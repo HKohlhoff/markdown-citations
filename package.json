@@ -1,0 +1,46 @@
+{
+  "name": "markdown-citations",
+  "version": "0.1.0",
+  "description": "Portable Markdown citations and bibliographies for Obsidian.",
+  "main": "main.js",
+  "type": "module",
+  "engines": {
+    "node": ">=20.19.0"
+  },
+  "scripts": {
+    "lint": "eslint . --max-warnings=0",
+    "typecheck": "tsc --noEmit",
+    "test:unit": "node scripts/run-unit-tests.mjs",
+    "test:metadata": "node scripts/check-release-metadata.mjs",
+    "test": "npm run lint && npm run typecheck && npm run test:metadata && npm run test:unit",
+    "build": "node build.mjs --production",
+    "build:prod": "node build.mjs --production",
+    "build:prod:deploy": "node build.mjs --production --deploy",
+    "dev": "node build.mjs --watch",
+    "dev:deploy": "node build.mjs --watch --deploy"
+  },
+  "keywords": [
+    "obsidian",
+    "citations",
+    "bibliography",
+    "bibtex",
+    "csl",
+    "markdown"
+  ],
+  "author": "Holger Kohlhoff",
+  "license": "AGPL-3.0-or-later",
+  "private": true,
+  "overrides": {
+    "moment": "2.31.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.13.3",
+    "esbuild": "^0.28.2",
+    "eslint": "^10.9.1",
+    "eslint-plugin-obsidianmd": "^0.4.2",
+    "globals": "^17.11.0",
+    "obsidian": "https://codeload.github.com/obsidianmd/obsidian-api/tar.gz/9abd9605ce081383674aae1ed111c456edde0688",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.68.0"
+  }
+}

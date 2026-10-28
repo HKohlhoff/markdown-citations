@@ -78,11 +78,12 @@ Veröffentlichung sind zwingend zu prüfen:
 
 ## Erster technischer Meilenstein
 
-1. eine konfigurierte Bibliografiedatei über die Vault-API lesen;
-2. BibTeX/BibLaTeX oder CSL-JSON normalisieren;
-3. eine Quelle in einem mobilen Dialog suchen;
-4. ein einfaches Markdown-Zitat an der Cursorposition einfügen;
-5. ein verlinktes Literaturverzeichnis erzeugen und sicher aktualisieren.
+1. [x] eine konfigurierte Bibliografiedatei über die Vault-API lesen;
+2. [x] BibTeX/BibLaTeX oder CSL-JSON normalisieren;
+3. [x] eine Quelle in einem mobilen Dialog suchen;
+4. [x] ein einfaches Markdown-Zitat an der Cursorposition einfügen;
+5. [x] ein verlinktes Literaturverzeichnis erzeugen und sicher aktualisieren.
 
-Danach folgen Seitenzahlen, mehrere Quellen, weitere CSL-Stile,
-Frontmatter-Überschreibungen und der Pandoc-Modus.
+Der erste Prototyp formatiert bewusst nur eine einfache Autor-Jahr-Darstellung.
+Danach folgen die geprüfte CSL-Engine, Seitenzahlen, mehrere Quellen, weitere
+CSL-Stile, Frontmatter-Überschreibungen und der Pandoc-Modus.

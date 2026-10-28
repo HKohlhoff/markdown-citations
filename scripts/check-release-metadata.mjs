@@ -5,6 +5,7 @@ const pkg = JSON.parse(fs.readFileSync("package.json", "utf8"));
 const versions = JSON.parse(fs.readFileSync("versions.json", "utf8"));
 const readme = fs.readFileSync("README.md", "utf8");
 const concept = fs.readFileSync("KONZEPT.md", "utf8");
+const buildSource = fs.readFileSync("build.mjs", "utf8");
 const errors = [];
 
 if (manifest.id !== "markdown-citations") errors.push("Unexpected plugin id.");
@@ -20,6 +21,15 @@ if (manifest.isDesktopOnly !== false) errors.push("Plugin must not be desktop-on
 if (pkg.license !== "AGPL-3.0-or-later") errors.push("Unexpected license.");
 if (!readme.includes("Flowershow")) errors.push("README must describe Flowershow portability.");
 if (!concept.includes("macOS, iPadOS und iOS")) errors.push("Concept must retain the mobile requirement.");
+if (!buildSource.includes("citationJsMobileShim")) {
+  errors.push("Citation.js synchronous network loading must remain excluded from the mobile bundle.");
+}
+if (!fs.existsSync("scripts/check-mobile-bundle.mjs")) {
+  errors.push("Mobile bundle validation script is missing.");
+}
+if (!fs.existsSync("LICENSES/Citation.js-MIT.md")) {
+  errors.push("Bundled Citation.js license text is missing.");
+}
 
 const sourceFiles = fs.readdirSync("src", { recursive: true })
   .filter((path) => typeof path === "string" && path.endsWith(".ts"));

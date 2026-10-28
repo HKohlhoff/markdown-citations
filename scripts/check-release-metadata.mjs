@@ -30,12 +30,32 @@ if (!fs.existsSync("scripts/check-mobile-bundle.mjs")) {
 if (!fs.existsSync("LICENSES/Citation.js-MIT.md")) {
   errors.push("Bundled Citation.js license text is missing.");
 }
+if (!fs.existsSync("LICENSES/CSL-Styles-CC-BY-SA-3.0.md")) {
+  errors.push("Bundled CSL styles attribution is missing.");
+}
+
+const styleFiles = fs.readdirSync("resources/csl/styles")
+  .filter((file) => file.endsWith(".csl"));
+if (styleFiles.length < 5) errors.push("At least five bundled CSL styles are required.");
+for (const file of styleFiles) {
+  const style = fs.readFileSync(`resources/csl/styles/${file}`, "utf8");
+  if (!style.includes("<title>")) errors.push(`${file} has no CSL title metadata.`);
+  if (!style.includes("creativecommons.org/licenses/by-sa/3.0")) {
+    errors.push(`${file} does not retain its CC BY-SA 3.0 rights metadata.`);
+  }
+}
 
 const sourceFiles = fs.readdirSync("src", { recursive: true })
-  .filter((path) => typeof path === "string" && path.endsWith(".ts"));
+  .filter((path) => typeof path === "string" && path.endsWith(".ts"))
+  .filter((path) => path !== "ui/vault-path-modal.ts");
 const sourceText = sourceFiles.map((path) => fs.readFileSync(`src/${path}`, "utf8")).join("\n");
 for (const api of ["getAllLoadedFiles(", "getFiles(", "getMarkdownFiles("]) {
   if (sourceText.includes(api)) errors.push(`Source must not enumerate the complete vault with ${api}`);
+}
+
+const pickerSource = fs.readFileSync("src/ui/vault-path-modal.ts", "utf8");
+if (!pickerSource.includes("SuggestModal") || !pickerSource.includes("getFiles()")) {
+  errors.push("Vault file enumeration must remain isolated in the user-opened picker.");
 }
 
 if (errors.length > 0) throw new Error(errors.join("\n"));

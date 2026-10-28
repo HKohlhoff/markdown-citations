@@ -35,6 +35,7 @@ jobs:
             release/LICENSE
             release/THIRD_PARTY_NOTICES.md
             release/LICENSES/Citation.js-MIT.md
+            release/LICENSES/CSL-Styles-CC-BY-SA-3.0.md
       - name: Publish release assets
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -47,7 +48,8 @@ jobs:
               release/styles.css \
               release/LICENSE \
               release/THIRD_PARTY_NOTICES.md \
-              release/LICENSES/Citation.js-MIT.md
+              release/LICENSES/Citation.js-MIT.md \
+              release/LICENSES/CSL-Styles-CC-BY-SA-3.0.md
           else
             gh release create "$tag" \
               --verify-tag \
@@ -58,5 +60,6 @@ jobs:
               release/styles.css \
               release/LICENSE \
               release/THIRD_PARTY_NOTICES.md \
-              release/LICENSES/Citation.js-MIT.md
+              release/LICENSES/Citation.js-MIT.md \
+              release/LICENSES/CSL-Styles-CC-BY-SA-3.0.md
           fi

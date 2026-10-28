@@ -11,7 +11,16 @@ Their copyright notices and complete license texts are distributed in their npm
 packages and source repositories. Citation.js is developed by Lars Willighagen
 and contributors.
 
-The prototype does not yet bundle `citeproc-js` or CSL style files. Before a
-CSL engine, styles, or locales are distributed, this document must be expanded
-with their exact versions and license terms. Every release must receive a
-production dependency license audit.
+## Citation Style Language styles
+
+- Source: https://github.com/citation-style-language/styles
+- Project: https://citationstyles.org/
+- License: Creative Commons Attribution-ShareAlike 3.0 Unported
+- Bundled styles: APA 7, Chicago 18 author-date, Cite Them Right 12
+  (Harvard), MLA 9, IEEE, Elsevier Vancouver, and DIN 1505-2 author-date.
+
+The style files retain their original author and contributor metadata. An
+attribution and license notice is included in
+`LICENSES/CSL-Styles-CC-BY-SA-3.0.md`. The prototype does not yet bundle a CSL
+rendering engine or locale files. Every release must receive a production
+dependency and bundled-content license audit.

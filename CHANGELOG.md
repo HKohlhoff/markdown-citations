@@ -2,6 +2,12 @@
 
 All notable changes to Markdown Citations will be documented in this file.
 
+## Unreleased
+
+- Rework the settings page with searchable Vault file and folder pickers.
+- Add seven bundled CSL citation styles and custom Vault CSL selection.
+- Improve settings layout for wide desktop fields and mobile screens.
+
 ## 0.1.0 - 2026-10-28
 
 - Create the independent Markdown Citations project scaffold.

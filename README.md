@@ -8,6 +8,11 @@ CSL-JSON files through the Obsidian Vault API, offers a mobile-friendly source
 search, inserts a readable linked citation, and creates or updates an owned
 bibliography block.
 
+The settings page provides searchable Vault file and folder selectors, wide
+path fields, and a dropdown containing seven bundled CSL styles: APA 7,
+Chicago author-date, Harvard Cite Them Right, MLA 9, IEEE, Vancouver, and DIN
+1505-2. Custom `.csl` files stored in the vault can also be selected.
+
 ## Goals
 
 - produce Markdown that remains readable without the plugin;
@@ -22,7 +27,7 @@ The complete product decisions and open technical questions are recorded in
 
 ## Prototype workflow
 
-1. Add one or more vault-relative bibliography paths in the plugin settings.
+1. Select one or more bibliography files in the plugin settings.
 2. Run **Markdown Citations: Insert citation** in an open Markdown note.
 3. Search by author, title, year, or citekey and select a source.
 4. Run **Markdown Citations: Update bibliography**.
@@ -70,7 +75,9 @@ The project uses GitFlow:
 - `feature/*` branches start from `develop`;
 - release and hotfix branches are merged with explicit merge commits.
 
-No remote repository or release is created automatically.
+The private development repository is
+<https://github.com/HKohlhoff/markdown-citations>. Pushes, tags, and releases
+are never created automatically by the local build.
 
 ## Privacy
 

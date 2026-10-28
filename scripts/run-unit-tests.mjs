@@ -22,13 +22,14 @@ try {
     outbase: "tests",
     outdir: outputDir,
     bundle: true,
+    external: ["yaml"],
     format: "esm",
     platform: "node",
     target: "node20",
     sourcemap: false,
     logLevel: "warning",
     plugins: [citationJsMobileShim],
-    loader: { ".csl": "text", ".xml": "text" },
+    loader: { ".csl": "text", ".xml": "text", ".md": "text" },
   });
   const files = tests.map((file) => path.join(outputDir, path.relative("tests", file).replace(/\.ts$/, ".js")));
   const result = spawnSync(process.execPath, ["--test", ...files], { stdio: "inherit" });

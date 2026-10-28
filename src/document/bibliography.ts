@@ -2,6 +2,7 @@ import type { EditorPosition } from "obsidian";
 import type { BibliographyItem } from "../model/bibliography";
 import type { BibliographyPosition } from "../settings-data";
 import { bibliographyAnchor, renderBibliographyEntry } from "../citation/render";
+import { findDocumentCitations } from "./citations";
 
 export const BIBLIOGRAPHY_START = "<!-- markdown-citations:bibliography:start -->";
 export const BIBLIOGRAPHY_END = "<!-- markdown-citations:bibliography:end -->";
@@ -26,8 +27,9 @@ export function updateBibliography(
   position: BibliographyPosition,
   cursorOffset: number,
   formattedEntries?: readonly FormattedBibliographyText[],
+  collectedItems?: readonly BibliographyItem[],
 ): BibliographyUpdate {
-  const citedItems = citedItemsInDocument(content, items);
+  const citedItems = collectedItems ? [...collectedItems] : citedItemsInDocument(content, items);
   const block = renderBibliographyBlock(citedItems, heading, includeHeading, formattedEntries);
   const existing = existingBibliographyRange(content);
 
@@ -72,10 +74,8 @@ export function citedItemsInDocument(
   const byAnchor = new Map(items.map((item) => [bibliographyAnchor(item.citeKey), item]));
   const result: BibliographyItem[] = [];
   const seen = new Set<string>();
-  const citationPattern = /\[[^\]]+\]\(#(ref-[a-z0-9_.:-]+)(?:\s+"[^"]*")?\)/gi;
-
-  for (const match of content.matchAll(citationPattern)) {
-    const anchor = match[1]?.toLowerCase();
+  for (const citation of findDocumentCitations(content)) {
+    const anchor = citation.anchor;
     if (!anchor || seen.has(anchor)) continue;
     const item = byAnchor.get(anchor);
     if (!item) continue;

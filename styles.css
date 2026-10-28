@@ -34,9 +34,12 @@
 }
 
 .markdown-citations-settings .markdown-citations-add-source {
-  border-top: 0;
+  display: flex;
+  align-items: center;
+  border: 0;
   justify-content: flex-end;
-  padding-top: 0;
+  margin: var(--size-4-2) 0;
+  padding: var(--size-4-1) 0;
 }
 
 .markdown-citations-picker-title {
@@ -93,4 +96,19 @@
 .markdown-citations-dialog-actions {
   border-top: 0;
   justify-content: flex-end;
+}
+
+.markdown-citations-documentation-modal {
+  width: min(58rem, calc(100vw - 2rem));
+}
+
+.markdown-citations-documentation-modal .modal-content {
+  max-height: 75vh;
+  overflow-y: auto;
+}
+
+.markdown-citations-documentation-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--size-4-4);
 }

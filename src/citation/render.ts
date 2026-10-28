@@ -69,7 +69,7 @@ export function searchableText(item: BibliographyItem): string {
   ].filter((value): value is string => typeof value === "string").join(" ").toLowerCase();
 }
 
-function shortAuthorLabel(item: BibliographyItem): string {
+export function shortAuthorLabel(item: BibliographyItem): string {
   const authors = names(item);
   if (authors.length === 0) return item.csl.title?.trim() || item.citeKey;
   if (authors.length === 1) return authors[0] ?? item.citeKey;

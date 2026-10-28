@@ -3,7 +3,7 @@
   "name": "Markdown Citations",
   "version": "0.1.0",
   "minAppVersion": "1.13.0",
-  "description": "Create portable Markdown citations and bibliographies from BibTeX, BibLaTeX, and CSL-JSON sources.",
+  "description": "Create portable Markdown citations and bibliographies from .bib or .json (CSL-JSON) files, regardless of the tool used to create them.",
   "author": "Holger Kohlhoff",
   "authorUrl": "https://github.com/HKohlhoff",
   "fundingUrl": "https://ko-fi.com/hokdev",

@@ -27,6 +27,20 @@ test("updateBibliography follows first citation order and ignores normal links",
   assert.ok(result.content.includes("[normal link](https://example.com)"));
 });
 
+test("updateBibliography recognizes nested numeric citation labels", () => {
+  const result = updateBibliography(
+    "Numeric [[1]](#ref-first2024).",
+    [first],
+    "References",
+    true,
+    "end",
+    0,
+  );
+
+  assert.deepEqual(result.citedItems.map((entry) => entry.citeKey), ["first2024"]);
+  assert.ok(result.content.includes("<a id=\"ref-first2024\"></a>"));
+});
+
 test("updateBibliography replaces only its existing owned block", () => {
   const initial = updateBibliography(
     "Text [(Alpha, 2024)](#ref-first2024).",

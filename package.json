@@ -1,7 +1,7 @@
 {
   "name": "markdown-citations",
   "version": "0.1.0",
-  "description": "Portable Markdown citations and bibliographies for Obsidian.",
+  "description": "Portable Markdown citations and bibliographies from .bib or .json (CSL-JSON) files for Obsidian.",
   "main": "main.js",
   "type": "module",
   "engines": {
@@ -34,6 +34,7 @@
     "moment": "2.31.0"
   },
   "devDependencies": {
+    "@codemirror/view": "^6.43.13",
     "@types/node": "^24.13.3",
     "esbuild": "^0.28.2",
     "eslint": "^10.9.1",
@@ -41,7 +42,8 @@
     "globals": "^17.11.0",
     "obsidian": "https://codeload.github.com/obsidianmd/obsidian-api/tar.gz/9abd9605ce081383674aae1ed111c456edde0688",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.68.0"
+    "typescript-eslint": "^8.68.0",
+    "yaml": "^2.9.1"
   },
   "dependencies": {
     "@citation-js/core": "^0.9.0",

@@ -3,9 +3,10 @@
 Markdown Citations is an Obsidian plugin for creating readable, portable
 citations and bibliographies from BibTeX, BibLaTeX, and CSL-JSON sources.
 
-The project is at the beginning of development. Version 0.1.0 establishes the
-mobile-compatible plugin shell, persisted settings, quality checks, and the
-architecture for the first citation prototype.
+Version 0.1.0 is the first working prototype. It loads BibTeX, BibLaTeX, and
+CSL-JSON files through the Obsidian Vault API, offers a mobile-friendly source
+search, inserts a readable linked citation, and creates or updates an owned
+bibliography block.
 
 ## Goals
 
@@ -19,12 +20,20 @@ architecture for the first citation prototype.
 The complete product decisions and open technical questions are recorded in
 [KONZEPT.md](KONZEPT.md).
 
-## Current scaffold
+## Prototype workflow
 
-The plugin currently loads in Obsidian, stores normalized settings, exposes a
-settings tab, and provides a small setup-status command. Bibliography parsing
-and citation insertion are intentionally reserved for the next development
-step.
+1. Add one or more vault-relative bibliography paths in the plugin settings.
+2. Run **Markdown Citations: Insert citation** in an open Markdown note.
+3. Search by author, title, year, or citekey and select a source.
+4. Run **Markdown Citations: Update bibliography**.
+
+The current citation label and bibliography entry are deliberately simple
+author-year prototypes. Correct CSL formatting, locators such as page numbers,
+and narrative or multiple citations are the next development stages.
+
+The bibliography is bounded by two ownership markers. Only this owned block is
+replaced during an update; normal Markdown links and unrelated text remain
+untouched.
 
 ## Development
 

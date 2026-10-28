@@ -1,2 +1,9 @@
-/* Markdown Citations currently relies on Obsidian's native components.
-   Plugin-specific styles will be added only when the citation UI requires them. */
+.markdown-citations-source-title {
+  font-weight: var(--font-semibold);
+}
+
+.markdown-citations-source-meta {
+  color: var(--text-muted);
+  font-size: var(--font-ui-smaller);
+  margin-top: var(--size-2-1);
+}

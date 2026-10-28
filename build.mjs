@@ -2,6 +2,7 @@ import esbuild from "esbuild";
 import fs from "node:fs";
 import { builtinModules } from "node:module";
 import path from "node:path";
+import { citationJsMobileShim } from "./scripts/esbuild-plugins.mjs";
 
 const production = process.argv.includes("--production");
 const watch = process.argv.includes("--watch");
@@ -9,11 +10,21 @@ const deploy = process.argv.includes("--deploy");
 const pluginId = "markdown-citations";
 const pluginsDir = process.env.OBSIDIAN_PLUGINS_DIR ?? "";
 const releaseDir = "release";
+const releaseFiles = [
+  "main.js",
+  "manifest.json",
+  "styles.css",
+  "LICENSE",
+  "THIRD_PARTY_NOTICES.md",
+  "LICENSES/Citation.js-MIT.md",
+];
 
 function syncArtifacts() {
   fs.mkdirSync(releaseDir, { recursive: true });
-  for (const file of ["main.js", "manifest.json", "styles.css"]) {
-    fs.copyFileSync(file, path.join(releaseDir, file));
+  for (const file of releaseFiles) {
+    const releasePath = path.join(releaseDir, file);
+    fs.mkdirSync(path.dirname(releasePath), { recursive: true });
+    fs.copyFileSync(file, releasePath);
   }
   if (!deploy) return;
   if (!pluginsDir) throw new Error("OBSIDIAN_PLUGINS_DIR is required for deployment.");
@@ -21,8 +32,10 @@ function syncArtifacts() {
     ? path.resolve(pluginsDir)
     : path.join(path.resolve(pluginsDir), pluginId);
   fs.mkdirSync(target, { recursive: true });
-  for (const file of ["main.js", "manifest.json", "styles.css"]) {
-    fs.copyFileSync(path.join(releaseDir, file), path.join(target, file));
+  for (const file of releaseFiles) {
+    const targetPath = path.join(target, file);
+    fs.mkdirSync(path.dirname(targetPath), { recursive: true });
+    fs.copyFileSync(path.join(releaseDir, file), targetPath);
   }
   const marker = path.join(target, ".hotreload");
   if (!fs.existsSync(marker)) fs.writeFileSync(marker, "", "utf8");
@@ -41,7 +54,7 @@ const context = await esbuild.context({
   minify: production,
   external: ["obsidian", "electron", ...builtinModules],
   logLevel: "info",
-  plugins: [{
+  plugins: [citationJsMobileShim, {
     name: "release-and-deploy",
     setup(build) {
       build.onEnd((result) => {

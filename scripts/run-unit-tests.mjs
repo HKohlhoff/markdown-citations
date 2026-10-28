@@ -3,6 +3,7 @@ import path from "node:path";
 import process from "node:process";
 import { spawnSync } from "node:child_process";
 import esbuild from "esbuild";
+import { citationJsMobileShim } from "./esbuild-plugins.mjs";
 
 const outputDir = ".test-build";
 fs.rmSync(outputDir, { recursive: true, force: true });
@@ -25,7 +26,8 @@ try {
     platform: "node",
     target: "node20",
     sourcemap: false,
-    logLevel: "warning"
+    logLevel: "warning",
+    plugins: [citationJsMobileShim],
   });
   const files = tests.map((file) => path.join(outputDir, path.relative("tests", file).replace(/\.ts$/, ".js")));
   const result = spawnSync(process.execPath, ["--test", ...files], { stdio: "inherit" });

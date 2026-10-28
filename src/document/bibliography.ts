@@ -3,10 +3,8 @@ import type { BibliographyItem } from "../model/bibliography";
 import type { BibliographyPosition } from "../settings-data";
 import { bibliographyAnchor, renderBibliographyEntry } from "../citation/render";
 import { findDocumentCitations } from "./citations";
-
-export const BIBLIOGRAPHY_START = "<!-- markdown-citations:bibliography:start -->";
-export const BIBLIOGRAPHY_END = "<!-- markdown-citations:bibliography:end -->";
-export const BIBLIOGRAPHY_PLACEHOLDER = "<!-- markdown-citations:bibliography -->";
+import { BIBLIOGRAPHY_START, BIBLIOGRAPHY_END, BIBLIOGRAPHY_PLACEHOLDER, bibliographyRange, bibliographyPlaceholder } from "./markdown-ranges";
+export { BIBLIOGRAPHY_START, BIBLIOGRAPHY_END, BIBLIOGRAPHY_PLACEHOLDER };
 
 export interface BibliographyUpdate {
   content: string;
@@ -31,7 +29,7 @@ export function updateBibliography(
 ): BibliographyUpdate {
   const citedItems = collectedItems ? [...collectedItems] : citedItemsInDocument(content, items);
   const block = renderBibliographyBlock(citedItems, heading, includeHeading, formattedEntries);
-  const existing = existingBibliographyRange(content);
+  const existing = bibliographyRange(content);
 
   if (existing) {
     return {
@@ -44,7 +42,7 @@ export function updateBibliography(
     };
   }
 
-  const placeholderIndex = content.indexOf(BIBLIOGRAPHY_PLACEHOLDER);
+  const placeholderIndex = bibliographyPlaceholder(content);
   if (placeholderIndex >= 0) {
     return {
       content: joinBibliographyBlock(
@@ -112,14 +110,6 @@ function joinBibliographyBlock(before: string, block: string, after: string): st
   const prefix = normalizedBefore ? "\n\n" : "";
   const suffix = normalizedAfter ? "\n\n" : "\n";
   return normalizedBefore + prefix + block + suffix + normalizedAfter;
-}
-
-function existingBibliographyRange(content: string): { start: number; end: number } | undefined {
-  const start = content.indexOf(BIBLIOGRAPHY_START);
-  if (start < 0) return undefined;
-  const endMarker = content.indexOf(BIBLIOGRAPHY_END, start);
-  if (endMarker < 0) return undefined;
-  return { start, end: endMarker + BIBLIOGRAPHY_END.length };
 }
 
 function clamp(value: number, minimum: number, maximum: number): number {

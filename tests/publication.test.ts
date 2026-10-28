@@ -129,3 +129,12 @@ test("missing sources, missing embeddings, cycles, and publication-as-input abor
   await assert.rejects(buildPublication({ path: "Master_publishVersion.md", content: result.content }, sources, settings, style, codec, resolver([a])), /original master/u);
   assert.equal(root.content, "![[A]]");
 });
+
+test("publication preserves bibliography marker examples in chapter code", async () => {
+  const example = ["```md", BIBLIOGRAPHY_START, "Example", BIBLIOGRAPHY_END, "```"].join("\n");
+  const a = { path: "A.md", content: cite("# Chapter\n" + example + "\nText ", "alpha", "3") };
+  const result = await buildPublication({ path: "Master.md", content: "![[A]]" }, sources, settings, style, codec, resolver([a]));
+  assert.ok(result.content.includes(example));
+  assert.equal(result.citationCount, 1);
+  assert.equal(result.sourceCount, 1);
+});

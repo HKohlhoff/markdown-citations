@@ -2,7 +2,8 @@ import { bibliographyAnchor } from "../citation/render";
 import { formatCslCitation, formatCslBibliography } from "../csl/processor";
 import type { BibliographyItem } from "../model/bibliography";
 import type { MarkdownCitationsSettings } from "../settings-data";
-import { BIBLIOGRAPHY_START, BIBLIOGRAPHY_END, BIBLIOGRAPHY_PLACEHOLDER, updateBibliography } from "./bibliography";
+import { BIBLIOGRAPHY_PLACEHOLDER, updateBibliography } from "./bibliography";
+import { bibliographyRange } from "./markdown-ranges";
 import { frontmatterRange, readCitationState, writeCitationState, type CitationState, type YamlCodec } from "./citation-frontmatter";
 import { excludedDocumentRanges, findDocumentCitations, renderCitationLink, recoverOldCitation } from "./citations";
 import { collectMasterCitations, findNoteEmbeddings, type ResolveEmbedding, type SourceNote } from "./master";
@@ -50,11 +51,9 @@ export async function buildPublication(
     }
     const frontmatter = frontmatterRange(note.content);
     if (!rootNote && frontmatter) replacements.push({ start: 0, end: frontmatter.bodyStart, text: "" });
-    const bibStart = note.content.indexOf(BIBLIOGRAPHY_START);
-    if (bibStart >= 0) {
-      const bibEnd = note.content.indexOf(BIBLIOGRAPHY_END, bibStart);
-      if (bibEnd < 0) throw new Error(`Unclosed bibliography in ${note.path}.`);
-      replacements.push({ start: bibStart, end: bibEnd + BIBLIOGRAPHY_END.length, text: rootNote ? BIBLIOGRAPHY_PLACEHOLDER : "" });
+    const bibliography = bibliographyRange(note.content);
+    if (bibliography) {
+      replacements.push({ ...bibliography, text: rootNote ? BIBLIOGRAPHY_PLACEHOLDER : "" });
     }
     const events = [
       ...findDocumentCitations(note.content).map(citation => ({ start: citation.start, end: citation.end, citation, embed: undefined })),

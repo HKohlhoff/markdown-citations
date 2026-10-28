@@ -4,6 +4,11 @@ All notable changes to Markdown Citations will be documented in this file.
 
 ## Unreleased
 
+- Protect fenced-code, inline-code, and comment examples from bibliography
+  replacement; reject incomplete or duplicated ownership markers.
+- Verify rebased publication links independently of Vault effects and document
+  how to detach a publication copy without losing its citation data.
+
 - Add Create / update publication note: assemble supported embeds into the
   sibling <master>_publishVersion.md with master-wide citation formatting,
   numbering, unique citation IDs, and a shared bibliography.

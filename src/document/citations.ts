@@ -1,5 +1,6 @@
 import { bibliographyAnchor, type CitationRenderOptions } from "../citation/render";
 import type { BibliographyItem } from "../model/bibliography";
+import { syntaxRanges, bibliographyRange } from "./markdown-ranges";
 import {
   frontmatterRange, readCitationState, writeCitationState, validateStoredCitation,
   type CitationState, type StoredCitation, type YamlCodec,
@@ -141,25 +142,8 @@ export function recoverOldCitation(label: string, item: BibliographyItem): Store
 }
 
 export function excludedDocumentRanges(content: string): [number, number][] {
-  const ranges: [number, number][] = [];
-  const frontmatter = frontmatterRange(content);
-  if (frontmatter) ranges.push([0, frontmatter.bodyStart]);
-  const endMarker = "<!-- markdown-citations:bibliography:end -->";
-  const blockStart = content.indexOf("<!-- markdown-citations:bibliography:start -->");
-  const blockEnd = content.indexOf(endMarker, blockStart);
-  if (blockStart >= 0 && blockEnd >= 0) ranges.push([blockStart, blockEnd + endMarker.length]);
-  // Mask fenced code line by line, including fences longer than the opening fence.
-  let fence: { char: string; length: number; start: number } | undefined;
-  for (const line of content.matchAll(/^.*(?:\n|$)/gmu)) {
-    const marker = /^ {0,3}(`{3,}|~{3,})(.*)$/u.exec(line[0].trimEnd());
-    if (!marker?.[1]) continue;
-    if (!fence) fence = { char: marker[1][0] ?? "`", length: marker[1].length, start: line.index };
-    else if (marker[1][0] === fence.char && marker[1].length >= fence.length && !marker[2]?.trim()) {
-      ranges.push([fence.start, line.index + line[0].length]);
-      fence = undefined;
-    }
-  }
-  if (fence) ranges.push([fence.start, content.length]);
-  for (const match of content.matchAll(/(`+)[\s\S]*?\1|<!--[\s\S]*?-->/gu)) ranges.push([match.index, match.index + match[0].length]);
+  const ranges = syntaxRanges(content);
+  const bibliography = bibliographyRange(content);
+  if (bibliography) ranges.push([bibliography.start, bibliography.end]);
   return ranges;
 }

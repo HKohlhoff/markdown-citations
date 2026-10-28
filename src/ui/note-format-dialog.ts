@@ -25,6 +25,7 @@ export class NoteFormatDialog extends Modal {
 
   onOpen(): void {
     this.setTitle("Citation style and language for this note");
+    this.modalEl.addClass("markdown-citations-note-format-dialog");
     this.render();
   }
 
@@ -61,25 +62,25 @@ export class NoteFormatDialog extends Modal {
         .addOption("en-GB", "English (United Kingdom)")
         .setValue(this.noteFormat.locale)
         .onChange(value => { this.noteFormat.locale = value; }));
-    const actions = new Setting(this.contentEl);
+    const actions = new Setting(this.contentEl).setClass("markdown-citations-note-format-actions");
     actions.addButton(button => button.setButtonText("Cancel").onClick(() => this.close()));
     for (const update of [false, true]) {
       actions.addButton(button => {
         button.setButtonText(update ? "Save to frontmatter and update citations" : "Save to frontmatter");
         if (update) button.setCta();
         button.onClick(async () => {
-        if (this.saving) return;
-        this.saving = true;
-        button.setDisabled(true);
-        try {
-          await this.onSave({ ...this.noteFormat }, update);
-          this.close();
-        } catch (error) {
-          new Notice(`Could not save note citation settings: ${error instanceof Error ? error.message : String(error)}`, 9000);
-        } finally {
-          this.saving = false;
-          button.setDisabled(false);
-        }
+          if (this.saving) return;
+          this.saving = true;
+          button.setDisabled(true);
+          try {
+            await this.onSave({ ...this.noteFormat }, update);
+            this.close();
+          } catch (error) {
+            new Notice(`Could not save note citation settings: ${error instanceof Error ? error.message : String(error)}`, 9000);
+          } finally {
+            this.saving = false;
+            button.setDisabled(false);
+          }
         });
       });
     }

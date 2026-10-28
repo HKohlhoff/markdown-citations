@@ -290,6 +290,12 @@ Regenerating from the master replaces these local output changes as well.
 Keep an independent copy under another filename if you want to retain a separate
 edition permanently.
 
+A differently named copy is never the original master's output destination.
+For a completely independent ordinary citation note, remove the entire
+`markdown-citations.publication` subsection (including `source`) from the copy.
+Keep `style`, `locale`, and `citations`; local style changes and citation updates
+continue to work. The original generated output should retain its ownership.
+
 An existing destination is replaced only if its publication ownership matches
 this master. An unrelated file with the same name, unsaved output edits,
 missing notes/sources, invalid citation details, cycles, or detected changes

@@ -1,13 +1,42 @@
 import type { CSLName } from "@citation-js/core";
 import type { BibliographyItem } from "../model/bibliography";
 
-export function renderMarkdownCitation(item: BibliographyItem): string {
-  const label = renderCitationLabel(item);
+export type CitationForm = "parenthetical" | "narrative";
+export type CitationLocatorType = "page" | "pages" | "chapter" | "section" | "paragraph" | "figure" | "table" | "line";
+
+export interface CitationRenderOptions {
+  form?: CitationForm;
+  locatorType?: CitationLocatorType;
+  locator?: string;
+  prefix?: string;
+  suffix?: string;
+  locale?: string;
+}
+
+export function renderMarkdownCitation(
+  item: BibliographyItem,
+  options: CitationRenderOptions = {},
+): string {
+  const label = renderCitationLabel(item, options);
   return `[${label}](#${bibliographyAnchor(item.citeKey)})`;
 }
 
-export function renderCitationLabel(item: BibliographyItem): string {
-  return `(${shortAuthorLabel(item)}, ${issuedYear(item)})`;
+export function renderCitationLabel(
+  item: BibliographyItem,
+  options: CitationRenderOptions = {},
+): string {
+  const author = shortAuthorLabel(item);
+  const yearAndDetails = [
+    issuedYear(item),
+    renderLocator(options),
+    options.suffix?.trim(),
+  ].filter((value): value is string => Boolean(value));
+  const prefix = options.prefix?.trim();
+  if (options.form === "narrative") {
+    return `${prefix ? `${prefix} ` : ""}${author} (${yearAndDetails.join(", ")})`;
+  }
+  const prefixedAuthor = prefix ? `${prefix} ${author}` : author;
+  return `(${[prefixedAuthor, ...yearAndDetails].join(", ")})`;
 }
 
 export function renderBibliographyEntry(item: BibliographyItem): string {
@@ -71,6 +100,24 @@ function formatFullName(name: CSLName): string {
 function issuedYear(item: BibliographyItem): string {
   const year = item.csl.issued?.["date-parts"]?.[0]?.[0];
   return year === undefined ? "n.d." : String(year);
+}
+
+function renderLocator(options: CitationRenderOptions): string | undefined {
+  const locator = options.locator?.trim();
+  if (!locator) return undefined;
+  const type = options.locatorType ?? "page";
+  const german = options.locale?.toLowerCase().startsWith("de") ?? false;
+  const labels: Record<CitationLocatorType, readonly [string, string]> = {
+    page: ["p.", "S."],
+    pages: ["pp.", "S."],
+    chapter: ["chap.", "Kap."],
+    section: ["sec.", "Abschn."],
+    paragraph: ["para.", "Abs."],
+    figure: ["fig.", "Abb."],
+    table: ["tbl.", "Tab."],
+    line: ["line", "Z."],
+  };
+  return `${labels[type][german ? 1 : 0]} ${locator}`;
 }
 
 function escapeMarkdown(value: string): string {

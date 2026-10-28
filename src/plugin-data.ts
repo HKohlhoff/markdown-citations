@@ -1,6 +1,6 @@
 import { normalizeSettings, type MarkdownCitationsSettings } from "./settings-data";
 
-export const CURRENT_SCHEMA_VERSION = 1;
+export const CURRENT_SCHEMA_VERSION = 2;
 
 export interface MarkdownCitationsData {
   schemaVersion: number;

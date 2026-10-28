@@ -7,3 +7,90 @@
   font-size: var(--font-ui-smaller);
   margin-top: var(--size-2-1);
 }
+
+.markdown-citations-settings .markdown-citations-section-intro {
+  border-bottom: 0;
+  padding-bottom: var(--size-4-1);
+}
+
+.markdown-citations-settings .markdown-citations-empty-state {
+  background: var(--background-secondary);
+  border-radius: var(--radius-s);
+  color: var(--text-muted);
+  margin: 0 0 var(--size-4-2);
+  padding: var(--size-4-3);
+}
+
+.markdown-citations-settings .markdown-citations-path-setting .setting-item-control,
+.markdown-citations-settings .markdown-citations-select-setting .setting-item-control {
+  flex: 1 1 26rem;
+}
+
+.markdown-citations-settings .markdown-citations-path-input,
+.markdown-citations-settings .markdown-citations-wide-select {
+  flex: 1 1 auto;
+  max-width: 42rem;
+  width: 100%;
+}
+
+.markdown-citations-settings .markdown-citations-add-source {
+  border-top: 0;
+  justify-content: flex-end;
+  padding-top: 0;
+}
+
+.markdown-citations-picker-title {
+  font-weight: var(--font-semibold);
+}
+
+.markdown-citations-picker-path {
+  color: var(--text-muted);
+  font-size: var(--font-ui-smaller);
+  margin-top: var(--size-2-1);
+}
+
+@media (max-width: 600px) {
+  .markdown-citations-settings .markdown-citations-path-setting,
+  .markdown-citations-settings .markdown-citations-select-setting {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .markdown-citations-settings .markdown-citations-path-setting .setting-item-control,
+  .markdown-citations-settings .markdown-citations-select-setting .setting-item-control {
+    flex-basis: auto;
+    width: 100%;
+  }
+
+  .markdown-citations-settings .markdown-citations-path-input,
+  .markdown-citations-settings .markdown-citations-wide-select {
+    min-width: 0;
+  }
+}
+
+.markdown-citations-citation-dialog .modal-content {
+  max-width: 46rem;
+}
+
+.markdown-citations-dialog-source {
+  color: var(--text-muted);
+  margin-top: 0;
+}
+
+.markdown-citations-citation-preview {
+  background: var(--background-secondary);
+  border-radius: var(--radius-s);
+  margin: var(--size-4-4) 0;
+  padding: var(--size-4-3);
+}
+
+.markdown-citations-citation-preview-label {
+  color: var(--text-muted);
+  font-size: var(--font-ui-smaller);
+  margin-bottom: var(--size-2-2);
+}
+
+.markdown-citations-dialog-actions {
+  border-top: 0;
+  justify-content: flex-end;
+}

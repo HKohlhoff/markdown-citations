@@ -16,12 +16,14 @@ test("updateBibliography follows first citation order and ignores normal links",
     "Then [(Beta, 2025)](#ref-second2025).",
     "Finally [(Alpha, 2024)](#ref-first2024).",
   ].join("\n\n");
-  const result = updateBibliography(content, [first, second], "Literatur", "end", 0);
+  const result = updateBibliography(content, [first, second], "Literatur", true, "end", 0);
 
   assert.deepEqual(result.citedItems.map((entry) => entry.citeKey), ["second2025", "first2024"]);
   assert.ok(result.content.includes(BIBLIOGRAPHY_START));
   assert.ok(result.content.includes(BIBLIOGRAPHY_END));
+  assert.ok(result.content.includes(`${BIBLIOGRAPHY_START}\n\n## Literatur`));
   assert.ok(result.content.indexOf("Second source") < result.content.indexOf("First source"));
+  assert.ok(result.content.includes("Second source*.\n\n<a id=\"ref-first2024\"></a>Alpha (2024). *First source") );
   assert.ok(result.content.includes("[normal link](https://example.com)"));
 });
 
@@ -30,6 +32,7 @@ test("updateBibliography replaces only its existing owned block", () => {
     "Text [(Alpha, 2024)](#ref-first2024).",
     [first],
     "Literatur",
+    true,
     "end",
     0,
   ).content;
@@ -37,6 +40,7 @@ test("updateBibliography replaces only its existing owned block", () => {
     initial.replace("Text", "Changed text"),
     [first],
     "References",
+    true,
     "end",
     0,
   ).content;
@@ -44,6 +48,42 @@ test("updateBibliography replaces only its existing owned block", () => {
   assert.equal(updated.match(new RegExp(BIBLIOGRAPHY_START, "g"))?.length, 1);
   assert.ok(updated.startsWith("Changed text"));
   assert.ok(updated.includes("## References"));
+});
+
+test("updateBibliography can omit the heading and renders entries as paragraphs", () => {
+  const result = updateBibliography(
+    "Text [(Alpha, 2024)](#ref-first2024).",
+    [first],
+    "Literatur",
+    false,
+    "end",
+    0,
+  );
+
+  assert.ok(!result.content.includes("## Literatur"));
+  assert.ok(!result.content.includes("\n- Alpha"));
+  assert.ok(result.content.includes("\n<a id=\"ref-first2024\"></a>Alpha (2024)."));
+});
+
+test("updateBibliography automatically uses a placeholder", () => {
+  const content = [
+    "Text [(Alpha, 2024)](#ref-first2024).",
+    "<!-- markdown-citations:bibliography -->",
+    "After",
+  ].join("\n\n");
+  const result = updateBibliography(content, [first], "Literatur", true, "end", 0);
+
+  assert.ok(result.content.indexOf(BIBLIOGRAPHY_START) < result.content.indexOf("After"));
+  assert.ok(!result.content.includes("<!-- markdown-citations:bibliography -->"));
+});
+
+test("updateBibliography normalizes surrounding blank and whitespace-only lines", () => {
+  const content = "Before\n \n\nAfter [(Alpha, 2024)](#ref-first2024).";
+  const result = updateBibliography(content, [first], "Literatur", false, "cursor", 10);
+
+  assert.ok(result.content.includes(`Before\n\n${BIBLIOGRAPHY_START}`));
+  assert.ok(!result.content.includes(`Before\n \n${BIBLIOGRAPHY_START}`));
+  assert.ok(result.content.includes(`${BIBLIOGRAPHY_END}\n\nAfter`));
 });
 
 function item(citeKey: string, title: string, family: string, year: number): BibliographyItem {

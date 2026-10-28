@@ -25,8 +25,10 @@ Serververarbeitung mit Flowershow veröffentlicht werden.
 - Beim Aktualisieren wird die Notiz von oben nach unten analysiert. Dadurch
   bleiben Reihenfolge, numerische Stile und Literaturverzeichnis konsistent.
 - Das Literaturverzeichnis wird standardmäßig an der Cursorposition eingefügt
-  und anschließend dort aktualisiert. Notizende und Platzhalter sind weitere
-  Optionen.
+  und anschließend dort aktualisiert. Das Notizende ist eine weitere Option;
+  ein vorhandener Platzhalter wird ohne zusätzliche Einstellung automatisch
+  bevorzugt. Die Überschrift kann unabhängig davon ein- oder ausgeschaltet
+  werden.
 - Ein kleiner Einfügedialog bietet Quellensuche, optionale Seiten- oder
   Abschnittsangaben und eine wissenschaftliche oder redaktionelle Darstellung.
 - Ein einfacher Vorlagenmodus darf flexible Verweise erzeugen, aber keine zweite
@@ -84,6 +86,7 @@ Veröffentlichung sind zwingend zu prüfen:
 4. [x] ein einfaches Markdown-Zitat an der Cursorposition einfügen;
 5. [x] ein verlinktes Literaturverzeichnis erzeugen und sicher aktualisieren.
 
-Der erste Prototyp formatiert bewusst nur eine einfache Autor-Jahr-Darstellung.
-Danach folgen die geprüfte CSL-Engine, Seitenzahlen, mehrere Quellen, weitere
-CSL-Stile, Frontmatter-Überschreibungen und der Pandoc-Modus.
+Der erste Prototyp verwendet citeproc-js lokal für CSL-formatierte Einzelzitate,
+Seiten- und Abschnittsangaben sowie Literaturverzeichnisse. Danach folgen
+mehrere Quellen pro Zitat, vollständige Reformatierung bestehender Zitate,
+Frontmatter-Überschreibungen und der Pandoc-Modus.

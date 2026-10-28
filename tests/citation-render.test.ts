@@ -30,6 +30,26 @@ test("renderMarkdownCitation creates a readable linked citation", () => {
   );
 });
 
+test("renderMarkdownCitation includes localized pages and optional text", () => {
+  assert.equal(
+    renderMarkdownCitation(item, {
+      locatorType: "pages",
+      locator: "23–27",
+      prefix: "vgl.",
+      suffix: "Hervorhebung hinzugefügt",
+      locale: "de-DE",
+    }),
+    "[(vgl. Müller & Schmidt, 2024, S. 23–27, Hervorhebung hinzugefügt)](#ref-muller-2024)",
+  );
+});
+
+test("renderMarkdownCitation supports narrative citations", () => {
+  assert.equal(
+    renderMarkdownCitation(item, { form: "narrative", locator: "7", locale: "en-US" }),
+    "[Müller & Schmidt (2024, p. 7)](#ref-muller-2024)",
+  );
+});
+
 test("bibliographyAnchor is deterministic and fragment-safe", () => {
   assert.equal(bibliographyAnchor(" Example:2026/A "), "ref-example:2026-a");
 });

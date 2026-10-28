@@ -1,4 +1,4 @@
-import { App, normalizePath, PluginSettingTab, Setting } from "obsidian";
+import { App, ButtonComponent, normalizePath, PluginSettingTab, Setting } from "obsidian";
 import { BUNDLED_CITATION_STYLES, getBundledCitationStyle } from "../csl/styles";
 import type MarkdownCitationsPlugin from "../main";
 import { VaultFileSuggestModal, VaultFolderSuggestModal } from "./vault-path-modal";
@@ -18,14 +18,10 @@ export class MarkdownCitationsSettingTab extends PluginSettingTab {
   private renderSettings(): void {
     this.containerEl.empty();
     this.containerEl.addClass("markdown-citations-settings");
-    this.containerEl.createEl("p", {
-      text: "Configure the vault files used for citations and the defaults used when Markdown Citations writes a note.",
-      cls: "setting-item-description",
-    });
-
     this.renderSources();
     this.renderCitationFormatting();
     this.renderBibliographyOutput();
+    this.renderAbout();
   }
 
   private renderSources(): void {
@@ -36,7 +32,7 @@ export class MarkdownCitationsSettingTab extends PluginSettingTab {
 
     new Setting(this.containerEl)
       .setName("Bibliography files")
-      .setDesc("BibTeX, BibLaTeX, or CSL-JSON files that are searched when inserting a citation.")
+      .setDesc("Source files: .bib or .json (CSL-JSON). The program used to create them does not matter.")
       .setClass("markdown-citations-section-intro");
 
     if (this.plugin.settings.bibliographyPaths.length === 0) {
@@ -75,20 +71,19 @@ export class MarkdownCitationsSettingTab extends PluginSettingTab {
         }));
     });
 
-    new Setting(this.containerEl)
-      .setClass("markdown-citations-add-source")
-      .addButton((button) => button
-        .setButtonText("Add bibliography file")
-        .setCta()
-        .onClick(() => this.chooseBibliographyFile()));
+    const addSource = this.containerEl.createDiv({ cls: "markdown-citations-add-source" });
+    new ButtonComponent(addSource)
+      .setButtonText("Add bibliography file")
+      .setCta()
+      .onClick(() => this.chooseBibliographyFile());
 
     const localLibrary = new Setting(this.containerEl)
       .setName("Local library file")
-      .setDesc("CSL-JSON file managed locally by Markdown Citations. Choose an existing JSON file or select its destination folder.")
+      .setDesc("Optional additional .json (CSL-JSON) file. Leave empty when your bibliography files already contain all sources.")
       .setClass("markdown-citations-path-setting");
     localLibrary.addText((text) => {
       text
-        .setPlaceholder(`Markdown Citations/${LOCAL_LIBRARY_FILE_NAME}`)
+        .setPlaceholder("Optional: choose .json (CSL-JSON)")
         .setValue(this.plugin.settings.localLibraryPath)
         .onChange(async (value) => {
           this.plugin.settings.localLibraryPath = value;
@@ -98,7 +93,7 @@ export class MarkdownCitationsSettingTab extends PluginSettingTab {
     });
     localLibrary.addExtraButton((button) => button
       .setIcon("file-search-2")
-      .setTooltip("Choose existing JSON file")
+      .setTooltip("Choose existing .json (CSL-JSON) file")
       .onClick(() => {
         new VaultFileSuggestModal(this.app, "json", (file) => {
           void this.saveLocalLibraryPath(file.path);
@@ -122,6 +117,16 @@ export class MarkdownCitationsSettingTab extends PluginSettingTab {
       .setName("Citation formatting")
       .setDesc(`${BUNDLED_CITATION_STYLES.length} CSL styles are installed with the plugin. A custom CSL file can also be selected from this vault.`)
       .setHeading();
+
+    new Setting(this.containerEl)
+      .setName("Allow frontmatter overrides")
+      .setDesc("Allow style and locale under markdown-citations in frontmatter to override citation style and language for this note. Off by default. All other settings remain global; citation data remains active either way.")
+      .addToggle(toggle => toggle
+        .setValue(this.plugin.settings.allowFrontmatterOverrides)
+        .onChange(async value => {
+          this.plugin.settings.allowFrontmatterOverrides = value;
+          await this.plugin.saveSettings();
+        }));
 
     const currentStyle = this.plugin.settings.defaultCitationStyle;
     const bundledStyle = getBundledCitationStyle(currentStyle);
@@ -167,18 +172,6 @@ export class MarkdownCitationsSettingTab extends PluginSettingTab {
           await this.plugin.saveSettings();
         }));
 
-    new Setting(this.containerEl)
-      .setName("Citation mode")
-      .setDesc("Readable Markdown is intended for direct publication; Pandoc syntax is intended for later document conversion.")
-      .setClass("markdown-citations-select-setting")
-      .addDropdown((dropdown) => dropdown
-        .addOption("markdown", "Readable Markdown")
-        .addOption("pandoc", "Pandoc")
-        .setValue(this.plugin.settings.citationMode)
-        .onChange(async (value) => {
-          this.plugin.settings.citationMode = value === "pandoc" ? "pandoc" : "markdown";
-          await this.plugin.saveSettings();
-        }));
   }
 
   private renderBibliographyOutput(): void {
@@ -226,6 +219,18 @@ export class MarkdownCitationsSettingTab extends PluginSettingTab {
         });
       text.inputEl.addClass("markdown-citations-path-input");
     });
+  }
+
+  private renderAbout(): void {
+    new Setting(this.containerEl).setName("About").setHeading();
+    new Setting(this.containerEl)
+      .setName("Last update")
+      .setDesc(`Review the features and usage notes for version ${this.plugin.manifest.version}.`)
+      .addButton(button => button.setButtonText("Show last update").onClick(() => this.plugin.showLastUpdate()));
+    new Setting(this.containerEl)
+      .setName("README")
+      .setDesc("Open the complete plugin documentation without leaving Obsidian.")
+      .addButton(button => button.setButtonText("Show readme").onClick(() => this.plugin.showReadme()));
   }
 
   private chooseBibliographyFile(replaceIndex?: number): void {

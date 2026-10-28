@@ -9,8 +9,14 @@ test("normalizePluginData wraps legacy flat settings", () => {
   });
 
   assert.equal(data.schemaVersion, CURRENT_SCHEMA_VERSION);
-  assert.equal(data.settings.citationMode, "pandoc");
+  assert.equal("citationMode" in data.settings, false);
   assert.equal(data.settings.bibliographyHeading, "References");
+  assert.equal(data.lastReadUpdateVersion, "");
+});
+
+test("update acknowledgements survive normalization and invalid values default to unread", () => {
+  assert.equal(normalizePluginData({ lastReadUpdateVersion: "0.1.0", settings: {} }).lastReadUpdateVersion, "0.1.0");
+  assert.equal(normalizePluginData({ lastReadUpdateVersion: 100 }).lastReadUpdateVersion, "");
 });
 
 test("normalizePluginData prefers the settings object", () => {
@@ -24,6 +30,6 @@ test("normalizePluginData prefers the settings object", () => {
   });
 
   assert.equal(data.schemaVersion, CURRENT_SCHEMA_VERSION);
-  assert.equal(data.settings.citationMode, "markdown");
+  assert.equal("citationMode" in data.settings, false);
   assert.equal(data.settings.defaultLocale, "en-US");
 });

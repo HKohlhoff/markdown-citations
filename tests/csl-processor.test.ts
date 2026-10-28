@@ -109,6 +109,15 @@ test("APA keeps the Dehaene URL separate from the original publication date", ()
   );
 });
 
+test("DIN access-date separators stay text instead of becoming Markdown list items", () => {
+  const markdown = placeBibliographyUrlOnOwnLine(
+    "Test Institute: A web page. URL https://example.com/article. - abgerufen am 2026-10-25",
+  );
+  assert.match(markdown, /\n\\- abgerufen am 2026-10-25/u);
+  assert.doesNotMatch(markdown, /^[-+*] /mu);
+  assert.equal(placeBibliographyUrlOnOwnLine(markdown), markdown);
+});
+
 test("citeproc formats a narrative citation as finished text", () => {
   const citation = formatCslCitation(
     [item],
@@ -122,6 +131,46 @@ test("citeproc formats a narrative citation as finished text", () => {
   assert.match(citation, /2024/u);
   assert.match(citation, /9/u);
   assert.doesNotMatch(citation, /<[^>]+>/u);
+});
+
+test("numeric styles provide readable narrative authors without citeproc sentinel text", () => {
+  for (const id of ["ieee", "nlm-citation-sequence", "american-physics-society", "ams-numeric-alphabetical"]) {
+    const style = getBundledCitationStyle(id)?.content;
+    assert.ok(style);
+    const citation = formatCslCitation([dehaene], dehaene,
+      { form: "narrative", locator: "3", prefix: "vgl." }, style, "de-DE");
+    assert.match(citation, /^vgl\. Dehaene /u);
+    assert.match(citation, /1/u);
+    assert.doesNotMatch(citation, /NO_PRINTED_FORM/u);
+    assert.equal(citation.match(/vgl\./gu)?.length, 1);
+  }
+});
+
+test("APS preserves citation order while AMS numbers alphabetically sorted references", () => {
+  const sources = [item, alphabeticallyFirst];
+  const aps = getBundledCitationStyle("american-physics-society")?.content ?? "";
+  const ams = getBundledCitationStyle("ams-numeric-alphabetical")?.content ?? "";
+  assert.deepEqual(formatCslBibliography(sources, aps, "en-US").map(entry => entry.citeKey), ["mueller2024", "adams2023"]);
+  assert.deepEqual(formatCslBibliography(sources, ams, "en-US").map(entry => entry.citeKey), ["adams2023", "mueller2024"]);
+  assert.equal(formatCslCitation(sources, item, {}, aps, "en-US"), "[1]");
+  assert.equal(formatCslCitation(sources, item, {}, ams, "en-US"), "[2]");
+});
+
+test("ISO 690 adaptation retains the 2021 base and switches language-specific terms", () => {
+  const style = getBundledCitationStyle("iso690-author-date-localized")?.content ?? "";
+  assert.match(style, /ISO 690:2021/u);
+  const source: BibliographyItem = {
+    citeKey: "online", sourcePath: "library.json",
+    csl: { id: "online", type: "webpage", title: "Web publication", author: [{ family: "Author" }],
+      issued: { "date-parts": [[2026]] }, accessed: { "date-parts": [[2026, 10, 28]] }, URL: "https://example.com/source" },
+  };
+  const de = formatCslBibliography([source], style, "de-DE")[0]?.markdown ?? "";
+  const en = formatCslBibliography([source], style, "en-US")[0]?.markdown ?? "";
+  assert.match(de, /https:\/\/example.com\/source/u);
+  assert.match(en, /https:\/\/example.com\/source/u);
+  assert.doesNotMatch(de, /Available|accessed/u);
+  assert.match(en, /Available|accessed/u);
+  assert.notEqual(de, en);
 });
 
 test("citeproc returns the bibliography order required by the CSL style", () => {

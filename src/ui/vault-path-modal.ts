@@ -6,12 +6,12 @@ const PURPOSES: Record<VaultFilePurpose, { extensions: readonly string[]; placeh
   bibliography: {
     extensions: ["bib", "biblatex", "json"],
     placeholder: "Search bibliography files in this vault…",
-    empty: "No BibTeX, BibLaTeX, or CSL-JSON files found.",
+    empty: "No bibliography files found: .bib or .json (CSL-JSON).",
   },
   json: {
     extensions: ["json"],
-    placeholder: "Search JSON files in this vault…",
-    empty: "No JSON files found.",
+    placeholder: "Search .json (CSL-JSON) files in this vault…",
+    empty: "No .json (CSL-JSON) files found.",
   },
   csl: {
     extensions: ["csl"],

@@ -27,6 +27,20 @@ test("updateBibliography follows first citation order and ignores normal links",
   assert.ok(result.content.includes("[normal link](https://example.com)"));
 });
 
+test("updateBibliography recognizes nested numeric citation labels", () => {
+  const result = updateBibliography(
+    "Numeric [[1]](#ref-first2024).",
+    [first],
+    "References",
+    true,
+    "end",
+    0,
+  );
+
+  assert.deepEqual(result.citedItems.map((entry) => entry.citeKey), ["first2024"]);
+  assert.ok(result.content.includes("<a id=\"ref-first2024\"></a>"));
+});
+
 test("updateBibliography replaces only its existing owned block", () => {
   const initial = updateBibliography(
     "Text [(Alpha, 2024)](#ref-first2024).",
@@ -99,3 +113,19 @@ function item(citeKey: string, title: string, family: string, year: number): Bib
     },
   };
 }
+
+test("bibliography markers and placeholders inside code examples are never output targets", () => {
+  const example = `\n\`\`\`md\n${BIBLIOGRAPHY_START}\nExample\n${BIBLIOGRAPHY_END}\n<!-- markdown-citations:bibliography -->\n\`\`\`\n`;
+  const text = example + "Text [(Alpha, 2024)](#ref-first2024).";
+  const result = updateBibliography(text, [first], "Literatur", true, "end", 0).content;
+  assert.ok(result.startsWith(example));
+  assert.equal(result.split(BIBLIOGRAPHY_START).length - 1, 2);
+  assert.ok(result.indexOf('<a id="ref-first2024"') > result.indexOf("Text [(Alpha"));
+});
+
+test("incomplete and duplicated bibliography blocks stop before replacing note text", () => {
+  for (const text of [BIBLIOGRAPHY_START, BIBLIOGRAPHY_END,
+    `${BIBLIOGRAPHY_START}\n${BIBLIOGRAPHY_END}\n${BIBLIOGRAPHY_START}\n${BIBLIOGRAPHY_END}`]) {
+    assert.throws(() => updateBibliography(text, [first], "Literatur", true, "end", 0), /ownership markers/u);
+  }
+});

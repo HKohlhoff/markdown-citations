@@ -25,9 +25,14 @@ included in `LICENSES/citeproc-js-AGPL-3.0-or-later.txt`.
 - Project: https://citationstyles.org/
 - License: Creative Commons Attribution-ShareAlike 3.0 Unported
 - Bundled styles: APA 7, Chicago 18 author-date, Cite Them Right 12
-  (Harvard), MLA 9, IEEE, Elsevier Vancouver, and DIN 1505-2 author-date.
+  (Harvard), MLA 9, IEEE, NLM/Vancouver, APS/Physical Review, an adapted
+  AMS numeric style with alphabetical ordering, and an adapted localized
+  ISO 690:2021 author-date style.
 
-The style and locale files retain their original author and contributor metadata. An
+The style and locale files retain their original author and contributor metadata.
+Adaptations add contributor credit and distinct identifiers, retaining CC BY-SA
+3.0 terms. Changes and pinned upstream sources are recorded in
+`resources/csl/README.md`. An
 attribution and license notice is included in
 `LICENSES/CSL-Styles-CC-BY-SA-3.0.md`. Every release must receive a production
 dependency and bundled-content license audit.

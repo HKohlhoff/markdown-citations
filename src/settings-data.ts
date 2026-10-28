@@ -1,4 +1,3 @@
-export type CitationMode = "markdown" | "pandoc";
 export type BibliographyPosition = "cursor" | "end";
 
 export interface MarkdownCitationsSettings {
@@ -6,7 +5,7 @@ export interface MarkdownCitationsSettings {
   localLibraryPath: string;
   defaultCitationStyle: string;
   defaultLocale: string;
-  citationMode: CitationMode;
+  allowFrontmatterOverrides: boolean;
   bibliographyPosition: BibliographyPosition;
   includeBibliographyHeading: boolean;
   bibliographyHeading: string;
@@ -14,10 +13,10 @@ export interface MarkdownCitationsSettings {
 
 export const DEFAULT_SETTINGS: MarkdownCitationsSettings = {
   bibliographyPaths: [],
-  localLibraryPath: "Markdown Citations/MarkdownCitations.json",
+  localLibraryPath: "",
   defaultCitationStyle: "apa",
   defaultLocale: "de-DE",
-  citationMode: "markdown",
+  allowFrontmatterOverrides: false,
   bibliographyPosition: "cursor",
   includeBibliographyHeading: true,
   bibliographyHeading: "Literatur",
@@ -28,13 +27,20 @@ export function normalizeSettings(value: unknown): MarkdownCitationsSettings {
   return {
     bibliographyPaths: normalizePathList(candidate.bibliographyPaths),
     localLibraryPath: normalizePath(candidate.localLibraryPath, DEFAULT_SETTINGS.localLibraryPath),
-    defaultCitationStyle: normalizeText(candidate.defaultCitationStyle, DEFAULT_SETTINGS.defaultCitationStyle),
+    defaultCitationStyle: normalizeCitationStyle(candidate.defaultCitationStyle),
     defaultLocale: normalizeText(candidate.defaultLocale, DEFAULT_SETTINGS.defaultLocale),
-    citationMode: candidate.citationMode === "pandoc" ? "pandoc" : "markdown",
+    allowFrontmatterOverrides: candidate.allowFrontmatterOverrides === true,
     bibliographyPosition: normalizeBibliographyPosition(candidate.bibliographyPosition),
     includeBibliographyHeading: candidate.includeBibliographyHeading !== false,
     bibliographyHeading: normalizeText(candidate.bibliographyHeading, DEFAULT_SETTINGS.bibliographyHeading),
   };
+}
+
+function normalizeCitationStyle(value: unknown): string {
+  const style = normalizeText(value, DEFAULT_SETTINGS.defaultCitationStyle);
+  if (style === "din-1505-2") return "iso690-author-date-localized";
+  if (style === "elsevier-vancouver") return "nlm-citation-sequence";
+  return style;
 }
 
 function normalizeBibliographyPosition(value: unknown): BibliographyPosition {

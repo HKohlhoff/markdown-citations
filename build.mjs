@@ -54,7 +54,7 @@ const context = await esbuild.context({
   target: "es2021",
   sourcemap: production ? false : "inline",
   minify: production,
-  external: ["obsidian", "electron", ...builtinModules],
+  external: ["obsidian", "electron", "@codemirror/view", "@codemirror/state", ...builtinModules],
   logLevel: "info",
   plugins: [citationJsMobileShim, {
     name: "release-and-deploy",
@@ -64,7 +64,7 @@ const context = await esbuild.context({
       });
     },
   }],
-  loader: { ".csl": "text", ".xml": "text" },
+  loader: { ".csl": "text", ".xml": "text", ".md": "text" },
 });
 
 if (watch) {

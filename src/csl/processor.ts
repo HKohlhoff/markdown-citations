@@ -1,5 +1,5 @@
 import CSL from "citeproc";
-import type { CitationRenderOptions } from "../citation/render";
+import { shortAuthorLabel, type CitationRenderOptions } from "../citation/render";
 import type { BibliographyItem } from "../model/bibliography";
 import { getCslLocale } from "./locales";
 
@@ -20,9 +20,10 @@ export function formatCslCitation(
   const citationItem = toProcessorCitationItem(citedItem, options);
 
   if (options.form === "narrative") {
-    const author = engine.makeCitationCluster([{ ...citationItem, "author-only": true }]);
-    const remainder = engine.makeCitationCluster([{ ...citationItem, "suppress-author": true }]);
-    return normalizeCslOutput(`${author} ${remainder}`);
+    const authorOnly = engine.makeCitationCluster([{ id: citedItem.citeKey, "author-only": true }]);
+    const author = authorOnly.includes("NO_PRINTED_FORM") ? shortAuthorLabel(citedItem) : authorOnly;
+    const remainder = engine.makeCitationCluster([{ ...citationItem, prefix: undefined, "suppress-author": true }]);
+    return normalizeCslOutput(`${options.prefix?.trim() ? `${options.prefix.trim()} ` : ""}${author} ${remainder}`);
   }
 
   return normalizeCslOutput(engine.makeCitationCluster([citationItem]));
@@ -80,8 +81,13 @@ export function placeBibliographyUrlOnOwnLine(markdown: string): string {
   const prefix = /\n[ \t]*$/u.test(beforeUrl) ? beforeUrl : `${beforeUrl.trimEnd()}  \n`;
   const suffix = afterUrl.trim() === "" || /^[ \t]*\n/u.test(afterUrl)
     ? afterUrl
-    : `  \n${afterUrl.trimStart()}`;
+    : `  \n${escapeBibliographyLineStart(afterUrl.trimStart())}`;
   return `${prefix}${lastUrl}${suffix}`;
+}
+
+function escapeBibliographyLineStart(value: string): string {
+  return value.replace(/^([-+*])(?=\s)/u, "\\$1")
+    .replace(/^(\d+)([.)])(?=\s)/u, "$1\\$2");
 }
 
 function createEngine(

@@ -8,6 +8,11 @@ declare module "*.xml" {
   export default content;
 }
 
+declare module "*.md" {
+  const content: string;
+  export default content;
+}
+
 declare module "citeproc" {
   interface CitationItem {
     id: string;

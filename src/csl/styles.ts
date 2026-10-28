@@ -1,7 +1,9 @@
 import apa from "../../resources/csl/styles/apa.csl";
 import chicagoAuthorDate from "../../resources/csl/styles/chicago-author-date.csl";
-import dinAuthorDate from "../../resources/csl/styles/din-1505-2.csl";
-import vancouver from "../../resources/csl/styles/elsevier-vancouver.csl";
+import isoAuthorDate from "../../resources/csl/styles/iso690-author-date-localized.csl";
+import vancouver from "../../resources/csl/styles/nlm-citation-sequence.csl";
+import aps from "../../resources/csl/styles/american-physics-society.csl";
+import ams from "../../resources/csl/styles/ams-numeric-alphabetical.csl";
 import harvardCiteThemRight from "../../resources/csl/styles/harvard-cite-them-right.csl";
 import ieee from "../../resources/csl/styles/ieee.csl";
 import mla from "../../resources/csl/styles/modern-language-association.csl";
@@ -33,18 +35,30 @@ export const BUNDLED_CITATION_STYLES: readonly BundledCitationStyle[] = [
     fileName: "modern-language-association.csl",
     content: mla,
   },
-  { id: "ieee", title: "IEEE Reference Guide version 11.29.2023", fileName: "ieee.csl", content: ieee },
+  { id: "ieee", title: "IEEE – Technik und Informatik (numerisch)", fileName: "ieee.csl", content: ieee },
   {
-    id: "elsevier-vancouver",
-    title: "Elsevier – NLM/Vancouver (citation-sequence)",
-    fileName: "elsevier-vancouver.csl",
+    id: "nlm-citation-sequence",
+    title: "NLM/Vancouver – Medizin (numerisch)",
+    fileName: "nlm-citation-sequence.csl",
     content: vancouver,
   },
   {
-    id: "din-1505-2",
-    title: "DIN 1505-2 (author-date, Deutsch) – superseded by ISO 690",
-    fileName: "din-1505-2.csl",
-    content: dinAuthorDate,
+    id: "iso690-author-date-localized",
+    title: "ISO 690:2021 – Autor/Jahr (DE/EN, angepasst)",
+    fileName: "iso690-author-date-localized.csl",
+    content: isoAuthorDate,
+  },
+  {
+    id: "american-physics-society",
+    title: "APS / Physical Review – Physik (numerisch)",
+    fileName: "american-physics-society.csl",
+    content: aps,
+  },
+  {
+    id: "ams-numeric-alphabetical",
+    title: "AMS – Mathematik (numerisch, alphabetisch; angepasst)",
+    fileName: "ams-numeric-alphabetical.csl",
+    content: ams,
   },
 ];
 

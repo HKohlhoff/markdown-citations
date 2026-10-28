@@ -2,10 +2,9 @@ import type { EditorPosition } from "obsidian";
 import type { BibliographyItem } from "../model/bibliography";
 import type { BibliographyPosition } from "../settings-data";
 import { bibliographyAnchor, renderBibliographyEntry } from "../citation/render";
-
-export const BIBLIOGRAPHY_START = "<!-- markdown-citations:bibliography:start -->";
-export const BIBLIOGRAPHY_END = "<!-- markdown-citations:bibliography:end -->";
-export const BIBLIOGRAPHY_PLACEHOLDER = "<!-- markdown-citations:bibliography -->";
+import { findDocumentCitations } from "./citations";
+import { BIBLIOGRAPHY_START, BIBLIOGRAPHY_END, BIBLIOGRAPHY_PLACEHOLDER, bibliographyRange, bibliographyPlaceholder } from "./markdown-ranges";
+export { BIBLIOGRAPHY_START, BIBLIOGRAPHY_END, BIBLIOGRAPHY_PLACEHOLDER };
 
 export interface BibliographyUpdate {
   content: string;
@@ -26,10 +25,11 @@ export function updateBibliography(
   position: BibliographyPosition,
   cursorOffset: number,
   formattedEntries?: readonly FormattedBibliographyText[],
+  collectedItems?: readonly BibliographyItem[],
 ): BibliographyUpdate {
-  const citedItems = citedItemsInDocument(content, items);
+  const citedItems = collectedItems ? [...collectedItems] : citedItemsInDocument(content, items);
   const block = renderBibliographyBlock(citedItems, heading, includeHeading, formattedEntries);
-  const existing = existingBibliographyRange(content);
+  const existing = bibliographyRange(content);
 
   if (existing) {
     return {
@@ -42,7 +42,7 @@ export function updateBibliography(
     };
   }
 
-  const placeholderIndex = content.indexOf(BIBLIOGRAPHY_PLACEHOLDER);
+  const placeholderIndex = bibliographyPlaceholder(content);
   if (placeholderIndex >= 0) {
     return {
       content: joinBibliographyBlock(
@@ -72,10 +72,8 @@ export function citedItemsInDocument(
   const byAnchor = new Map(items.map((item) => [bibliographyAnchor(item.citeKey), item]));
   const result: BibliographyItem[] = [];
   const seen = new Set<string>();
-  const citationPattern = /\[[^\]]+\]\(#(ref-[a-z0-9_.:-]+)(?:\s+"[^"]*")?\)/gi;
-
-  for (const match of content.matchAll(citationPattern)) {
-    const anchor = match[1]?.toLowerCase();
+  for (const citation of findDocumentCitations(content)) {
+    const anchor = citation.anchor;
     if (!anchor || seen.has(anchor)) continue;
     const item = byAnchor.get(anchor);
     if (!item) continue;
@@ -112,14 +110,6 @@ function joinBibliographyBlock(before: string, block: string, after: string): st
   const prefix = normalizedBefore ? "\n\n" : "";
   const suffix = normalizedAfter ? "\n\n" : "\n";
   return normalizedBefore + prefix + block + suffix + normalizedAfter;
-}
-
-function existingBibliographyRange(content: string): { start: number; end: number } | undefined {
-  const start = content.indexOf(BIBLIOGRAPHY_START);
-  if (start < 0) return undefined;
-  const endMarker = content.indexOf(BIBLIOGRAPHY_END, start);
-  if (endMarker < 0) return undefined;
-  return { start, end: endMarker + BIBLIOGRAPHY_END.length };
 }
 
 function clamp(value: number, minimum: number, maximum: number): number {

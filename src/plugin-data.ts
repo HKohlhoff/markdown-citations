@@ -1,10 +1,11 @@
 import { normalizeSettings, type MarkdownCitationsSettings } from "./settings-data";
 
-export const CURRENT_SCHEMA_VERSION = 2;
+export const CURRENT_SCHEMA_VERSION = 3;
 
 export interface MarkdownCitationsData {
   schemaVersion: number;
   settings: MarkdownCitationsSettings;
+  lastReadUpdateVersion: string;
 }
 
 export function normalizePluginData(value: unknown): MarkdownCitationsData {
@@ -13,6 +14,7 @@ export function normalizePluginData(value: unknown): MarkdownCitationsData {
   return {
     schemaVersion: CURRENT_SCHEMA_VERSION,
     settings: normalizeSettings(settingsSource),
+    lastReadUpdateVersion: typeof candidate.lastReadUpdateVersion === "string" ? candidate.lastReadUpdateVersion : "",
   };
 }
 

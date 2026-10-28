@@ -31,22 +31,44 @@ change is requested.
   by Markdown Citations.
 - User-triggered updates may replace only plugin-owned citation text and the
   configured bibliography block.
+- Explicit publication generation may create or fully rebuild the sibling
+  `<master>_publishVersion.md` only when existing ownership identifies that
+  master as its source. Never modify the original master or chapters during
+  assembly, overwrite unrelated destinations, or discard unsaved output edits.
 - Keep ownership markers readable and unobtrusive.
 - Do not add network access, telemetry, or live synchronization without an
   explicit request and corresponding privacy documentation.
 
 ## Product decisions
 
-- Readable Markdown is the default citation mode; Pandoc citation syntax is an
-  optional per-note or global mode.
+- Produce finished readable Markdown only. Pandoc citation syntax, conversion
+  commands, and export execution are outside this plugin's scope. Document the
+  interoperability boundary in README rather than adding an output-mode switch.
 - BibTeX/BibLaTeX and CSL-JSON are supported input formats and normalize to one
   internal model.
 - Zotero is optional. Multiple bibliography files and a local vault library are
   first-class sources.
 - CSL styles are open-ended; APA 7 is the default, not a hard-coded formatter.
-- Global settings may be overridden through documented frontmatter fields.
+- Only citation style and locale may be overridden through `style` and
+  `locale` inside `markdown-citations` when the global opt-in switch is enabled (off by default).
+  Sources, bibliography heading, visibility, and placement always remain global.
+  Master aggregation uses only the active master's overrides.
 
 ## Quality and Git
+
+### Shared About convention
+
+At the end of the plugin settings, provide **About** with **Last update → Show
+last update** and **README → Show readme**, matching Canvas HTML Exporter.
+Render temporary Markdown dialogs inside Obsidian with no documentation notes
+created in the vault. Embed the repository README directly; keep `Last Update.md`
+identical to the displayed update text and tied to the manifest version. Omit
+README images in the dialog, retain relevant links (including Ko-fi as text),
+and resolve relative documentation links to this repository. Close dialogs and
+unload renderer components when the plugin is disabled. The cross-project
+convention is also recorded in Holger's global Codex `AGENTS.md`.
+
+### Verification
 
 Before completing code changes, run `npm test` and `npm run build:prod` where
 possible. Use the shared vault

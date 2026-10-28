@@ -67,3 +67,30 @@
     min-width: 0;
   }
 }
+
+.markdown-citations-citation-dialog .modal-content {
+  max-width: 46rem;
+}
+
+.markdown-citations-dialog-source {
+  color: var(--text-muted);
+  margin-top: 0;
+}
+
+.markdown-citations-citation-preview {
+  background: var(--background-secondary);
+  border-radius: var(--radius-s);
+  margin: var(--size-4-4) 0;
+  padding: var(--size-4-3);
+}
+
+.markdown-citations-citation-preview-label {
+  color: var(--text-muted);
+  font-size: var(--font-ui-smaller);
+  margin-bottom: var(--size-2-2);
+}
+
+.markdown-citations-dialog-actions {
+  border-top: 0;
+  justify-content: flex-end;
+}

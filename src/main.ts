@@ -1,10 +1,13 @@
 import { Notice, Plugin, type Editor } from "obsidian";
 import { loadBibliographies } from "./bibliography/load";
-import { renderMarkdownCitation } from "./citation/render";
-import { updateBibliography } from "./document/bibliography";
+import { bibliographyAnchor, type CitationRenderOptions } from "./citation/render";
+import { formatCslBibliography, formatCslCitation } from "./csl/processor";
+import { resolveCitationStyle } from "./csl/resolve-style";
+import { citedItemsInDocument, updateBibliography } from "./document/bibliography";
 import type { BibliographyItem } from "./model/bibliography";
 import { normalizePluginData, type MarkdownCitationsData } from "./plugin-data";
 import { normalizeSettings, type MarkdownCitationsSettings } from "./settings-data";
+import { CitationDialog } from "./ui/citation-dialog";
 import { MarkdownCitationsSettingTab } from "./ui/settings-tab";
 import { SourceSuggestModal } from "./ui/source-suggest-modal";
 
@@ -25,7 +28,7 @@ export default class MarkdownCitationsPlugin extends Plugin {
     });
     this.addCommand({
       id: "update-bibliography",
-      name: "Update bibliography",
+      name: "Insert / update bibliography",
       editorCallback: (editor) => {
         void this.requestBibliographyUpdate(editor);
       },
@@ -53,8 +56,37 @@ export default class MarkdownCitationsPlugin extends Plugin {
     const items = await this.loadSources();
     if (!items) return;
     new SourceSuggestModal(this.app, items, (item) => {
-      editor.replaceSelection(renderMarkdownCitation(item));
+      void this.openCitationDialog(editor, items, item);
     }).open();
+  }
+
+  private async openCitationDialog(
+    editor: Editor,
+    items: readonly BibliographyItem[],
+    item: BibliographyItem,
+  ): Promise<void> {
+    try {
+      const style = await resolveCitationStyle(this.app.vault, this.settings.defaultCitationStyle);
+      const orderedItems = citedItemsInDocument(editor.getValue(), items);
+      if (!orderedItems.some((entry) => entry.citeKey === item.citeKey)) orderedItems.push(item);
+      new CitationDialog(
+        this.app,
+        item,
+        this.settings.defaultLocale,
+        (options) => formatCslCitation(
+          orderedItems,
+          item,
+          options,
+          style,
+          this.settings.defaultLocale,
+        ),
+        (options) => {
+          this.insertFormattedCitation(editor, items, item, options, style);
+        },
+      ).open();
+    } catch (error) {
+      new Notice(`Markdown Citations could not apply the CSL style: ${errorMessage(error)}`, 9000);
+    }
   }
 
   private async requestBibliographyUpdate(editor: Editor): Promise<void> {
@@ -62,17 +94,51 @@ export default class MarkdownCitationsPlugin extends Plugin {
     if (!items) return;
     const content = editor.getValue();
     const cursorOffset = editor.posToOffset(editor.getCursor());
+    const citedItems = citedItemsInDocument(content, items);
+    let formattedEntries: ReturnType<typeof formatCslBibliography> | undefined;
+    try {
+      const style = await resolveCitationStyle(this.app.vault, this.settings.defaultCitationStyle);
+      formattedEntries = formatCslBibliography(citedItems, style, this.settings.defaultLocale);
+    } catch (error) {
+      new Notice(`Markdown Citations could not apply the CSL style: ${errorMessage(error)}`, 9000);
+      return;
+    }
     const update = updateBibliography(
       content,
       items,
       this.settings.bibliographyHeading,
+      this.settings.includeBibliographyHeading,
       this.settings.bibliographyPosition,
       cursorOffset,
+      formattedEntries,
     );
     editor.setValue(update.content);
     new Notice(
       `Markdown Citations updated the bibliography with ${update.citedItems.length} source(s).`,
     );
+  }
+
+  private insertFormattedCitation(
+    editor: Editor,
+    items: readonly BibliographyItem[],
+    item: BibliographyItem,
+    options: CitationRenderOptions,
+    style: string,
+  ): void {
+    try {
+      const orderedItems = citedItemsInDocument(editor.getValue(), items);
+      if (!orderedItems.some((entry) => entry.citeKey === item.citeKey)) orderedItems.push(item);
+      const label = formatCslCitation(
+        orderedItems,
+        item,
+        options,
+        style,
+        this.settings.defaultLocale,
+      );
+      editor.replaceSelection(`[${label}](#${bibliographyAnchor(item.citeKey)})`);
+    } catch (error) {
+      new Notice(`Markdown Citations could not format the citation: ${errorMessage(error)}`, 9000);
+    }
   }
 
   private async loadSources(): Promise<BibliographyItem[] | undefined> {
@@ -103,4 +169,8 @@ export default class MarkdownCitationsPlugin extends Plugin {
     if (localPath && this.app.vault.getAbstractFileByPath(localPath)) paths.push(localPath);
     return [...new Set(paths)];
   }
+}
+
+function errorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : String(error);
 }

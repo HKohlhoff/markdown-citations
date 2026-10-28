@@ -1,5 +1,5 @@
 export type CitationMode = "markdown" | "pandoc";
-export type BibliographyPosition = "cursor" | "end" | "placeholder";
+export type BibliographyPosition = "cursor" | "end";
 
 export interface MarkdownCitationsSettings {
   bibliographyPaths: string[];
@@ -8,6 +8,7 @@ export interface MarkdownCitationsSettings {
   defaultLocale: string;
   citationMode: CitationMode;
   bibliographyPosition: BibliographyPosition;
+  includeBibliographyHeading: boolean;
   bibliographyHeading: string;
 }
 
@@ -18,6 +19,7 @@ export const DEFAULT_SETTINGS: MarkdownCitationsSettings = {
   defaultLocale: "de-DE",
   citationMode: "markdown",
   bibliographyPosition: "cursor",
+  includeBibliographyHeading: true,
   bibliographyHeading: "Literatur",
 };
 
@@ -30,12 +32,13 @@ export function normalizeSettings(value: unknown): MarkdownCitationsSettings {
     defaultLocale: normalizeText(candidate.defaultLocale, DEFAULT_SETTINGS.defaultLocale),
     citationMode: candidate.citationMode === "pandoc" ? "pandoc" : "markdown",
     bibliographyPosition: normalizeBibliographyPosition(candidate.bibliographyPosition),
+    includeBibliographyHeading: candidate.includeBibliographyHeading !== false,
     bibliographyHeading: normalizeText(candidate.bibliographyHeading, DEFAULT_SETTINGS.bibliographyHeading),
   };
 }
 
 function normalizeBibliographyPosition(value: unknown): BibliographyPosition {
-  if (value === "end" || value === "placeholder") return value;
+  if (value === "end") return value;
   return "cursor";
 }
 

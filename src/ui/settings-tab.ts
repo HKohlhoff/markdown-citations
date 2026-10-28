@@ -161,7 +161,6 @@ export class MarkdownCitationsSettingTab extends PluginSettingTab {
         .addOption("de-DE", "Deutsch (Deutschland)")
         .addOption("en-US", "English (United States)")
         .addOption("en-GB", "English (United Kingdom)")
-        .addOption("fr-FR", "Français (France)")
         .setValue(this.plugin.settings.defaultLocale)
         .onChange(async (value) => {
           this.plugin.settings.defaultLocale = value;
@@ -195,17 +194,27 @@ export class MarkdownCitationsSettingTab extends PluginSettingTab {
       .addDropdown((dropdown) => dropdown
         .addOption("cursor", "Cursor position")
         .addOption("end", "End of note")
-        .addOption("placeholder", "Existing placeholder")
         .setValue(this.plugin.settings.bibliographyPosition)
         .onChange(async (value) => {
-          this.plugin.settings.bibliographyPosition =
-            value === "end" || value === "placeholder" ? value : "cursor";
+          this.plugin.settings.bibliographyPosition = value === "end" ? "end" : "cursor";
           await this.plugin.saveSettings();
+        }));
+
+    new Setting(this.containerEl)
+      .setName("Insert bibliography heading")
+      .setDesc("Turn this off when the bibliography is inserted below an existing heading or in the middle of a note.")
+      .addToggle((toggle) => toggle
+        .setValue(this.plugin.settings.includeBibliographyHeading)
+        .onChange(async (value) => {
+          this.plugin.settings.includeBibliographyHeading = value;
+          await this.plugin.saveSettings();
+          this.refreshSettings();
         }));
 
     const heading = new Setting(this.containerEl)
       .setName("Bibliography heading")
       .setDesc("Heading written above a generated bibliography.")
+      .setDisabled(!this.plugin.settings.includeBibliographyHeading)
       .setClass("markdown-citations-path-setting");
     heading.addText((text) => {
       text

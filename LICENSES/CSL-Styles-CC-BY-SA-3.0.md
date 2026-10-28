@@ -1,9 +1,10 @@
-# Citation Style Language styles
+# Citation Style Language styles and locales
 
-The bundled CSL files are taken from the official Citation Style Language
-styles repository:
+The bundled CSL style and locale files are taken from the official Citation
+Style Language repositories:
 
 https://github.com/citation-style-language/styles
+https://github.com/citation-style-language/locales
 
 They are licensed under the Creative Commons Attribution-ShareAlike 3.0
 Unported license:

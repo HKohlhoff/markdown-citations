@@ -33,6 +33,9 @@ if (!fs.existsSync("LICENSES/Citation.js-MIT.md")) {
 if (!fs.existsSync("LICENSES/CSL-Styles-CC-BY-SA-3.0.md")) {
   errors.push("Bundled CSL styles attribution is missing.");
 }
+if (!fs.existsSync("LICENSES/citeproc-js-AGPL-3.0-or-later.txt")) {
+  errors.push("Bundled citeproc-js license text is missing.");
+}
 
 const styleFiles = fs.readdirSync("resources/csl/styles")
   .filter((file) => file.endsWith(".csl"));
@@ -41,6 +44,16 @@ for (const file of styleFiles) {
   const style = fs.readFileSync(`resources/csl/styles/${file}`, "utf8");
   if (!style.includes("<title>")) errors.push(`${file} has no CSL title metadata.`);
   if (!style.includes("creativecommons.org/licenses/by-sa/3.0")) {
+    errors.push(`${file} does not retain its CC BY-SA 3.0 rights metadata.`);
+  }
+}
+
+const localeFiles = fs.readdirSync("resources/csl/locales")
+  .filter((file) => file.endsWith(".xml"));
+if (localeFiles.length !== 3) errors.push("Exactly three bundled CSL locales are required.");
+for (const file of localeFiles) {
+  const locale = fs.readFileSync(`resources/csl/locales/${file}`, "utf8");
+  if (!locale.includes("creativecommons.org/licenses/by-sa/3.0")) {
     errors.push(`${file} does not retain its CC BY-SA 3.0 rights metadata.`);
   }
 }

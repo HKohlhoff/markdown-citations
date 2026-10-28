@@ -38,3 +38,12 @@ test("normalizeSettings accepts supported modes and rejects unknown values", () 
   assert.equal(fallback.citationMode, "markdown");
   assert.equal(fallback.bibliographyPosition, "cursor");
 });
+
+test("normalizeSettings migrates placeholder placement and defaults the heading toggle", () => {
+  const settings = normalizeSettings({ bibliographyPosition: "placeholder" });
+  assert.equal(settings.bibliographyPosition, "cursor");
+  assert.equal(settings.includeBibliographyHeading, true);
+
+  const withoutHeading = normalizeSettings({ includeBibliographyHeading: false });
+  assert.equal(withoutHeading.includeBibliographyHeading, false);
+});

@@ -13,41 +13,54 @@ export interface BibliographyUpdate {
   citedItems: BibliographyItem[];
 }
 
+export interface FormattedBibliographyText {
+  citeKey: string;
+  markdown: string;
+}
+
 export function updateBibliography(
   content: string,
   items: readonly BibliographyItem[],
   heading: string,
+  includeHeading: boolean,
   position: BibliographyPosition,
   cursorOffset: number,
+  formattedEntries?: readonly FormattedBibliographyText[],
 ): BibliographyUpdate {
   const citedItems = citedItemsInDocument(content, items);
-  const block = renderBibliographyBlock(citedItems, heading);
+  const block = renderBibliographyBlock(citedItems, heading, includeHeading, formattedEntries);
   const existing = existingBibliographyRange(content);
 
   if (existing) {
     return {
-      content: content.slice(0, existing.start) + block + content.slice(existing.end),
+      content: joinBibliographyBlock(
+        content.slice(0, existing.start),
+        block,
+        content.slice(existing.end),
+      ),
       citedItems,
     };
   }
 
-  if (position === "placeholder") {
-    const placeholderIndex = content.indexOf(BIBLIOGRAPHY_PLACEHOLDER);
-    if (placeholderIndex >= 0) {
-      return {
-        content: content.slice(0, placeholderIndex)
-          + block
-          + content.slice(placeholderIndex + BIBLIOGRAPHY_PLACEHOLDER.length),
-        citedItems,
-      };
-    }
+  const placeholderIndex = content.indexOf(BIBLIOGRAPHY_PLACEHOLDER);
+  if (placeholderIndex >= 0) {
+    return {
+      content: joinBibliographyBlock(
+        content.slice(0, placeholderIndex),
+        block,
+        content.slice(placeholderIndex + BIBLIOGRAPHY_PLACEHOLDER.length),
+      ),
+      citedItems,
+    };
   }
 
   const insertionOffset = position === "end" ? content.length : clamp(cursorOffset, 0, content.length);
-  const prefix = insertionOffset > 0 && !content.slice(0, insertionOffset).endsWith("\n\n") ? "\n\n" : "";
-  const suffix = insertionOffset < content.length && !content.slice(insertionOffset).startsWith("\n") ? "\n\n" : "\n";
   return {
-    content: content.slice(0, insertionOffset) + prefix + block + suffix + content.slice(insertionOffset),
+    content: joinBibliographyBlock(
+      content.slice(0, insertionOffset),
+      block,
+      content.slice(insertionOffset),
+    ),
     citedItems,
   };
 }
@@ -72,19 +85,33 @@ export function citedItemsInDocument(
   return result;
 }
 
-function renderBibliographyBlock(items: readonly BibliographyItem[], heading: string): string {
-  const lines = [
-    BIBLIOGRAPHY_START,
-    `## ${heading.trim() || "Literature"}`,
-    "",
-  ];
-  for (const item of items) {
-    lines.push(`<a id="${bibliographyAnchor(item.citeKey)}"></a>`);
-    lines.push(`- ${renderBibliographyEntry(item)}`);
+function renderBibliographyBlock(
+  items: readonly BibliographyItem[],
+  heading: string,
+  includeHeading: boolean,
+  formattedEntries?: readonly FormattedBibliographyText[],
+): string {
+  const lines = [BIBLIOGRAPHY_START, ""];
+  if (includeHeading) lines.push(`## ${heading.trim() || "Literature"}`, "");
+  const entries = formattedEntries ?? items.map((item) => ({
+    citeKey: item.citeKey,
+    markdown: renderBibliographyEntry(item),
+  }));
+  for (const entry of entries) {
+    lines.push(`<a id="${bibliographyAnchor(entry.citeKey)}"></a>${entry.markdown}`, "");
   }
-  if (items.length === 0) lines.push("_No Markdown Citations references found._");
-  lines.push("", BIBLIOGRAPHY_END);
+  if (entries.length === 0) lines.push("_No Markdown Citations references found._");
+  if (lines[lines.length - 1] !== "") lines.push("");
+  lines.push(BIBLIOGRAPHY_END);
   return lines.join("\n");
+}
+
+function joinBibliographyBlock(before: string, block: string, after: string): string {
+  const normalizedBefore = before.replace(/[\t ]*(?:\r?\n[\t ]*)+$/u, "");
+  const normalizedAfter = after.replace(/^(?:[\t ]*\r?\n)+[\t ]*/u, "");
+  const prefix = normalizedBefore ? "\n\n" : "";
+  const suffix = normalizedAfter ? "\n\n" : "\n";
+  return normalizedBefore + prefix + block + suffix + normalizedAfter;
 }
 
 function existingBibliographyRange(content: string): { start: number; end: number } | undefined {

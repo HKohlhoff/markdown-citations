@@ -36,6 +36,7 @@ jobs:
             release/THIRD_PARTY_NOTICES.md
             release/LICENSES/Citation.js-MIT.md
             release/LICENSES/CSL-Styles-CC-BY-SA-3.0.md
+            release/LICENSES/citeproc-js-AGPL-3.0-or-later.txt
       - name: Publish release assets
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -49,7 +50,8 @@ jobs:
               release/LICENSE \
               release/THIRD_PARTY_NOTICES.md \
               release/LICENSES/Citation.js-MIT.md \
-              release/LICENSES/CSL-Styles-CC-BY-SA-3.0.md
+              release/LICENSES/CSL-Styles-CC-BY-SA-3.0.md \
+              release/LICENSES/citeproc-js-AGPL-3.0-or-later.txt
           else
             gh release create "$tag" \
               --verify-tag \
@@ -61,5 +63,6 @@ jobs:
               release/LICENSE \
               release/THIRD_PARTY_NOTICES.md \
               release/LICENSES/Citation.js-MIT.md \
-              release/LICENSES/CSL-Styles-CC-BY-SA-3.0.md
+              release/LICENSES/CSL-Styles-CC-BY-SA-3.0.md \
+              release/LICENSES/citeproc-js-AGPL-3.0-or-later.txt
           fi

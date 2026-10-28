@@ -18,6 +18,7 @@ const releaseFiles = [
   "THIRD_PARTY_NOTICES.md",
   "LICENSES/Citation.js-MIT.md",
   "LICENSES/CSL-Styles-CC-BY-SA-3.0.md",
+  "LICENSES/citeproc-js-AGPL-3.0-or-later.txt",
 ];
 
 function syncArtifacts() {
@@ -63,7 +64,7 @@ const context = await esbuild.context({
       });
     },
   }],
-  loader: { ".csl": "text" },
+  loader: { ".csl": "text", ".xml": "text" },
 });
 
 if (watch) {

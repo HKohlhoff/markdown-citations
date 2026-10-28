@@ -28,7 +28,7 @@ try {
     sourcemap: false,
     logLevel: "warning",
     plugins: [citationJsMobileShim],
-    loader: { ".csl": "text" },
+    loader: { ".csl": "text", ".xml": "text" },
   });
   const files = tests.map((file) => path.join(outputDir, path.relative("tests", file).replace(/\.ts$/, ".js")));
   const result = spawnSync(process.execPath, ["--test", ...files], { stdio: "inherit" });

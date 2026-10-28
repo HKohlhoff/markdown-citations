@@ -5,7 +5,8 @@ citations and bibliographies from BibTeX, BibLaTeX, and CSL-JSON sources.
 
 Version 0.1.0 is the first working prototype. It loads BibTeX, BibLaTeX, and
 CSL-JSON files through the Obsidian Vault API, offers a mobile-friendly source
-search, inserts a readable linked citation, and creates or updates an owned
+search, formats citations and bibliographies locally with citeproc-js, writes
+the finished result as portable Markdown, and creates or updates an owned
 bibliography block.
 
 The settings page provides searchable Vault file and folder selectors, wide
@@ -30,11 +31,14 @@ The complete product decisions and open technical questions are recorded in
 1. Select one or more bibliography files in the plugin settings.
 2. Run **Markdown Citations: Insert citation** in an open Markdown note.
 3. Search by author, title, year, or citekey and select a source.
-4. Run **Markdown Citations: Update bibliography**.
+4. Choose the citation form and optionally add a page, section, prefix, or
+   suffix. The preview uses the selected CSL style.
+5. Run **Markdown Citations: Insert / update bibliography**.
 
-The current citation label and bibliography entry are deliberately simple
-author-year prototypes. Correct CSL formatting, locators such as page numbers,
-and narrative or multiple citations are the next development stages.
+The selected CSL style now formats single citations, locators, and bibliography
+entries. Multiple-source citation clusters and full-document citation
+reformatting remain later development stages. The Pandoc selector reserves the
+planned export mode; the current prototype inserts readable Markdown citations.
 
 The bibliography is bounded by two ownership markers. Only this owned block is
 replaced during an update; normal Markdown links and unrelated text remain
@@ -90,5 +94,6 @@ Copyright © 2026 Holger Kohlhoff.
 
 Markdown Citations is licensed under the GNU Affero General Public License,
 version 3 or later. Third-party components retain their own licenses. The
-planned citation dependencies require a fresh license audit before the first
-public release.
+currently bundled citation dependencies, CSL styles, and locales are recorded
+in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) and `LICENSES/`. Every
+release still requires a fresh production dependency and bundled-content audit.

@@ -16,6 +16,11 @@ All notable changes to Markdown Citations will be documented in this file.
   inputs, and a compact details row for volume, issue, edition, and pages.
 - Label the preview with the active global CSL style and locale, and allow a
   temporary bundled or custom-vault preview style without changing settings.
+- Render preview Markdown instead of exposing emphasis markers, keep the style
+  selector directly visible, and use a fixed language choice defaulting to the
+  global locale.
+- Delay creation and configuration of `MarkdownCitations.json` until the first
+  reference is actually saved.
 
 - Protect fenced-code, inline-code, and comment examples from bibliography
   replacement; reject incomplete or duplicated ownership markers.

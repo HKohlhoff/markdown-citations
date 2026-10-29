@@ -1,4 +1,4 @@
-import { App, DropdownComponent, Modal, Notice, Setting } from "obsidian";
+import { App, Component, DropdownComponent, MarkdownRenderer, Modal, Notice, Setting } from "obsidian";
 import type { CSLType } from "@citation-js/core";
 import {
   buildLocalReference,
@@ -20,16 +20,14 @@ const ADVANCED_FIELDS: readonly (keyof LocalReferenceInput)[] = [
 
 export class LocalReferenceDialog extends Modal {
   private readonly value: LocalReferenceInput;
+  private readonly previewRenderer = new Component();
   private saving = false;
   private advancedOpen: boolean;
-  private previewStyleOpen = false;
   private previewStyleId: string;
   private previewStyleXml: string;
   private previewEl?: HTMLElement;
-  private previewLabelEl?: HTMLElement;
   private advancedEl?: HTMLElement;
   private advancedButtonEl?: HTMLButtonElement;
-  private previewStyleControlsEl?: HTMLElement;
   private previewStyleSelect?: DropdownComponent;
   private previewTimer?: number;
 
@@ -44,6 +42,7 @@ export class LocalReferenceDialog extends Modal {
   ) {
     super(app);
     this.value = { ...EMPTY_LOCAL_REFERENCE, ...initial };
+    if (!initial) this.value.language = locale;
     this.previewStyleId = configuredStyle;
     this.previewStyleXml = styleXml;
     this.advancedOpen = ADVANCED_FIELDS.some(field => String(this.value[field]).trim() !== "");
@@ -52,6 +51,7 @@ export class LocalReferenceDialog extends Modal {
   onOpen(): void {
     this.setTitle(this.originalCiteKey ? "Edit local reference" : "Create local reference");
     this.modalEl.addClass("markdown-citations-local-reference-dialog");
+    this.previewRenderer.load();
     this.contentEl.createEl("p", {
       text: "Add the essential details first. The citekey is generated automatically and remains stable when the reference is edited.",
       cls: "markdown-citations-dialog-source",
@@ -73,7 +73,7 @@ export class LocalReferenceDialog extends Modal {
     this.addText("Title", "Required.", "title", "Title of the work");
     this.addNames("Authors", "One name per line. Use Family, Given for people; write an organisation without a comma.", "authors");
     this.addText("Publication date", "YYYY, YYYY-MM, or YYYY-MM-DD.", "issued", "2026");
-    this.addText("Language", "Optional BCP 47 language tag.", "language", "de-DE");
+    this.addLanguage();
 
     this.contentEl.createDiv({
       text: this.originalCiteKey ? `Citekey: @${this.originalCiteKey}` : "The citekey will be created automatically when you save.",
@@ -112,20 +112,14 @@ export class LocalReferenceDialog extends Modal {
     this.updateAdvancedVisibility();
 
     const preview = this.contentEl.createDiv({ cls: "markdown-citations-citation-preview" });
-    const previewHeader = preview.createDiv({ cls: "markdown-citations-local-reference-preview-header" });
-    this.previewLabelEl = previewHeader.createDiv({ cls: "markdown-citations-citation-preview-label" });
-    const styleButton = previewHeader.createEl("button", {
-      text: "Change preview style",
-      cls: "mod-ghost markdown-citations-local-reference-preview-style-button",
+    preview.createDiv({
+      text: `Citation and bibliography preview · ${localeTitle(this.locale)}`,
+      cls: "markdown-citations-citation-preview-label",
     });
-    styleButton.addEventListener("click", () => {
-      this.previewStyleOpen = !this.previewStyleOpen;
-      this.updatePreviewStyleVisibility();
-    });
-    this.previewStyleControlsEl = preview.createDiv({ cls: "markdown-citations-local-reference-preview-controls" });
-    new Setting(this.previewStyleControlsEl)
+    new Setting(preview)
       .setName("Preview style")
       .setDesc("This changes only the preview, not the plugin settings or reference data.")
+      .setClass("markdown-citations-local-reference-preview-controls")
       .addDropdown(dropdown => {
         this.previewStyleSelect = dropdown;
         for (const style of BUNDLED_CITATION_STYLES) dropdown.addOption(style.id, style.title);
@@ -140,9 +134,7 @@ export class LocalReferenceDialog extends Modal {
           await this.setPreviewStyle(value);
         });
       });
-    this.updatePreviewStyleVisibility();
     this.previewEl = preview.createDiv();
-    this.updatePreviewLabel();
     this.updatePreview();
 
     new Setting(this.contentEl)
@@ -170,6 +162,7 @@ export class LocalReferenceDialog extends Modal {
 
   onClose(): void {
     if (this.previewTimer !== undefined) window.clearTimeout(this.previewTimer);
+    this.previewRenderer.unload();
     this.contentEl.empty();
   }
 
@@ -206,6 +199,23 @@ export class LocalReferenceDialog extends Modal {
       });
   }
 
+  private addLanguage(): void {
+    new Setting(this.contentEl)
+      .setName("Language")
+      .setDesc("Language of the reference. New references use the global locale by default.")
+      .setClass("markdown-citations-reference-field")
+      .addDropdown(dropdown => {
+        dropdown.addOption("", "Not specified");
+        dropdown.addOption("de-DE", "Deutsch (Deutschland)");
+        dropdown.addOption("en-US", "English (United States)");
+        dropdown.addOption("en-GB", "English (United Kingdom)");
+        if (this.value.language && !["de-DE", "en-US", "en-GB"].includes(this.value.language)) {
+          dropdown.addOption(this.value.language, `Existing value: ${this.value.language}`);
+        }
+        dropdown.setValue(this.value.language).onChange(value => this.change("language", value));
+      });
+  }
+
   private change(field: Exclude<keyof LocalReferenceInput, "type">, value: string): void {
     this.value[field] = value;
     this.updateAdvancedButton();
@@ -223,10 +233,6 @@ export class LocalReferenceDialog extends Modal {
     this.updateAdvancedButton();
   }
 
-  private updatePreviewStyleVisibility(): void {
-    this.previewStyleControlsEl?.toggleClass("is-hidden", !this.previewStyleOpen);
-  }
-
   private choosePreviewStyle(): void {
     new VaultFileSuggestModal(this.app, "csl", file => {
       void this.setPreviewStyle(file.path);
@@ -241,16 +247,11 @@ export class LocalReferenceDialog extends Modal {
         this.previewStyleSelect.addOption(styleId, `Custom: ${styleId}`);
       }
       this.previewStyleSelect?.setValue(styleId);
-      this.updatePreviewLabel();
       this.updatePreview();
     } catch (error) {
       new Notice(`Could not load preview style: ${errorMessage(error)}`, 9000);
       this.previewStyleSelect?.setValue(this.previewStyleId);
     }
-  }
-
-  private updatePreviewLabel(): void {
-    this.previewLabelEl?.setText(`Preview · ${styleTitle(this.previewStyleId)} · ${localeTitle(this.locale)}`);
   }
 
   private updatePreview(): void {
@@ -271,18 +272,21 @@ export class LocalReferenceDialog extends Modal {
       const item: BibliographyItem = { citeKey: String(csl.id), sourcePath: "", csl };
       const citation = formatCslCitation([item], item, { form: "parenthetical" }, this.previewStyleXml, this.locale);
       const bibliography = formatCslBibliography([item], this.previewStyleXml, this.locale)[0]?.markdown ?? "";
+      this.previewRenderer.unload();
+      this.previewRenderer.load();
       this.previewEl.empty();
-      this.previewEl.createDiv({ text: citation, cls: "markdown-citations-local-reference-citation" });
-      this.previewEl.createEl("hr");
-      this.previewEl.createDiv({ text: bibliography });
+      this.previewEl.createDiv({ text: "Citation", cls: "markdown-citations-local-reference-preview-section-label" });
+      const citationEl = this.previewEl.createDiv({ cls: "markdown-citations-local-reference-citation markdown-rendered" });
+      this.previewEl.createDiv({ text: "Bibliography", cls: "markdown-citations-local-reference-preview-section-label" });
+      const bibliographyEl = this.previewEl.createDiv({ cls: "markdown-citations-local-reference-bibliography markdown-rendered" });
+      void MarkdownRenderer.render(this.app, citation, citationEl, "", this.previewRenderer)
+        .catch(() => citationEl.setText(citation));
+      void MarkdownRenderer.render(this.app, bibliography, bibliographyEl, "", this.previewRenderer)
+        .catch(() => bibliographyEl.setText(bibliography));
     } catch (error) {
       this.previewEl.setText(errorMessage(error));
     }
   }
-}
-
-function styleTitle(styleId: string): string {
-  return getBundledCitationStyle(styleId)?.title ?? `Custom: ${styleId}`;
 }
 
 function localeTitle(locale: string): string {

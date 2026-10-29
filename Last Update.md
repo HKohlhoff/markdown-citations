@@ -21,20 +21,22 @@ Obsidian, and DOI/URL lines are separate from the bibliographic text.
 
 **Manage local references** now creates and edits an ordinary CSL-JSON library
 inside the vault. **Create local reference** opens the editor directly. The
-settings page provides the same manager beside the local-library path. If no
-path is configured, the first action creates `MarkdownCitations.json` in the
-vault root.
+settings page provides the same manager beside the local-library path. Opening
+these dialogs no longer creates or configures a file. If no path is configured,
+saving the first reference creates `MarkdownCitations.json` in the vault root.
 
 The calm basic form asks only for type, title, authors, publication date, and
-language. Publication details, identifiers, and access data are available under
+language. Language uses a fixed named selection and initially follows the global
+locale. Publication details, identifiers, and access data are available under
 **Show advanced fields**. The plugin generates a readable, collision-safe
 citekey automatically and keeps it stable on later edits.
 
-A live citation and bibliography preview names the active global locale and CSL
-style. **Change preview style** temporarily previews any bundled style or a
-custom vault `.csl` file without changing the global settings or stored data.
-CSL remains responsible for the final appearance; the reference data stays
-portable and independent of the chosen style.
+A live citation and bibliography preview renders the finished Markdown instead
+of showing formatting markers. Its directly visible selector previews any
+bundled style or a custom vault `.csl` file without changing global settings or
+stored data. CSL remains responsible for punctuation, quotation marks, and the
+final appearance; the reference data stays portable and independent of the
+chosen style.
 
 Additional CSL fields from externally edited records are retained. Existing
 citekeys stay fixed to protect links in notes, generated keys avoid duplicates

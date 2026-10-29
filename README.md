@@ -60,13 +60,15 @@ The plugin always inserts finished, readable Markdown citations.
 Markdown Citations can maintain an optional local CSL-JSON library inside the
 vault. Use **Markdown Citations: Manage local references**, **Create local
 reference**, or **Manage references** beside the local library path in settings.
-If no path has been chosen yet, the first of these actions creates
-`MarkdownCitations.json` in the vault root and stores that path in the plugin
-settings. A destination folder selected in settings uses the same filename in
-that folder.
+If no path has been chosen yet, opening the manager or editor does not create a
+file or change the settings. Saving the first reference creates
+`MarkdownCitations.json` in the vault root and stores that path. A destination
+folder selected in settings uses the same filename in that folder.
 
 The reference editor starts with the essential attributes: reference type,
-title, authors, publication date, and language. **Show advanced fields** adds
+title, authors, publication date, and language. Language is selected from the
+same named choices as the global locale and initially follows that global
+choice. **Show advanced fields** adds
 editors, container title, volume, issue, edition, pages, publisher and place,
 ISBN, DOI, URL, and access date. Enter one author or editor per line. Use
 `Family, Given` for a person and a line without a comma for an organisation.
@@ -80,11 +82,12 @@ links stay valid.
 
 The live preview shows both the citation and bibliography entry using the
 current global locale and CSL style, including a custom `.csl` file from the
-vault. **Change preview style** can temporarily preview any bundled style or a
-custom vault `.csl` file without changing global settings or reference data.
-CSL determines punctuation, ordering, labels, italics, and which supplied
-attributes are displayed. The editor therefore remains a bibliographic data
-editor rather than introducing a second formatting language.
+vault. Its directly visible style selector can temporarily preview any bundled
+style or a custom vault `.csl` file without changing global settings or
+reference data. The preview renders the finished Markdown, including italics.
+CSL determines punctuation, quotation marks, ordering, labels, italics, and
+which supplied attributes are displayed. The editor therefore remains a
+bibliographic data editor rather than introducing a second formatting language.
 
 The local library remains ordinary, indented CSL-JSON and can be read or edited
 by other tools. When Markdown Citations edits an existing entry, additional CSL

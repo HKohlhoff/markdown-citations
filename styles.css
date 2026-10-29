@@ -202,8 +202,7 @@
   padding: 0 var(--size-4-4) var(--size-4-2);
 }
 
-.markdown-citations-local-reference-advanced.is-hidden,
-.markdown-citations-local-reference-preview-controls.is-hidden {
+.markdown-citations-local-reference-advanced.is-hidden {
   display: none;
 }
 
@@ -221,13 +220,13 @@
   padding: 0;
 }
 
-.markdown-citations-local-reference-grid .setting-item-info {
+.markdown-citations-local-reference-dialog .markdown-citations-local-reference-grid .markdown-citations-reference-field .setting-item-info {
   flex: none;
   margin-bottom: var(--size-2-1);
 }
 
-.markdown-citations-local-reference-grid .setting-item-control {
-  flex-basis: auto;
+.markdown-citations-local-reference-dialog .markdown-citations-local-reference-grid .markdown-citations-reference-field .setting-item-control {
+  flex: none;
   min-width: 0;
   width: 100%;
 }
@@ -236,24 +235,6 @@
   max-width: none;
   text-align: left;
   width: 100%;
-}
-
-.markdown-citations-local-reference-preview-header {
-  align-items: center;
-  display: flex;
-  gap: var(--size-4-2);
-  justify-content: space-between;
-  margin-bottom: var(--size-2-2);
-}
-
-.markdown-citations-local-reference-preview-header .markdown-citations-citation-preview-label {
-  margin-bottom: 0;
-}
-
-.markdown-citations-local-reference-preview-style-button {
-  font-size: var(--font-ui-smaller);
-  height: auto;
-  padding: var(--size-2-1) var(--size-4-2);
 }
 
 .markdown-citations-local-reference-preview-controls {
@@ -269,6 +250,21 @@
 .markdown-citations-local-reference-preview-controls select {
   max-width: none;
   width: 100%;
+}
+
+.markdown-citations-local-reference-preview-section-label {
+  color: var(--text-muted);
+  font-size: var(--font-ui-smaller);
+  font-weight: var(--font-semibold);
+  margin-top: var(--size-4-3);
+}
+
+.markdown-citations-local-reference-dialog .markdown-rendered > :first-child {
+  margin-top: var(--size-2-1);
+}
+
+.markdown-citations-local-reference-dialog .markdown-rendered > :last-child {
+  margin-bottom: 0;
 }
 
 .markdown-citations-local-reference-citation {

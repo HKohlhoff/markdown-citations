@@ -6,6 +6,7 @@ export class LocalLibraryDialog extends Modal {
   constructor(
     app: App,
     private readonly path: string,
+    private readonly configured: boolean,
     private readonly items: readonly BibliographyItem[],
     private readonly onCreate: () => void,
     private readonly onEdit: (item: BibliographyItem) => void,
@@ -18,7 +19,9 @@ export class LocalLibraryDialog extends Modal {
     this.setTitle("Local reference library");
     this.modalEl.addClass("markdown-citations-local-library-dialog");
     this.contentEl.createEl("p", {
-      text: `${this.items.length} local reference(s) in ${this.path}. The file remains ordinary CSL-JSON and can be used by other tools.`,
+      text: this.configured
+        ? `${this.items.length} local reference(s) in ${this.path}. The file remains ordinary CSL-JSON and can be used by other tools.`
+        : `No local library file is configured. The first saved reference will create ${this.path} in the vault root.`,
       cls: "markdown-citations-dialog-source",
     });
 

@@ -22,7 +22,7 @@ import { registerCitationNavigation } from "./ui/citation-navigation";
 import { NoteFormatDialog } from "./ui/note-format-dialog";
 import { assertPublicationOwnership, buildPublication, publicationPath } from "./document/publication";
 import { createPublicationLinkRebaser } from "./vault/publication-links";
-import { deleteLocalReference, ensureLocalLibrary, readLocalLibrary, saveLocalReference } from "./vault/local-library";
+import { deleteLocalReference, readLocalLibrary, saveLocalReference } from "./vault/local-library";
 import { generateLocalCiteKey, localReferenceInput, type LocalReferenceInput } from "./bibliography/local-library";
 import { LocalReferenceDialog } from "./ui/local-reference-dialog";
 import { DeleteLocalReferenceDialog, LocalLibraryDialog } from "./ui/local-library-dialog";
@@ -145,11 +145,12 @@ export default class MarkdownCitationsPlugin extends Plugin {
 
   async openLocalLibrary(): Promise<void> {
     try {
-      const path = await this.prepareLocalLibrary();
+      const path = this.localLibraryTargetPath();
       const items = await readLocalLibrary(this.app.vault, path);
       const modal = new LocalLibraryDialog(
         this.app,
         path,
+        this.settings.localLibraryPath !== "",
         items,
         () => { void this.openLocalReferenceEditor(); },
         item => { void this.openLocalReferenceEditor(item); },
@@ -164,7 +165,7 @@ export default class MarkdownCitationsPlugin extends Plugin {
 
   async openLocalReferenceEditor(item?: BibliographyItem): Promise<void> {
     try {
-      const path = await this.prepareLocalLibrary();
+      const path = this.localLibraryTargetPath();
       if (item && item.sourcePath !== path) throw new Error("Only references from the local library can be edited.");
       const style = await resolveCitationStyle(this.app.vault, this.settings.defaultCitationStyle);
       const modal = new LocalReferenceDialog(
@@ -199,12 +200,8 @@ export default class MarkdownCitationsPlugin extends Plugin {
     modal.open();
   }
 
-  private async prepareLocalLibrary(): Promise<string> {
-    if (!this.settings.localLibraryPath) {
-      this.settings.localLibraryPath = "MarkdownCitations.json";
-      await this.saveSettings();
-    }
-    return ensureLocalLibrary(this.app.vault, this.settings.localLibraryPath);
+  private localLibraryTargetPath(): string {
+    return this.settings.localLibraryPath || "MarkdownCitations.json";
   }
 
   private async persistLocalReference(
@@ -217,6 +214,10 @@ export default class MarkdownCitationsPlugin extends Plugin {
       ? { ...value, citeKey: originalCiteKey }
       : { ...value, citeKey: generateLocalCiteKey(value, allSources.items.map(entry => entry.citeKey)) };
     await saveLocalReference(this.app.vault, path, savedValue, originalCiteKey);
+    if (!this.settings.localLibraryPath) {
+      this.settings.localLibraryPath = path;
+      await this.saveSettings();
+    }
     new Notice(`${originalCiteKey ? "Local reference saved" : "Local reference created"}: @${savedValue.citeKey}`);
     void this.openLocalLibrary();
   }

@@ -20,6 +20,8 @@ export interface LocalReferenceInput {
   editors: string;
   issued: string;
   containerTitle: string;
+  eventTitle: string;
+  genre: string;
   publisher: string;
   publisherPlace: string;
   volume: string;
@@ -27,6 +29,7 @@ export interface LocalReferenceInput {
   pages: string;
   edition: string;
   version: string;
+  number: string;
   doi: string;
   url: string;
   accessed: string;
@@ -42,6 +45,8 @@ export const EMPTY_LOCAL_REFERENCE: LocalReferenceInput = {
   editors: "",
   issued: "",
   containerTitle: "",
+  eventTitle: "",
+  genre: "",
   publisher: "",
   publisherPlace: "",
   volume: "",
@@ -49,6 +54,7 @@ export const EMPTY_LOCAL_REFERENCE: LocalReferenceInput = {
   pages: "",
   edition: "",
   version: "",
+  number: "",
   doi: "",
   url: "",
   accessed: "",
@@ -58,8 +64,8 @@ export const EMPTY_LOCAL_REFERENCE: LocalReferenceInput = {
 
 const MANAGED_FIELDS = [
   "type", "id", "citation-key", "title", "author", "editor", "issued",
-  "container-title", "publisher", "publisher-place", "volume", "issue",
-  "page", "edition", "version", "DOI", "URL", "accessed", "language", "ISBN",
+  "container-title", "event-title", "genre", "publisher", "publisher-place", "volume", "issue",
+  "page", "edition", "version", "number", "DOI", "URL", "accessed", "language", "ISBN",
 ] as const;
 
 export function parseLocalLibrary(content: string, path: string): CSL[] {
@@ -94,6 +100,8 @@ export function localReferenceInput(record: CSL): LocalReferenceInput {
     editors: formatNames(record.editor),
     issued: formatDate(record.issued),
     containerTitle: text(record["container-title"]),
+    eventTitle: text(record["event-title"]),
+    genre: text(record.genre),
     publisher: text(record.publisher),
     publisherPlace: text(record["publisher-place"]),
     volume: text(record.volume),
@@ -101,6 +109,7 @@ export function localReferenceInput(record: CSL): LocalReferenceInput {
     pages: text(record.page),
     edition: text(record.edition),
     version: text(record.version),
+    number: text(record.number),
     doi: text(record.DOI),
     url: text(record.URL),
     accessed: formatDate(record.accessed),
@@ -145,6 +154,8 @@ export function buildLocalReference(
   assign(record, "editor", parseNames(input.editors));
   assign(record, "issued", parseDate(input.issued, "Publication date"));
   assignText(record, "container-title", input.containerTitle);
+  assignText(record, "event-title", input.eventTitle);
+  assignText(record, "genre", input.genre);
   assignText(record, "publisher", input.publisher);
   assignText(record, "publisher-place", input.publisherPlace);
   assignText(record, "volume", input.volume);
@@ -152,6 +163,7 @@ export function buildLocalReference(
   assignText(record, "page", input.pages);
   assignText(record, "edition", input.edition);
   assignText(record, "version", input.version);
+  assignText(record, "number", input.number);
   assignText(record, "DOI", normalizeDoi(input.doi));
   assignText(record, "URL", input.url);
   assign(record, "accessed", parseDate(input.accessed, "Accessed date"));

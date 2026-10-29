@@ -13,10 +13,23 @@ import type { BibliographyItem } from "../model/bibliography";
 import { VaultFileSuggestModal } from "./vault-path-modal";
 
 const CHOOSE_CSL = "__choose_csl__";
-const ADVANCED_FIELDS: readonly (keyof LocalReferenceInput)[] = [
-  "editors", "containerTitle", "volume", "issue", "edition", "pages", "version", "publisher",
-  "publisherPlace", "isbn", "doi", "url", "accessed",
-];
+const ADVANCED_FIELDS = [
+  "editors", "containerTitle", "eventTitle", "genre", "volume", "issue", "edition", "pages",
+  "version", "number", "publisher", "publisherPlace", "isbn", "doi", "url", "accessed",
+] as const satisfies readonly (keyof LocalReferenceInput)[];
+type AdvancedField = typeof ADVANCED_FIELDS[number];
+
+const BASIC_FIELDS_BY_TYPE: Partial<Record<CSLType, readonly AdvancedField[]>> = {
+  book: ["edition", "publisher", "isbn"],
+  "article-journal": ["containerTitle", "volume", "issue", "pages", "doi"],
+  chapter: ["containerTitle", "editors", "pages", "isbn"],
+  "paper-conference": ["containerTitle", "eventTitle", "pages", "doi"],
+  thesis: ["genre", "publisher"],
+  report: ["publisher", "number"],
+  webpage: ["url", "accessed"],
+  dataset: ["version", "publisher", "doi"],
+  software: ["version", "url", "doi"],
+};
 
 export class LocalReferenceDialog extends Modal {
   private readonly value: LocalReferenceInput;
@@ -28,13 +41,9 @@ export class LocalReferenceDialog extends Modal {
   private previewEl?: HTMLElement;
   private advancedEl?: HTMLElement;
   private advancedButtonEl?: HTMLButtonElement;
-  private basicAccessedAnchor?: HTMLElement;
-  private accessedSettingEl?: HTMLElement;
-  private versionSettingEl?: HTMLElement;
-  private isbnSettingEl?: HTMLElement;
-  private advancedAccessedAnchor?: HTMLElement;
-  private advancedVersionAnchor?: HTMLElement;
-  private advancedIsbnAnchor?: HTMLElement;
+  private basicFieldAnchor?: HTMLElement;
+  private readonly fieldSettings = new Map<AdvancedField, Setting>();
+  private readonly advancedAnchors = new Map<AdvancedField, HTMLElement>();
   private previewStyleSelect?: DropdownComponent;
   private previewTimer?: number;
 
@@ -82,7 +91,7 @@ export class LocalReferenceDialog extends Modal {
     this.addText("Title", "Required.", "title", "Title of the work");
     this.addNames("Authors", "One name per line. Use Family, Given for people; write an organisation without a comma.", "authors");
     this.addText("Publication date", "YYYY, YYYY-MM, or YYYY-MM-DD.", "issued", "2026");
-    this.basicAccessedAnchor = this.contentEl.createDiv({ cls: "markdown-citations-local-reference-field-anchor" });
+    this.basicFieldAnchor = this.contentEl.createDiv({ cls: "markdown-citations-local-reference-field-anchor" });
     this.addLanguage();
 
     this.contentEl.createDiv({
@@ -103,38 +112,26 @@ export class LocalReferenceDialog extends Modal {
 
     this.advancedEl = this.contentEl.createDiv({ cls: "markdown-citations-local-reference-advanced" });
     new Setting(this.advancedEl).setName("Publication details").setHeading();
-    this.addNames("Editors", "One name per line, using the same format as authors.", "editors", this.advancedEl);
-    this.addText("Container title", "Journal, book, proceedings, or website containing this work.", "containerTitle", "Journal or book title", this.advancedEl);
+    this.addAdvancedNames("Editors", "One name per line, using the same format as authors.", "editors", this.advancedEl);
+    this.addAdvancedText("Container title", "Journal, book, proceedings, or website containing this work.", "containerTitle", "Journal or book title", this.advancedEl);
+    this.addAdvancedText("Conference / event", "Conference or other event related to this work.", "eventTitle", "Conference name", this.advancedEl);
+    this.addAdvancedText("Type / genre", "Subtype of the reference, such as doctoral thesis.", "genre", "Doctoral thesis", this.advancedEl);
 
     const compact = this.advancedEl.createDiv({ cls: "markdown-citations-local-reference-grid" });
-    this.addText("Volume", "", "volume", "12", compact);
-    this.addText("Issue", "", "issue", "3", compact);
-    this.addText("Edition", "", "edition", "2", compact);
-    this.addText("Pages", "", "pages", "23–41", compact);
+    this.addAdvancedText("Volume", "", "volume", "12", compact);
+    this.addAdvancedText("Issue", "", "issue", "3", compact);
+    this.addAdvancedText("Edition", "", "edition", "2", compact);
+    this.addAdvancedText("Pages", "", "pages", "23–41", compact);
 
-    this.advancedVersionAnchor = this.advancedEl.createDiv({ cls: "markdown-citations-local-reference-field-anchor" });
-    this.versionSettingEl = this.addText(
-      "Version",
-      "Software or dataset version.",
-      "version",
-      "1.0.0",
-      this.advancedEl,
-    ).settingEl;
-    this.addText("Publisher", "Optional publisher or institution.", "publisher", "Publisher", this.advancedEl);
-    this.addText("Publisher place", "Optional place of publication.", "publisherPlace", "Berlin", this.advancedEl);
+    this.addAdvancedText("Version", "Software or dataset version.", "version", "1.0.0", this.advancedEl);
+    this.addAdvancedText("Number", "Report or series number.", "number", "TR-2026-01", this.advancedEl);
+    this.addAdvancedText("Publisher", "Publisher, institution, university, or repository.", "publisher", "Publisher", this.advancedEl);
+    this.addAdvancedText("Publisher place", "Optional place of publication.", "publisherPlace", "Berlin", this.advancedEl);
     new Setting(this.advancedEl).setName("Identifiers and access").setHeading();
-    this.advancedIsbnAnchor = this.advancedEl.createDiv({ cls: "markdown-citations-local-reference-field-anchor" });
-    this.isbnSettingEl = this.addText("ISBN", "Book identifier.", "isbn", "978-…", this.advancedEl).settingEl;
-    this.addText("DOI", "A DOI or doi.org URL; it is stored as a DOI.", "doi", "10.1234/example", this.advancedEl);
-    this.addText("URL", "Optional full web address.", "url", "https://example.org", this.advancedEl);
-    this.advancedAccessedAnchor = this.advancedEl.createDiv({ cls: "markdown-citations-local-reference-field-anchor" });
-    this.accessedSettingEl = this.addText(
-      "Accessed",
-      "Access date: YYYY, YYYY-MM, or YYYY-MM-DD.",
-      "accessed",
-      "2026-10-29",
-      this.advancedEl,
-    ).settingEl;
+    this.addAdvancedText("ISBN", "Book identifier.", "isbn", "978-…", this.advancedEl);
+    this.addAdvancedText("DOI", "A DOI or doi.org URL; it is stored as a DOI.", "doi", "10.1234/example", this.advancedEl);
+    this.addAdvancedText("URL", "Optional full web address.", "url", "https://example.org", this.advancedEl);
+    this.addAdvancedText("Accessed", "Access date: YYYY, YYYY-MM, or YYYY-MM-DD.", "accessed", "2026-10-29", this.advancedEl);
     this.updateTypeDependentFields();
     this.updateAdvancedVisibility();
 
@@ -209,13 +206,27 @@ export class LocalReferenceDialog extends Modal {
     return setting;
   }
 
+  private addAdvancedText(
+    name: string,
+    description: string,
+    field: Exclude<AdvancedField, "editors">,
+    placeholder: string,
+    container: HTMLElement,
+  ): Setting {
+    const anchor = container.createDiv({ cls: "markdown-citations-local-reference-field-anchor" });
+    const setting = this.addText(name, description, field, placeholder, container);
+    this.advancedAnchors.set(field, anchor);
+    this.fieldSettings.set(field, setting);
+    return setting;
+  }
+
   private addNames(
     name: string,
     description: string,
     field: "authors" | "editors",
     container: HTMLElement = this.contentEl,
-  ): void {
-    new Setting(container)
+  ): Setting {
+    return new Setting(container)
       .setName(name)
       .setDesc(description)
       .setClass("markdown-citations-reference-field")
@@ -225,6 +236,19 @@ export class LocalReferenceDialog extends Modal {
           .onChange(value => this.change(field, value));
         text.inputEl.rows = 3;
       });
+  }
+
+  private addAdvancedNames(
+    name: string,
+    description: string,
+    field: "editors",
+    container: HTMLElement,
+  ): Setting {
+    const anchor = container.createDiv({ cls: "markdown-citations-local-reference-field-anchor" });
+    const setting = this.addNames(name, description, field, container);
+    this.advancedAnchors.set(field, anchor);
+    this.fieldSettings.set(field, setting);
+    return setting;
   }
 
   private addLanguage(): void {
@@ -257,34 +281,36 @@ export class LocalReferenceDialog extends Modal {
   }
 
   private advancedValueCount(): number {
-    return ADVANCED_FIELDS.filter(field => {
-      if (field === "accessed" && this.value.type === "webpage") return false;
-      if (field === "version" && this.value.type === "software") return false;
-      if (field === "isbn" && this.value.type === "book") return false;
-      return String(this.value[field]).trim() !== "";
-    }).length;
+    const basicFields = new Set(basicFieldsForType(this.value.type));
+    return ADVANCED_FIELDS.filter(field => !basicFields.has(field) && String(this.value[field]).trim() !== "").length;
   }
 
   private updateTypeDependentFields(): void {
-    if (
-      !this.accessedSettingEl || !this.versionSettingEl || !this.isbnSettingEl || !this.basicAccessedAnchor
-      || !this.advancedAccessedAnchor || !this.advancedVersionAnchor || !this.advancedIsbnAnchor
-    ) return;
-    if (this.value.type === "webpage") {
-      this.basicAccessedAnchor.before(this.accessedSettingEl);
-    } else {
-      this.advancedAccessedAnchor.before(this.accessedSettingEl);
+    if (!this.basicFieldAnchor || this.fieldSettings.size !== ADVANCED_FIELDS.length) return;
+    for (const [field, setting] of this.fieldSettings) this.advancedAnchors.get(field)?.after(setting.settingEl);
+    for (const field of basicFieldsForType(this.value.type)) {
+      const setting = this.fieldSettings.get(field);
+      if (setting) this.basicFieldAnchor.before(setting.settingEl);
     }
-    if (this.value.type === "software") {
-      this.basicAccessedAnchor.before(this.versionSettingEl);
-    } else {
-      this.advancedVersionAnchor.before(this.versionSettingEl);
-    }
-    if (this.value.type === "book") {
-      this.basicAccessedAnchor.before(this.isbnSettingEl);
-    } else {
-      this.advancedIsbnAnchor.before(this.isbnSettingEl);
-    }
+    this.updateTypeDependentLabels();
+  }
+
+  private updateTypeDependentLabels(): void {
+    this.fieldSettings.get("containerTitle")?.setName(
+      this.value.type === "article-journal" ? "Journal"
+        : this.value.type === "chapter" ? "Book title"
+          : this.value.type === "paper-conference" ? "Proceedings title"
+            : "Container title",
+    );
+    this.fieldSettings.get("publisher")?.setName(
+      this.value.type === "thesis" ? "University"
+        : this.value.type === "report" ? "Institution"
+          : this.value.type === "dataset" ? "Repository / publisher"
+            : "Publisher",
+    );
+    this.fieldSettings.get("eventTitle")?.setName(this.value.type === "paper-conference" ? "Conference" : "Conference / event");
+    this.fieldSettings.get("genre")?.setName(this.value.type === "thesis" ? "Thesis type" : "Type / genre");
+    this.fieldSettings.get("number")?.setName(this.value.type === "report" ? "Report number" : "Number");
   }
 
   private updateAdvancedVisibility(): void {
@@ -346,6 +372,10 @@ export class LocalReferenceDialog extends Modal {
       this.previewEl.setText(errorMessage(error));
     }
   }
+}
+
+function basicFieldsForType(type: CSLType): readonly AdvancedField[] {
+  return BASIC_FIELDS_BY_TYPE[type] ?? [];
 }
 
 function localeTitle(locale: string): string {

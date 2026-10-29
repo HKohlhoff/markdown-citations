@@ -20,10 +20,13 @@ const complete = {
   authors: "Müller, Anna\nOpen Research Group",
   issued: "2026-10-29",
   containerTitle: "Journal of Markdown",
+  eventTitle: "Markdown Research Conference",
+  genre: "Technical report",
   volume: "12",
   issue: "3",
   pages: "23–41",
   version: "4.5.0",
+  number: "TR-2026-01",
   doi: "https://doi.org/10.1234/example",
   accessed: "2026-10",
 };
@@ -40,6 +43,9 @@ test("local references map editable attributes to portable CSL-JSON", () => {
   assert.deepEqual(record.accessed, { "date-parts": [[2026, 10]] });
   assert.equal(record.DOI, "10.1234/example");
   assert.equal(record.version, "4.5.0");
+  assert.equal(record["event-title"], "Markdown Research Conference");
+  assert.equal(record.genre, "Technical report");
+  assert.equal(record.number, "TR-2026-01");
   assert.equal(record["container-title"], "Journal of Markdown");
   assert.deepEqual(localReferenceInput(record), { ...complete, doi: "10.1234/example" });
 });

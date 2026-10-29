@@ -25,13 +25,14 @@ settings page provides the same manager beside the local-library path. Opening
 these dialogs no longer creates or configures a file. If no path is configured,
 saving the first reference creates `MarkdownCitations.json` in the vault root.
 
-The calm basic form asks only for type, title, authors, publication date, and
-language. Language uses a fixed named selection and initially follows the global
-locale. Web pages show their important access date directly in the basic form;
-software shows its version there, and books show their ISBN. Publication
-details, identifiers, and access data are otherwise available under **Show
-advanced fields**. The plugin generates a readable, collision-safe
-citekey automatically and keeps it stable on later edits.
+The calm basic form begins with type, title, authors, publication date, and
+language, then adapts its important publication fields to the selected type.
+Books, journal articles, chapters, conference papers, theses, reports, web
+pages, datasets, and software therefore expose the details most useful for that
+source without opening **Show advanced fields**. The editor now also stores CSL
+conference, genre or thesis type, and report-number attributes. The plugin
+generates a readable, collision-safe citekey automatically and keeps it stable
+on later edits.
 
 A live citation and bibliography preview renders the finished Markdown instead
 of showing formatting markers. Its directly visible selector previews any

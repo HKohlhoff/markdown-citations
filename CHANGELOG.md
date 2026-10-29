@@ -26,6 +26,8 @@ All notable changes to Markdown Citations will be documented in this file.
 - Store the CSL version attribute and show it in the basic form for software.
 - Show ISBN in the basic form for books while retaining it for other types in
   the advanced section.
+- Adapt the basic form to every supported reference type and add portable CSL
+  fields for conference/event title, thesis type or genre, and report number.
 
 - Protect fenced-code, inline-code, and comment examples from bibliography
   replacement; reject incomplete or duplicated ownership markers.

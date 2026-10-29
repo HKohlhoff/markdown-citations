@@ -35,7 +35,7 @@ export class LocalReferenceDialog extends Modal {
       cls: "markdown-citations-dialog-source",
     });
 
-    new Setting(this.contentEl).setName("Reference type").addDropdown(dropdown => {
+    new Setting(this.contentEl).setName("Reference type").setClass("markdown-citations-field-medium").addDropdown(dropdown => {
       for (const type of LOCAL_REFERENCE_TYPES) dropdown.addOption(type.id, type.label);
       if (!LOCAL_REFERENCE_TYPES.some(type => type.id === this.value.type)) {
         dropdown.addOption(this.value.type, `Existing type: ${this.value.type}`);
@@ -49,7 +49,8 @@ export class LocalReferenceDialog extends Modal {
       .setName("Citekey")
       .setDesc(this.originalCiteKey
         ? "The citekey stays fixed so existing citation links remain valid."
-        : "Required stable identifier without spaces, for example mueller2026.");
+        : "Required stable identifier without spaces, for example mueller2026.")
+      .setClass("markdown-citations-field-medium");
     citeKey.addText(text => text
       .setPlaceholder("mueller2026")
       .setValue(this.value.citeKey)
@@ -59,22 +60,22 @@ export class LocalReferenceDialog extends Modal {
     this.addText("Title", "Required.", "title", "Title of the work");
     this.addNames("Authors", "One name per line. Use Family, Given for people; write an organisation without a comma.", "authors");
     this.addNames("Editors", "Optional. One name per line, using the same format as authors.", "editors");
-    this.addText("Publication date", "YYYY, YYYY-MM, or YYYY-MM-DD.", "issued", "2026");
     this.addText("Container title", "Journal, book, proceedings, or website containing this work.", "containerTitle", "Journal or book title");
-    this.addText("Publisher", "Optional publisher or institution.", "publisher", "Publisher");
-    this.addText("Publisher place", "Optional place of publication.", "publisherPlace", "Berlin");
 
-    const compact = this.contentEl.createDiv({ cls: "markdown-citations-local-reference-grid" });
+    const compact = this.contentEl.createDiv({ cls: "markdown-citations-local-reference-grid markdown-citations-local-reference-short-fields" });
     this.addText("Volume", "", "volume", "12", compact);
     this.addText("Issue", "", "issue", "3", compact);
-    this.addText("Pages", "Page or page range.", "pages", "23–41", compact);
     this.addText("Edition", "", "edition", "2", compact);
+    this.addText("Pages", "Page or page range.", "pages", "23–41", compact);
 
+    this.addText("Publisher", "Optional publisher or institution.", "publisher", "Publisher");
+    this.addText("Publisher place", "Optional place of publication.", "publisherPlace", "Berlin");
+    this.addText("Publication date", "YYYY, YYYY-MM, or YYYY-MM-DD.", "issued", "2026");
+    this.addText("ISBN", "Optional ISBN for books and chapters.", "isbn", "978-…");
     this.addText("DOI", "A DOI or doi.org URL; it is stored as a DOI.", "doi", "10.1234/example");
     this.addText("URL", "Optional full web address.", "url", "https://example.org");
     this.addText("Accessed", "Optional access date: YYYY, YYYY-MM, or YYYY-MM-DD.", "accessed", "2026-10-29");
     this.addText("Language", "Optional BCP 47 language tag.", "language", "de-DE");
-    this.addText("ISBN", "Optional ISBN for books and chapters.", "isbn", "978-…");
 
     const preview = this.contentEl.createDiv({ cls: "markdown-citations-citation-preview" });
     preview.createDiv({ text: "Citation and bibliography preview", cls: "markdown-citations-citation-preview-label" });
@@ -116,7 +117,7 @@ export class LocalReferenceDialog extends Modal {
     placeholder: string,
     container: HTMLElement = this.contentEl,
   ): void {
-    const setting = new Setting(container).setName(name);
+    const setting = new Setting(container).setName(name).setClass(fieldClass(field));
     if (description) setting.setDesc(description);
     setting.addText(text => text
       .setPlaceholder(placeholder)
@@ -133,7 +134,8 @@ export class LocalReferenceDialog extends Modal {
           .setValue(this.value[field])
           .onChange(value => this.change(field, value));
         text.inputEl.rows = 3;
-      });
+      })
+      .setClass("markdown-citations-field-wide");
   }
 
   private change(field: Exclude<keyof LocalReferenceInput, "type">, value: string): void {
@@ -171,4 +173,11 @@ export class LocalReferenceDialog extends Modal {
 
 function errorMessage(error: unknown): string {
   return error instanceof Error ? error.message : String(error);
+}
+
+function fieldClass(field: Exclude<keyof LocalReferenceInput, "type" | "authors" | "editors">): string {
+  if (["volume", "issue", "edition", "pages"].includes(field)) return "markdown-citations-field-short";
+  if (["citeKey", "issued", "publisherPlace", "accessed", "language"].includes(field)) return "markdown-citations-field-medium";
+  if (["publisher", "isbn", "doi"].includes(field)) return "markdown-citations-field-long";
+  return "markdown-citations-field-wide";
 }

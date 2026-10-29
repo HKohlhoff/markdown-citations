@@ -77,9 +77,13 @@ export class MarkdownCitationsSettingTab extends PluginSettingTab {
       .setCta()
       .onClick(() => this.chooseBibliographyFile());
 
+    new Setting(this.containerEl)
+      .setName("Local library")
+      .setDesc("One optional .json (CSL-JSON) file managed by Markdown Citations. Leave it empty when the bibliography files above already contain all sources.")
+      .setClass("markdown-citations-section-intro");
+
     const localLibrary = new Setting(this.containerEl)
-      .setName("Local library file")
-      .setDesc("Optional additional .json (CSL-JSON) file. Leave empty when your bibliography files already contain all sources.")
+      .setName("Library file")
       .setClass("markdown-citations-path-setting");
     localLibrary.addText((text) => {
       text
@@ -99,10 +103,6 @@ export class MarkdownCitationsSettingTab extends PluginSettingTab {
           void this.saveLocalLibraryPath(file.path);
         }).open();
       }));
-    localLibrary.addButton((button) => button
-      .setButtonText("Manage references")
-      .setCta()
-      .onClick(() => { void this.plugin.openLocalLibrary(); }));
     localLibrary.addExtraButton((button) => button
       .setIcon("folder-search-2")
       .setTooltip("Choose destination folder")
@@ -114,6 +114,21 @@ export class MarkdownCitationsSettingTab extends PluginSettingTab {
           void this.saveLocalLibraryPath(path);
         }).open();
       }));
+    localLibrary.addExtraButton((button) => button
+      .setIcon("trash-2")
+      .setTooltip("Clear local library path (the file is not deleted)")
+      .setDisabled(!this.plugin.settings.localLibraryPath)
+      .onClick(async () => {
+        this.plugin.settings.localLibraryPath = "";
+        await this.plugin.saveSettings();
+        this.refreshSettings();
+      }));
+
+    const manageLibrary = this.containerEl.createDiv({ cls: "markdown-citations-manage-library" });
+    new ButtonComponent(manageLibrary)
+      .setButtonText("Manage references")
+      .setCta()
+      .onClick(() => { void this.plugin.openLocalLibrary(); });
   }
 
   private renderCitationFormatting(): void {

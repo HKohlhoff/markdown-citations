@@ -42,6 +42,12 @@
   padding: var(--size-4-1) 0;
 }
 
+.markdown-citations-settings .markdown-citations-manage-library {
+  display: flex;
+  justify-content: flex-end;
+  margin: var(--size-4-2) 0 var(--size-4-4);
+}
+
 .markdown-citations-picker-title {
   font-weight: var(--font-semibold);
 }
@@ -157,10 +163,29 @@
   flex: 1 1 26rem;
 }
 
-.markdown-citations-local-reference-dialog input,
-.markdown-citations-local-reference-dialog textarea,
-.markdown-citations-local-reference-dialog select {
+.markdown-citations-local-reference-dialog .setting-item-control {
+  justify-content: flex-end;
+}
+
+.markdown-citations-local-reference-dialog .markdown-citations-field-wide input,
+.markdown-citations-local-reference-dialog .markdown-citations-field-wide textarea {
   max-width: 42rem;
+  width: min(100%, 42rem);
+}
+
+.markdown-citations-local-reference-dialog .markdown-citations-field-medium input,
+.markdown-citations-local-reference-dialog .markdown-citations-field-medium select {
+  max-width: 20rem;
+  width: min(100%, 20rem);
+}
+
+.markdown-citations-local-reference-dialog .markdown-citations-field-long input {
+  max-width: 30rem;
+  width: min(100%, 30rem);
+}
+
+.markdown-citations-local-reference-dialog .markdown-citations-field-short input {
+  max-width: 8rem;
   width: 100%;
 }
 
@@ -171,7 +196,8 @@
 
 .markdown-citations-local-reference-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 var(--size-4-4);
+  grid-template-columns: repeat(4, minmax(6rem, 1fr));
 }
 
 .markdown-citations-local-reference-grid .setting-item {
@@ -181,6 +207,12 @@
 
 .markdown-citations-local-reference-grid .setting-item-control {
   flex-basis: auto;
+  width: 100%;
+}
+
+.markdown-citations-local-reference-grid .setting-item-control input {
+  max-width: none;
+  text-align: right;
   width: 100%;
 }
 
@@ -208,6 +240,12 @@
     width: 100%;
   }
 
+  .markdown-citations-local-reference-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 380px) {
   .markdown-citations-local-reference-grid {
     grid-template-columns: 1fr;
   }

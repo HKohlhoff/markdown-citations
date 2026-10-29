@@ -26,6 +26,7 @@ export interface LocalReferenceInput {
   issue: string;
   pages: string;
   edition: string;
+  version: string;
   doi: string;
   url: string;
   accessed: string;
@@ -47,6 +48,7 @@ export const EMPTY_LOCAL_REFERENCE: LocalReferenceInput = {
   issue: "",
   pages: "",
   edition: "",
+  version: "",
   doi: "",
   url: "",
   accessed: "",
@@ -57,7 +59,7 @@ export const EMPTY_LOCAL_REFERENCE: LocalReferenceInput = {
 const MANAGED_FIELDS = [
   "type", "id", "citation-key", "title", "author", "editor", "issued",
   "container-title", "publisher", "publisher-place", "volume", "issue",
-  "page", "edition", "DOI", "URL", "accessed", "language", "ISBN",
+  "page", "edition", "version", "DOI", "URL", "accessed", "language", "ISBN",
 ] as const;
 
 export function parseLocalLibrary(content: string, path: string): CSL[] {
@@ -98,6 +100,7 @@ export function localReferenceInput(record: CSL): LocalReferenceInput {
     issue: text(record.issue),
     pages: text(record.page),
     edition: text(record.edition),
+    version: text(record.version),
     doi: text(record.DOI),
     url: text(record.URL),
     accessed: formatDate(record.accessed),
@@ -148,6 +151,7 @@ export function buildLocalReference(
   assignText(record, "issue", input.issue);
   assignText(record, "page", input.pages);
   assignText(record, "edition", input.edition);
+  assignText(record, "version", input.version);
   assignText(record, "DOI", normalizeDoi(input.doi));
   assignText(record, "URL", input.url);
   assign(record, "accessed", parseDate(input.accessed, "Accessed date"));

@@ -23,6 +23,7 @@ const complete = {
   volume: "12",
   issue: "3",
   pages: "23–41",
+  version: "4.5.0",
   doi: "https://doi.org/10.1234/example",
   accessed: "2026-10",
 };
@@ -38,6 +39,7 @@ test("local references map editable attributes to portable CSL-JSON", () => {
   assert.deepEqual(record.issued, { "date-parts": [[2026, 10, 29]] });
   assert.deepEqual(record.accessed, { "date-parts": [[2026, 10]] });
   assert.equal(record.DOI, "10.1234/example");
+  assert.equal(record.version, "4.5.0");
   assert.equal(record["container-title"], "Journal of Markdown");
   assert.deepEqual(localReferenceInput(record), { ...complete, doi: "10.1234/example" });
 });

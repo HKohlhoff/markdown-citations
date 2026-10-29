@@ -14,7 +14,7 @@ import { VaultFileSuggestModal } from "./vault-path-modal";
 
 const CHOOSE_CSL = "__choose_csl__";
 const ADVANCED_FIELDS: readonly (keyof LocalReferenceInput)[] = [
-  "editors", "containerTitle", "volume", "issue", "edition", "pages", "publisher",
+  "editors", "containerTitle", "volume", "issue", "edition", "pages", "version", "publisher",
   "publisherPlace", "isbn", "doi", "url", "accessed",
 ];
 
@@ -30,6 +30,9 @@ export class LocalReferenceDialog extends Modal {
   private advancedButtonEl?: HTMLButtonElement;
   private basicAccessedAnchor?: HTMLElement;
   private accessedSettingEl?: HTMLElement;
+  private versionSettingEl?: HTMLElement;
+  private advancedAccessedAnchor?: HTMLElement;
+  private advancedVersionAnchor?: HTMLElement;
   private previewStyleSelect?: DropdownComponent;
   private previewTimer?: number;
 
@@ -107,12 +110,21 @@ export class LocalReferenceDialog extends Modal {
     this.addText("Edition", "", "edition", "2", compact);
     this.addText("Pages", "", "pages", "23–41", compact);
 
+    this.advancedVersionAnchor = this.advancedEl.createDiv({ cls: "markdown-citations-local-reference-field-anchor" });
+    this.versionSettingEl = this.addText(
+      "Version",
+      "Software or dataset version.",
+      "version",
+      "1.0.0",
+      this.advancedEl,
+    ).settingEl;
     this.addText("Publisher", "Optional publisher or institution.", "publisher", "Publisher", this.advancedEl);
     this.addText("Publisher place", "Optional place of publication.", "publisherPlace", "Berlin", this.advancedEl);
     new Setting(this.advancedEl).setName("Identifiers and access").setHeading();
     this.addText("ISBN", "Optional ISBN for books and chapters.", "isbn", "978-…", this.advancedEl);
     this.addText("DOI", "A DOI or doi.org URL; it is stored as a DOI.", "doi", "10.1234/example", this.advancedEl);
     this.addText("URL", "Optional full web address.", "url", "https://example.org", this.advancedEl);
+    this.advancedAccessedAnchor = this.advancedEl.createDiv({ cls: "markdown-citations-local-reference-field-anchor" });
     this.accessedSettingEl = this.addText(
       "Accessed",
       "Access date: YYYY, YYYY-MM, or YYYY-MM-DD.",
@@ -244,16 +256,25 @@ export class LocalReferenceDialog extends Modal {
   private advancedValueCount(): number {
     return ADVANCED_FIELDS.filter(field => {
       if (field === "accessed" && this.value.type === "webpage") return false;
+      if (field === "version" && this.value.type === "software") return false;
       return String(this.value[field]).trim() !== "";
     }).length;
   }
 
   private updateTypeDependentFields(): void {
-    if (!this.accessedSettingEl || !this.advancedEl || !this.basicAccessedAnchor) return;
+    if (
+      !this.accessedSettingEl || !this.versionSettingEl || !this.basicAccessedAnchor
+      || !this.advancedAccessedAnchor || !this.advancedVersionAnchor
+    ) return;
     if (this.value.type === "webpage") {
       this.basicAccessedAnchor.before(this.accessedSettingEl);
     } else {
-      this.advancedEl.append(this.accessedSettingEl);
+      this.advancedAccessedAnchor.before(this.accessedSettingEl);
+    }
+    if (this.value.type === "software") {
+      this.basicAccessedAnchor.before(this.versionSettingEl);
+    } else {
+      this.advancedVersionAnchor.before(this.versionSettingEl);
     }
   }
 

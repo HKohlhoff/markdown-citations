@@ -68,7 +68,8 @@ folder selected in settings uses the same filename in that folder.
 The reference editor starts with the essential attributes: reference type,
 title, authors, publication date, and language. Language is selected from the
 same named choices as the global locale and initially follows that global
-choice. **Show advanced fields** adds
+choice. For a web page, the important access date also moves directly into the
+basic form. **Show advanced fields** adds
 editors, container title, volume, issue, edition, pages, publisher and place,
 ISBN, DOI, URL, and access date. Enter one author or editor per line. Use
 `Family, Given` for a person and a line without a comma for an organisation.

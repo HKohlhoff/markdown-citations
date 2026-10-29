@@ -21,6 +21,8 @@ All notable changes to Markdown Citations will be documented in this file.
   global locale.
 - Delay creation and configuration of `MarkdownCitations.json` until the first
   reference is actually saved.
+- Tighten the compact publication-detail row and show the access date in the
+  basic form whenever the reference type is a web page.
 
 - Protect fenced-code, inline-code, and comment examples from bibliography
   replacement; reject incomplete or duplicated ownership markers.

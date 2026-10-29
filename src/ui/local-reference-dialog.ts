@@ -28,6 +28,8 @@ export class LocalReferenceDialog extends Modal {
   private previewEl?: HTMLElement;
   private advancedEl?: HTMLElement;
   private advancedButtonEl?: HTMLButtonElement;
+  private basicAccessedAnchor?: HTMLElement;
+  private accessedSettingEl?: HTMLElement;
   private previewStyleSelect?: DropdownComponent;
   private previewTimer?: number;
 
@@ -45,7 +47,7 @@ export class LocalReferenceDialog extends Modal {
     if (!initial) this.value.language = locale;
     this.previewStyleId = configuredStyle;
     this.previewStyleXml = styleXml;
-    this.advancedOpen = ADVANCED_FIELDS.some(field => String(this.value[field]).trim() !== "");
+    this.advancedOpen = this.advancedValueCount() > 0;
   }
 
   onOpen(): void {
@@ -67,12 +69,15 @@ export class LocalReferenceDialog extends Modal {
         }
         dropdown.setValue(this.value.type).onChange(value => {
           this.value.type = value as CSLType;
+          this.updateTypeDependentFields();
+          this.updateAdvancedButton();
           this.updatePreview();
         });
       });
     this.addText("Title", "Required.", "title", "Title of the work");
     this.addNames("Authors", "One name per line. Use Family, Given for people; write an organisation without a comma.", "authors");
     this.addText("Publication date", "YYYY, YYYY-MM, or YYYY-MM-DD.", "issued", "2026");
+    this.basicAccessedAnchor = this.contentEl.createDiv({ cls: "markdown-citations-local-reference-field-anchor" });
     this.addLanguage();
 
     this.contentEl.createDiv({
@@ -108,7 +113,14 @@ export class LocalReferenceDialog extends Modal {
     this.addText("ISBN", "Optional ISBN for books and chapters.", "isbn", "978-…", this.advancedEl);
     this.addText("DOI", "A DOI or doi.org URL; it is stored as a DOI.", "doi", "10.1234/example", this.advancedEl);
     this.addText("URL", "Optional full web address.", "url", "https://example.org", this.advancedEl);
-    this.addText("Accessed", "Optional access date: YYYY, YYYY-MM, or YYYY-MM-DD.", "accessed", "2026-10-29", this.advancedEl);
+    this.accessedSettingEl = this.addText(
+      "Accessed",
+      "Access date: YYYY, YYYY-MM, or YYYY-MM-DD.",
+      "accessed",
+      "2026-10-29",
+      this.advancedEl,
+    ).settingEl;
+    this.updateTypeDependentFields();
     this.updateAdvancedVisibility();
 
     const preview = this.contentEl.createDiv({ cls: "markdown-citations-citation-preview" });
@@ -172,13 +184,14 @@ export class LocalReferenceDialog extends Modal {
     field: Exclude<keyof LocalReferenceInput, "type" | "authors" | "editors">,
     placeholder: string,
     container: HTMLElement = this.contentEl,
-  ): void {
+  ): Setting {
     const setting = new Setting(container).setName(name).setClass("markdown-citations-reference-field");
     if (description) setting.setDesc(description);
     setting.addText(text => text
       .setPlaceholder(placeholder)
       .setValue(this.value[field])
       .onChange(value => this.change(field, value)));
+    return setting;
   }
 
   private addNames(
@@ -224,8 +237,24 @@ export class LocalReferenceDialog extends Modal {
 
   private updateAdvancedButton(): void {
     if (!this.advancedButtonEl) return;
-    const count = ADVANCED_FIELDS.filter(field => String(this.value[field]).trim() !== "").length;
+    const count = this.advancedValueCount();
     this.advancedButtonEl.textContent = `${this.advancedOpen ? "Hide" : "Show"} advanced fields${count ? ` (${count})` : ""}`;
+  }
+
+  private advancedValueCount(): number {
+    return ADVANCED_FIELDS.filter(field => {
+      if (field === "accessed" && this.value.type === "webpage") return false;
+      return String(this.value[field]).trim() !== "";
+    }).length;
+  }
+
+  private updateTypeDependentFields(): void {
+    if (!this.accessedSettingEl || !this.advancedEl || !this.basicAccessedAnchor) return;
+    if (this.value.type === "webpage") {
+      this.basicAccessedAnchor.before(this.accessedSettingEl);
+    } else {
+      this.advancedEl.append(this.accessedSettingEl);
+    }
   }
 
   private updateAdvancedVisibility(): void {

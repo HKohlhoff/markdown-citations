@@ -27,7 +27,8 @@ saving the first reference creates `MarkdownCitations.json` in the vault root.
 
 The calm basic form asks only for type, title, authors, publication date, and
 language. Language uses a fixed named selection and initially follows the global
-locale. Publication details, identifiers, and access data are available under
+locale. Web pages show their important access date directly in the basic form.
+Publication details, identifiers, and access data are otherwise available under
 **Show advanced fields**. The plugin generates a readable, collision-safe
 citekey automatically and keeps it stable on later edits.
 

@@ -46,6 +46,10 @@ citekeys stay fixed to protect links in notes, generated keys avoid duplicates
 in configured libraries, and deletion requires confirmation. Deleting a library
 record intentionally leaves existing note text unchanged.
 
+The README now contains the complete setup and entry workflow, person and
+organisation examples, a multi-record CSL-JSON example, and an explanation of
+which generated Markdown is published with Flowershow.
+
 ## Masters and embedded chapters
 
 Both bibliography commands follow full-note, heading, and block embeds,

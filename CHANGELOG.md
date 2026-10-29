@@ -28,6 +28,8 @@ All notable changes to Markdown Citations will be documented in this file.
   the advanced section.
 - Adapt the basic form to every supported reference type and add portable CSL
   fields for conference/event title, thesis type or genre, and report number.
+- Expand the README with a complete local-library workflow, CSL-JSON examples,
+  author-entry conventions, and the Flowershow publication boundary.
 
 - Protect fenced-code, inline-code, and comment examples from bibliography
   replacement; reject incomplete or duplicated ownership markers.

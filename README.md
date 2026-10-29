@@ -65,6 +65,39 @@ file or change the settings. Saving the first reference creates
 `MarkdownCitations.json` in the vault root and stores that path. A destination
 folder selected in settings uses the same filename in that folder.
 
+### Bibliography JSON or managed local library?
+
+Both use the same portable CSL-JSON data format, but they serve different
+workflows:
+
+- Add an existing `.json (CSL-JSON)` file under **Bibliography files** when it
+  comes from Zotero or another application. Markdown Citations reads it as a
+  source but does not offer its records in **Manage local references**.
+- Configure one file under **Local library** when references should be created,
+  edited, and deleted inside Obsidian. This is the file managed by the reference
+  dialog. Only one managed local-library file can be active at a time.
+- Both kinds of files can be active together with any number of `.bib` files.
+  Their citekeys share one namespace and therefore must be unique.
+
+The file and folder buttons beside **Library file** either select an existing
+CSL-JSON file or choose the destination folder for `MarkdownCitations.json`.
+The trash button only clears the configured path; it never deletes the file.
+
+### Create a reference in the dialog
+
+1. Run **Create local reference** or choose **Create reference** in the manager.
+2. Select the reference type and enter title, authors, publication date, and
+   language.
+3. Complete the type-specific fields shown in the basic form. For example, a
+   book asks for edition, publisher, and ISBN; a web page for URL and access
+   date; software for version, URL, and DOI.
+4. Open **Show advanced fields** only when additional publication details,
+   identifiers, editors, or access information are needed.
+5. Check the citation and bibliography preview. Its style selector is temporary
+   and does not modify the global plugin style or the stored reference.
+6. Choose **Create reference**. The plugin writes the entry to the configured
+   local CSL-JSON file and reports its generated citekey.
+
 The reference editor starts with the essential attributes: reference type,
 title, authors, publication date, and language. Language is selected from the
 same named choices as the global locale and initially follows that global
@@ -79,6 +112,20 @@ ISBN, DOI, URL, and access date. Enter one author or editor per line. Use
 `Family, Given` for a person and a line without a comma for an organisation.
 Dates accept `YYYY`, `YYYY-MM`, or `YYYY-MM-DD`; DOI URLs are normalized to
 their DOI identifier.
+
+Enter people one per line, with family name first:
+
+```text
+Müller, Anna
+Schmidt, Boris
+```
+
+Enter an institution or project without a comma so that it remains a literal
+organisation name:
+
+```text
+Open Research Group
+```
 
 The plugin creates a readable citekey from the first author or organisation,
 year, and title, transliterates it for portability, and adds a numeric suffix
@@ -101,6 +148,76 @@ because notes may already link to them. Deleting a local reference
 does not delete citation links from notes; those links can no longer be updated
 unless the same citekey is restored. Generated citekeys are kept unique across
 the configured bibliography files and local library.
+
+### CSL-JSON file example
+
+A CSL-JSON bibliography normally uses a JSON array in which each object is one
+bibliographic record; the parser also accepts a single record object. The
+managed local library is always written as an indented array. `id` and
+`citation-key` identify the record; Markdown Citations writes the same generated
+value to both fields:
+
+```json
+[
+  {
+    "type": "book",
+    "id": "mueller-2026-portable-zitate",
+    "citation-key": "mueller-2026-portable-zitate",
+    "title": "Portable Zitate",
+    "author": [
+      { "family": "Müller", "given": "Anna" }
+    ],
+    "issued": { "date-parts": [[2026]] },
+    "edition": "2",
+    "publisher": "Beispielverlag",
+    "publisher-place": "Berlin",
+    "ISBN": "978-3-00-000000-0",
+    "language": "de-DE"
+  },
+  {
+    "type": "webpage",
+    "id": "research-group-2026-project-page",
+    "citation-key": "research-group-2026-project-page",
+    "title": "Project page",
+    "author": [
+      { "literal": "Open Research Group" }
+    ],
+    "issued": { "date-parts": [[2026, 10, 29]] },
+    "accessed": { "date-parts": [[2026, 10, 29]] },
+    "URL": "https://example.org/project",
+    "language": "en-US"
+  },
+  {
+    "type": "software",
+    "id": "kohlhoff-2026-markdown-citations",
+    "citation-key": "kohlhoff-2026-markdown-citations",
+    "title": "Markdown Citations",
+    "author": [
+      { "family": "Kohlhoff", "given": "Holger" }
+    ],
+    "issued": { "date-parts": [[2026, 10, 29]] },
+    "version": "0.1.0",
+    "URL": "https://github.com/HKohlhoff/markdown-citations"
+  }
+]
+```
+
+The file may also be edited with another tool. Keep `id` and `citation-key`
+stable after a citation has been inserted; changing either value breaks the
+connection from existing notes. Standard CSL fields not shown by the dialog are
+retained when the plugin later edits that record. Invalid JSON, duplicate or
+unsafe citekeys, and missing types are reported before a managed update is
+written. The reference dialog additionally requires a title before saving.
+
+### What is published with Flowershow?
+
+The bibliography files are source data. The published note itself contains the
+finished, readable Markdown citation and bibliography, including ordinary links
+to stable HTML anchors such as `#ref-mueller-2026-portable-zitate`. Flowershow
+does not need Markdown Citations, citeproc, Zotero, or access to the CSL-JSON
+file to display that generated result. This separation is deliberate: tomorrow's
+publication test should judge the same Markdown that remains readable in the
+vault when the plugin is disabled.
 
 After changing the citation style or language, run **Update citations** to
 reformat citations and the bibliography together. Citation details such as

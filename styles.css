@@ -215,9 +215,10 @@
 
 .markdown-citations-local-reference-grid .setting-item {
   align-items: stretch;
-  border: 0;
+  border: 0 !important;
   flex-direction: column;
-  padding: 0;
+  margin-top: 0 !important;
+  padding: 0 !important;
 }
 
 .markdown-citations-local-reference-dialog .markdown-citations-local-reference-grid .markdown-citations-reference-field .setting-item-info {

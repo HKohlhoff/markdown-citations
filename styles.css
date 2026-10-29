@@ -159,60 +159,115 @@
   overflow-y: auto;
 }
 
-.markdown-citations-local-reference-dialog .setting-item-control {
-  flex: 1 1 26rem;
+.markdown-citations-local-reference-dialog .markdown-citations-reference-field .setting-item-info {
+  flex: 0 0 13rem;
+  min-width: 0;
 }
 
-.markdown-citations-local-reference-dialog .setting-item-control {
-  justify-content: flex-end;
+.markdown-citations-local-reference-dialog .markdown-citations-reference-field .setting-item-control {
+  flex: 1 1 32rem;
+  min-width: 0;
 }
 
-.markdown-citations-local-reference-dialog .markdown-citations-field-wide input,
-.markdown-citations-local-reference-dialog .markdown-citations-field-wide textarea {
-  max-width: 42rem;
-  width: min(100%, 42rem);
-}
-
-.markdown-citations-local-reference-dialog .markdown-citations-field-medium input,
-.markdown-citations-local-reference-dialog .markdown-citations-field-medium select {
-  max-width: 20rem;
-  width: min(100%, 20rem);
-}
-
-.markdown-citations-local-reference-dialog .markdown-citations-field-long input {
-  max-width: 30rem;
-  width: min(100%, 30rem);
-}
-
-.markdown-citations-local-reference-dialog .markdown-citations-field-short input {
-  max-width: 8rem;
+.markdown-citations-local-reference-dialog .markdown-citations-reference-field input,
+.markdown-citations-local-reference-dialog .markdown-citations-reference-field select,
+.markdown-citations-local-reference-dialog .markdown-citations-reference-field textarea {
+  max-width: none;
+  text-align: left;
   width: 100%;
 }
 
-.markdown-citations-local-reference-dialog textarea {
+.markdown-citations-local-reference-dialog .markdown-citations-reference-field textarea {
   min-height: 5rem;
   resize: vertical;
 }
 
+.markdown-citations-local-reference-key {
+  color: var(--text-muted);
+  font-size: var(--font-ui-smaller);
+  margin: var(--size-4-2) 0;
+  padding-left: calc(13rem + var(--size-4-4));
+}
+
+.markdown-citations-local-reference-advanced-action {
+  border: 0;
+  justify-content: flex-end;
+  padding-top: var(--size-4-2);
+}
+
+.markdown-citations-local-reference-advanced {
+  background: var(--background-secondary-alt);
+  border-radius: var(--radius-s);
+  margin-top: var(--size-4-2);
+  padding: 0 var(--size-4-4) var(--size-4-2);
+}
+
+.markdown-citations-local-reference-advanced.is-hidden,
+.markdown-citations-local-reference-preview-controls.is-hidden {
+  display: none;
+}
+
 .markdown-citations-local-reference-grid {
   display: grid;
-  gap: 0 var(--size-4-4);
+  gap: var(--size-4-2) var(--size-4-4);
   grid-template-columns: repeat(4, minmax(6rem, 1fr));
+  padding: var(--size-4-2) 0;
 }
 
 .markdown-citations-local-reference-grid .setting-item {
   align-items: stretch;
+  border: 0;
   flex-direction: column;
+  padding: 0;
+}
+
+.markdown-citations-local-reference-grid .setting-item-info {
+  flex: none;
+  margin-bottom: var(--size-2-1);
 }
 
 .markdown-citations-local-reference-grid .setting-item-control {
   flex-basis: auto;
+  min-width: 0;
   width: 100%;
 }
 
 .markdown-citations-local-reference-grid .setting-item-control input {
   max-width: none;
-  text-align: right;
+  text-align: left;
+  width: 100%;
+}
+
+.markdown-citations-local-reference-preview-header {
+  align-items: center;
+  display: flex;
+  gap: var(--size-4-2);
+  justify-content: space-between;
+  margin-bottom: var(--size-2-2);
+}
+
+.markdown-citations-local-reference-preview-header .markdown-citations-citation-preview-label {
+  margin-bottom: 0;
+}
+
+.markdown-citations-local-reference-preview-style-button {
+  font-size: var(--font-ui-smaller);
+  height: auto;
+  padding: var(--size-2-1) var(--size-4-2);
+}
+
+.markdown-citations-local-reference-preview-controls {
+  border-bottom: 1px solid var(--background-modifier-border);
+  margin-bottom: var(--size-4-3);
+  padding-bottom: var(--size-4-2);
+}
+
+.markdown-citations-local-reference-preview-controls .setting-item-control {
+  flex: 1 1 28rem;
+}
+
+.markdown-citations-local-reference-preview-controls select {
+  max-width: none;
   width: 100%;
 }
 
@@ -238,6 +293,14 @@
   .markdown-citations-local-reference-dialog .setting-item-control {
     flex-basis: auto;
     width: 100%;
+  }
+
+  .markdown-citations-local-reference-dialog .markdown-citations-reference-field .setting-item-info {
+    flex-basis: auto;
+  }
+
+  .markdown-citations-local-reference-key {
+    padding-left: 0;
   }
 
   .markdown-citations-local-reference-grid {

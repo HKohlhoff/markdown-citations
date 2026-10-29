@@ -23,7 +23,7 @@ import { NoteFormatDialog } from "./ui/note-format-dialog";
 import { assertPublicationOwnership, buildPublication, publicationPath } from "./document/publication";
 import { createPublicationLinkRebaser } from "./vault/publication-links";
 import { deleteLocalReference, ensureLocalLibrary, readLocalLibrary, saveLocalReference } from "./vault/local-library";
-import { localReferenceInput, type LocalReferenceInput } from "./bibliography/local-library";
+import { generateLocalCiteKey, localReferenceInput, type LocalReferenceInput } from "./bibliography/local-library";
 import { LocalReferenceDialog } from "./ui/local-reference-dialog";
 import { DeleteLocalReferenceDialog, LocalLibraryDialog } from "./ui/local-library-dialog";
 
@@ -171,6 +171,7 @@ export default class MarkdownCitationsPlugin extends Plugin {
         this.app,
         item ? localReferenceInput(item.csl) : undefined,
         item?.citeKey,
+        this.settings.defaultCitationStyle,
         style,
         this.settings.defaultLocale,
         async value => this.persistLocalReference(path, value, item?.citeKey),
@@ -212,10 +213,11 @@ export default class MarkdownCitationsPlugin extends Plugin {
     originalCiteKey?: string,
   ): Promise<void> {
     const allSources = await loadBibliographies(this.app.vault, this.configuredBibliographyPaths(this.settings));
-    const duplicate = allSources.items.find(entry => entry.citeKey === value.citeKey && entry.sourcePath !== path);
-    if (duplicate) throw new Error(`Citekey already exists in ${duplicate.sourcePath}: ${value.citeKey}`);
-    await saveLocalReference(this.app.vault, path, value, originalCiteKey);
-    new Notice(`${originalCiteKey ? "Local reference saved" : "Local reference created"}: @${value.citeKey}`);
+    const savedValue = originalCiteKey
+      ? { ...value, citeKey: originalCiteKey }
+      : { ...value, citeKey: generateLocalCiteKey(value, allSources.items.map(entry => entry.citeKey)) };
+    await saveLocalReference(this.app.vault, path, savedValue, originalCiteKey);
+    new Notice(`${originalCiteKey ? "Local reference saved" : "Local reference created"}: @${savedValue.citeKey}`);
     void this.openLocalLibrary();
   }
 

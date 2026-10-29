@@ -106,6 +106,23 @@ export function localReferenceInput(record: CSL): LocalReferenceInput {
   };
 }
 
+export function generateLocalCiteKey(
+  input: Pick<LocalReferenceInput, "authors" | "issued" | "title">,
+  occupiedCiteKeys: Iterable<string> = [],
+): string {
+  const author = input.authors.split(/\r?\n|;/u).map(value => value.trim()).find(Boolean) ?? "";
+  const familyOrOrganisation = author.includes(",") ? author.slice(0, author.indexOf(",")) : author;
+  const authorPart = slug(familyOrOrganisation).split("-").slice(0, 2).join("-");
+  const yearPart = /^(\d{4})/u.exec(input.issued.trim())?.[1] ?? "";
+  const titlePart = slug(input.title).split("-").filter(part => !CITEKEY_STOP_WORDS.has(part)).slice(0, 3).join("-");
+  const base = [authorPart, yearPart, titlePart].filter(Boolean).join("-").slice(0, 72) || "reference";
+  const occupied = new Set([...occupiedCiteKeys].map(value => value.toLowerCase()));
+  if (!occupied.has(base.toLowerCase())) return base;
+  let suffix = 2;
+  while (occupied.has(`${base}-${suffix}`.toLowerCase())) suffix += 1;
+  return `${base}-${suffix}`;
+}
+
 export function buildLocalReference(
   input: LocalReferenceInput,
   previous?: CSL,
@@ -231,6 +248,24 @@ function formatDate(date: CSLDate | undefined): string {
 
 function normalizeDoi(value: string): string {
   return value.trim().replace(/^https?:\/\/(?:dx\.)?doi\.org\//iu, "").replace(/^doi:\s*/iu, "");
+}
+
+const CITEKEY_STOP_WORDS = new Set([
+  "a", "an", "and", "der", "die", "das", "ein", "eine", "einer", "of", "the", "und", "von", "zu",
+]);
+
+function slug(value: string): string {
+  return value
+    .trim()
+    .replace(/ä/giu, "ae")
+    .replace(/ö/giu, "oe")
+    .replace(/ü/giu, "ue")
+    .replace(/ß/gu, "ss")
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/gu, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/gu, "-")
+    .replace(/^-+|-+$/gu, "");
 }
 
 function assign(record: Record<string, unknown>, key: string, value: unknown): void {

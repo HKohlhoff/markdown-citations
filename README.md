@@ -65,27 +65,33 @@ If no path has been chosen yet, the first of these actions creates
 settings. A destination folder selected in settings uses the same filename in
 that folder.
 
-The reference editor builds an entry from standard bibliographic attributes:
-reference type, citekey, title, authors, editors, publication and access dates,
-container title, publisher and place, volume, issue, pages, edition, DOI, URL,
-language, and ISBN. Enter one author or editor per line. Use `Family, Given` for
-a person and a line without a comma for an organisation. Dates accept `YYYY`,
-`YYYY-MM`, or `YYYY-MM-DD`; DOI URLs are normalized to their DOI identifier.
+The reference editor starts with the essential attributes: reference type,
+title, authors, publication date, and language. **Show advanced fields** adds
+editors, container title, volume, issue, edition, pages, publisher and place,
+ISBN, DOI, URL, and access date. Enter one author or editor per line. Use
+`Family, Given` for a person and a line without a comma for an organisation.
+Dates accept `YYYY`, `YYYY-MM`, or `YYYY-MM-DD`; DOI URLs are normalized to
+their DOI identifier.
+
+The plugin creates a readable citekey from the first author or organisation,
+year, and title, transliterates it for portability, and adds a numeric suffix
+when necessary. The citekey remains fixed on later edits so existing citation
+links stay valid.
 
 The live preview shows both the citation and bibliography entry using the
 current global locale and CSL style, including a custom `.csl` file from the
-vault. CSL determines punctuation, ordering, labels, italics, and which supplied
+vault. **Change preview style** can temporarily preview any bundled style or a
+custom vault `.csl` file without changing global settings or reference data.
+CSL determines punctuation, ordering, labels, italics, and which supplied
 attributes are displayed. The editor therefore remains a bibliographic data
-editor rather than introducing a second formatting language. To obtain a very
-specific appearance, select or create the corresponding CSL style and keep the
-reference data independent of that presentation.
+editor rather than introducing a second formatting language.
 
 The local library remains ordinary, indented CSL-JSON and can be read or edited
 by other tools. When Markdown Citations edits an existing entry, additional CSL
-fields it does not expose are preserved. Existing citekeys cannot be renamed in
-the editor because notes may already link to them. Deleting a local reference
+fields it does not expose are preserved. Existing citekeys cannot be renamed
+because notes may already link to them. Deleting a local reference
 does not delete citation links from notes; those links can no longer be updated
-unless the same citekey is restored. Citekeys must also remain unique across
+unless the same citekey is restored. Generated citekeys are kept unique across
 the configured bibliography files and local library.
 
 After changing the citation style or language, run **Update citations** to

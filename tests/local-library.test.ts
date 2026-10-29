@@ -4,6 +4,7 @@ import type { CSL } from "@citation-js/core";
 import {
   EMPTY_LOCAL_REFERENCE,
   buildLocalReference,
+  generateLocalCiteKey,
   localReferenceInput,
   parseLocalLibrary,
   removeLocalReference,
@@ -39,6 +40,20 @@ test("local references map editable attributes to portable CSL-JSON", () => {
   assert.equal(record.DOI, "10.1234/example");
   assert.equal(record["container-title"], "Journal of Markdown");
   assert.deepEqual(localReferenceInput(record), { ...complete, doi: "10.1234/example" });
+});
+
+test("local citekeys are readable, transliterated, and collision-safe", () => {
+  const input = {
+    authors: "Müller, Anna",
+    issued: "2026-10-29",
+    title: "Die künstliche Intelligenz und das Schreiben",
+  };
+  assert.equal(generateLocalCiteKey(input), "mueller-2026-kuenstliche-intelligenz-schreiben");
+  assert.equal(
+    generateLocalCiteKey(input, ["MUELLER-2026-KUENSTLICHE-INTELLIGENZ-SCHREIBEN", "mueller-2026-kuenstliche-intelligenz-schreiben-2"]),
+    "mueller-2026-kuenstliche-intelligenz-schreiben-3",
+  );
+  assert.equal(generateLocalCiteKey({ authors: "", issued: "", title: "" }), "reference");
 });
 
 test("editing keeps unknown CSL attributes while clearing managed blank values", () => {

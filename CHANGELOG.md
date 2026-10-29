@@ -11,9 +11,11 @@ All notable changes to Markdown Citations will be documented in this file.
   the configured vault file/folders through Obsidian APIs.
 - Preview local citations and bibliography entries with the active bundled or
   custom vault CSL style and locale.
-- Refine the local-library settings row and reference editor with separate
-  actions, content-sized right-aligned fields, and a compact bibliographic
-  details row for volume, issue, edition, and pages.
+- Redesign reference creation around a calm essential form, automatic stable
+  citekeys, collapsible advanced attributes, consistently aligned left-reading
+  inputs, and a compact details row for volume, issue, edition, and pages.
+- Label the preview with the active global CSL style and locale, and allow a
+  temporary bundled or custom-vault preview style without changing settings.
 
 - Protect fenced-code, inline-code, and comment examples from bibliography
   replacement; reject incomplete or duplicated ownership markers.

@@ -25,15 +25,20 @@ settings page provides the same manager beside the local-library path. If no
 path is configured, the first action creates `MarkdownCitations.json` in the
 vault root.
 
-Build a reference from its type, citekey, title, people, dates, publication
-details, DOI, URL, language, and ISBN. A live citation and bibliography preview
-uses the selected locale and CSL style, including a custom vault `.csl` file.
-CSL remains responsible for the final appearance; the stored reference data is
+The calm basic form asks only for type, title, authors, publication date, and
+language. Publication details, identifiers, and access data are available under
+**Show advanced fields**. The plugin generates a readable, collision-safe
+citekey automatically and keeps it stable on later edits.
+
+A live citation and bibliography preview names the active global locale and CSL
+style. **Change preview style** temporarily previews any bundled style or a
+custom vault `.csl` file without changing the global settings or stored data.
+CSL remains responsible for the final appearance; the reference data stays
 portable and independent of the chosen style.
 
 Additional CSL fields from externally edited records are retained. Existing
-citekeys stay fixed to protect links in notes, duplicate keys in other configured
-libraries are rejected, and deletion requires confirmation. Deleting a library
+citekeys stay fixed to protect links in notes, generated keys avoid duplicates
+in configured libraries, and deletion requires confirmation. Deleting a library
 record intentionally leaves existing note text unchanged.
 
 ## Masters and embedded chapters

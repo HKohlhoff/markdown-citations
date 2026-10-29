@@ -31,8 +31,10 @@ export class LocalReferenceDialog extends Modal {
   private basicAccessedAnchor?: HTMLElement;
   private accessedSettingEl?: HTMLElement;
   private versionSettingEl?: HTMLElement;
+  private isbnSettingEl?: HTMLElement;
   private advancedAccessedAnchor?: HTMLElement;
   private advancedVersionAnchor?: HTMLElement;
+  private advancedIsbnAnchor?: HTMLElement;
   private previewStyleSelect?: DropdownComponent;
   private previewTimer?: number;
 
@@ -121,7 +123,8 @@ export class LocalReferenceDialog extends Modal {
     this.addText("Publisher", "Optional publisher or institution.", "publisher", "Publisher", this.advancedEl);
     this.addText("Publisher place", "Optional place of publication.", "publisherPlace", "Berlin", this.advancedEl);
     new Setting(this.advancedEl).setName("Identifiers and access").setHeading();
-    this.addText("ISBN", "Optional ISBN for books and chapters.", "isbn", "978-…", this.advancedEl);
+    this.advancedIsbnAnchor = this.advancedEl.createDiv({ cls: "markdown-citations-local-reference-field-anchor" });
+    this.isbnSettingEl = this.addText("ISBN", "Book identifier.", "isbn", "978-…", this.advancedEl).settingEl;
     this.addText("DOI", "A DOI or doi.org URL; it is stored as a DOI.", "doi", "10.1234/example", this.advancedEl);
     this.addText("URL", "Optional full web address.", "url", "https://example.org", this.advancedEl);
     this.advancedAccessedAnchor = this.advancedEl.createDiv({ cls: "markdown-citations-local-reference-field-anchor" });
@@ -257,14 +260,15 @@ export class LocalReferenceDialog extends Modal {
     return ADVANCED_FIELDS.filter(field => {
       if (field === "accessed" && this.value.type === "webpage") return false;
       if (field === "version" && this.value.type === "software") return false;
+      if (field === "isbn" && this.value.type === "book") return false;
       return String(this.value[field]).trim() !== "";
     }).length;
   }
 
   private updateTypeDependentFields(): void {
     if (
-      !this.accessedSettingEl || !this.versionSettingEl || !this.basicAccessedAnchor
-      || !this.advancedAccessedAnchor || !this.advancedVersionAnchor
+      !this.accessedSettingEl || !this.versionSettingEl || !this.isbnSettingEl || !this.basicAccessedAnchor
+      || !this.advancedAccessedAnchor || !this.advancedVersionAnchor || !this.advancedIsbnAnchor
     ) return;
     if (this.value.type === "webpage") {
       this.basicAccessedAnchor.before(this.accessedSettingEl);
@@ -275,6 +279,11 @@ export class LocalReferenceDialog extends Modal {
       this.basicAccessedAnchor.before(this.versionSettingEl);
     } else {
       this.advancedVersionAnchor.before(this.versionSettingEl);
+    }
+    if (this.value.type === "book") {
+      this.basicAccessedAnchor.before(this.isbnSettingEl);
+    } else {
+      this.advancedIsbnAnchor.before(this.isbnSettingEl);
     }
   }
 

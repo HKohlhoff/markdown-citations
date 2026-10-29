@@ -24,6 +24,8 @@ All notable changes to Markdown Citations will be documented in this file.
 - Tighten the compact publication-detail row and show the access date in the
   basic form whenever the reference type is a web page.
 - Store the CSL version attribute and show it in the basic form for software.
+- Show ISBN in the basic form for books while retaining it for other types in
+  the advanced section.
 
 - Protect fenced-code, inline-code, and comment examples from bibliography
   replacement; reject incomplete or duplicated ownership markers.

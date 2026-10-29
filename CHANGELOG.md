@@ -4,6 +4,14 @@ All notable changes to Markdown Citations will be documented in this file.
 
 ## Unreleased
 
+- Add a mobile-friendly local CSL-JSON reference manager with create, edit,
+  preview, and confirmed-delete workflows.
+- Build local references from standard CSL attributes, preserve unknown fields,
+  keep existing citekeys stable, reject cross-library duplicates, and create
+  the configured vault file/folders through Obsidian APIs.
+- Preview local citations and bibliography entries with the active bundled or
+  custom vault CSL style and locale.
+
 - Protect fenced-code, inline-code, and comment examples from bibliography
   replacement; reject incomplete or duplicated ownership markers.
 - Verify rebased publication links independently of Vault effects and document

@@ -17,6 +17,25 @@ titles identify individual citations. Old inline metadata comments migrate to
 frontmatter during updates. Numeric citation links now render correctly in
 Obsidian, and DOI/URL lines are separate from the bibliographic text.
 
+## Local references
+
+**Manage local references** now creates and edits an ordinary CSL-JSON library
+inside the vault. **Create local reference** opens the editor directly. The
+settings page provides the same manager beside the local-library path. If no
+path is configured, the first action creates `MarkdownCitations.json` in the
+vault root.
+
+Build a reference from its type, citekey, title, people, dates, publication
+details, DOI, URL, language, and ISBN. A live citation and bibliography preview
+uses the selected locale and CSL style, including a custom vault `.csl` file.
+CSL remains responsible for the final appearance; the stored reference data is
+portable and independent of the chosen style.
+
+Additional CSL fields from externally edited records are retained. Existing
+citekeys stay fixed to protect links in notes, duplicate keys in other configured
+libraries are rejected, and deletion requires confirmation. Deleting a library
+record intentionally leaves existing note text unchanged.
+
 ## Masters and embedded chapters
 
 Both bibliography commands follow full-note, heading, and block embeds,
@@ -74,9 +93,8 @@ Existing DIN/Elsevier choices migrate to ISO 690/NLM respectively. Styles only
 change note content after a user-started update.
 
 The optional local library file is empty by default. File and folder pickers
-make source configuration easier. A local-library editing interface is still
-future work. The former unused citation-mode selector has been removed; the
-plugin always writes finished Markdown. Pandoc citation syntax and export
+make source configuration easier. The former unused citation-mode selector has
+been removed; the plugin always writes finished Markdown. Pandoc citation syntax and export
 belong to a separate authoring/export workflow, as explained in the README.
 
 ## Documentation

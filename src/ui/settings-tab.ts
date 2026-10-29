@@ -99,6 +99,10 @@ export class MarkdownCitationsSettingTab extends PluginSettingTab {
           void this.saveLocalLibraryPath(file.path);
         }).open();
       }));
+    localLibrary.addButton((button) => button
+      .setButtonText("Manage references")
+      .setCta()
+      .onClick(() => { void this.plugin.openLocalLibrary(); }));
     localLibrary.addExtraButton((button) => button
       .setIcon("folder-search-2")
       .setTooltip("Choose destination folder")

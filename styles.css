@@ -141,3 +141,74 @@
   justify-content: flex-end;
   margin-top: var(--size-4-4);
 }
+
+.markdown-citations-local-reference-dialog,
+.markdown-citations-local-library-dialog {
+  width: min(58rem, calc(100vw - 2rem));
+}
+
+.markdown-citations-local-reference-dialog .modal-content,
+.markdown-citations-local-library-dialog .modal-content {
+  max-height: 78vh;
+  overflow-y: auto;
+}
+
+.markdown-citations-local-reference-dialog .setting-item-control {
+  flex: 1 1 26rem;
+}
+
+.markdown-citations-local-reference-dialog input,
+.markdown-citations-local-reference-dialog textarea,
+.markdown-citations-local-reference-dialog select {
+  max-width: 42rem;
+  width: 100%;
+}
+
+.markdown-citations-local-reference-dialog textarea {
+  min-height: 5rem;
+  resize: vertical;
+}
+
+.markdown-citations-local-reference-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.markdown-citations-local-reference-grid .setting-item {
+  align-items: stretch;
+  flex-direction: column;
+}
+
+.markdown-citations-local-reference-grid .setting-item-control {
+  flex-basis: auto;
+  width: 100%;
+}
+
+.markdown-citations-local-reference-citation {
+  font-weight: var(--font-semibold);
+}
+
+.markdown-citations-local-library-actions {
+  border: 0;
+  justify-content: flex-end;
+}
+
+.markdown-citations-local-library-item .setting-item-info {
+  min-width: 0;
+}
+
+@media (max-width: 600px) {
+  .markdown-citations-local-reference-dialog .setting-item {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .markdown-citations-local-reference-dialog .setting-item-control {
+    flex-basis: auto;
+    width: 100%;
+  }
+
+  .markdown-citations-local-reference-grid {
+    grid-template-columns: 1fr;
+  }
+}

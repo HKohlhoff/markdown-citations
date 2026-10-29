@@ -55,6 +55,39 @@ entries. Multiple sources can be inserted as consecutive independent citations;
 combined citation clusters are deliberately outside the initial core scope.
 The plugin always inserts finished, readable Markdown citations.
 
+## Local references
+
+Markdown Citations can maintain an optional local CSL-JSON library inside the
+vault. Use **Markdown Citations: Manage local references**, **Create local
+reference**, or **Manage references** beside the local library path in settings.
+If no path has been chosen yet, the first of these actions creates
+`MarkdownCitations.json` in the vault root and stores that path in the plugin
+settings. A destination folder selected in settings uses the same filename in
+that folder.
+
+The reference editor builds an entry from standard bibliographic attributes:
+reference type, citekey, title, authors, editors, publication and access dates,
+container title, publisher and place, volume, issue, pages, edition, DOI, URL,
+language, and ISBN. Enter one author or editor per line. Use `Family, Given` for
+a person and a line without a comma for an organisation. Dates accept `YYYY`,
+`YYYY-MM`, or `YYYY-MM-DD`; DOI URLs are normalized to their DOI identifier.
+
+The live preview shows both the citation and bibliography entry using the
+current global locale and CSL style, including a custom `.csl` file from the
+vault. CSL determines punctuation, ordering, labels, italics, and which supplied
+attributes are displayed. The editor therefore remains a bibliographic data
+editor rather than introducing a second formatting language. To obtain a very
+specific appearance, select or create the corresponding CSL style and keep the
+reference data independent of that presentation.
+
+The local library remains ordinary, indented CSL-JSON and can be read or edited
+by other tools. When Markdown Citations edits an existing entry, additional CSL
+fields it does not expose are preserved. Existing citekeys cannot be renamed in
+the editor because notes may already link to them. Deleting a local reference
+does not delete citation links from notes; those links can no longer be updated
+unless the same citekey is restored. Citekeys must also remain unique across
+the configured bibliography files and local library.
+
 After changing the citation style or language, run **Update citations** to
 reformat citations and the bibliography together. Citation details such as
 locators, prefixes, and suffixes are stored in the note's `markdown-citations`

@@ -22,6 +22,10 @@ import { registerCitationNavigation } from "./ui/citation-navigation";
 import { NoteFormatDialog } from "./ui/note-format-dialog";
 import { assertPublicationOwnership, buildPublication, publicationPath } from "./document/publication";
 import { createPublicationLinkRebaser } from "./vault/publication-links";
+import { deleteLocalReference, ensureLocalLibrary, readLocalLibrary, saveLocalReference } from "./vault/local-library";
+import { localReferenceInput, type LocalReferenceInput } from "./bibliography/local-library";
+import { LocalReferenceDialog } from "./ui/local-reference-dialog";
+import { DeleteLocalReferenceDialog, LocalLibraryDialog } from "./ui/local-library-dialog";
 
 const yamlCodec: YamlCodec = { parse: parseYaml, stringify: stringifyYaml };
 
@@ -58,6 +62,16 @@ export default class MarkdownCitationsPlugin extends Plugin {
     );
     this.addSettingTab(new MarkdownCitationsSettingTab(this.app, this));
     registerCitationNavigation(this);
+    this.addCommand({
+      id: "manage-local-references",
+      name: "Manage local references",
+      callback: () => { void this.openLocalLibrary(); },
+    });
+    this.addCommand({
+      id: "create-local-reference",
+      name: "Create local reference",
+      callback: () => { void this.openLocalReferenceEditor(); },
+    });
     this.addCommand({
       id: "update-publication-note",
       name: "Create / update publication note",
@@ -129,6 +143,45 @@ export default class MarkdownCitationsPlugin extends Plugin {
     this.showUpdateNotice(true);
   }
 
+  async openLocalLibrary(): Promise<void> {
+    try {
+      const path = await this.prepareLocalLibrary();
+      const items = await readLocalLibrary(this.app.vault, path);
+      const modal = new LocalLibraryDialog(
+        this.app,
+        path,
+        items,
+        () => { void this.openLocalReferenceEditor(); },
+        item => { void this.openLocalReferenceEditor(item); },
+        item => this.confirmDeleteLocalReference(item),
+      );
+      this.register(() => modal.close());
+      modal.open();
+    } catch (error) {
+      new Notice(`Could not open local reference library: ${errorMessage(error)}`, 9000);
+    }
+  }
+
+  async openLocalReferenceEditor(item?: BibliographyItem): Promise<void> {
+    try {
+      const path = await this.prepareLocalLibrary();
+      if (item && item.sourcePath !== path) throw new Error("Only references from the local library can be edited.");
+      const style = await resolveCitationStyle(this.app.vault, this.settings.defaultCitationStyle);
+      const modal = new LocalReferenceDialog(
+        this.app,
+        item ? localReferenceInput(item.csl) : undefined,
+        item?.citeKey,
+        style,
+        this.settings.defaultLocale,
+        async value => this.persistLocalReference(path, value, item?.citeKey),
+      );
+      this.register(() => modal.close());
+      modal.open();
+    } catch (error) {
+      new Notice(`Could not open local reference editor: ${errorMessage(error)}`, 9000);
+    }
+  }
+
   private showUpdateNotice(force = false): void {
     void this.updateNotice?.show(force).catch((error: unknown) => {
       console.error("[markdown-citations] Could not save update acknowledgement", error);
@@ -142,6 +195,41 @@ export default class MarkdownCitationsPlugin extends Plugin {
       onClosed();
     });
     this.documentationModals.add(modal);
+    modal.open();
+  }
+
+  private async prepareLocalLibrary(): Promise<string> {
+    if (!this.settings.localLibraryPath) {
+      this.settings.localLibraryPath = "MarkdownCitations.json";
+      await this.saveSettings();
+    }
+    return ensureLocalLibrary(this.app.vault, this.settings.localLibraryPath);
+  }
+
+  private async persistLocalReference(
+    path: string,
+    value: LocalReferenceInput,
+    originalCiteKey?: string,
+  ): Promise<void> {
+    const allSources = await loadBibliographies(this.app.vault, this.configuredBibliographyPaths(this.settings));
+    const duplicate = allSources.items.find(entry => entry.citeKey === value.citeKey && entry.sourcePath !== path);
+    if (duplicate) throw new Error(`Citekey already exists in ${duplicate.sourcePath}: ${value.citeKey}`);
+    await saveLocalReference(this.app.vault, path, value, originalCiteKey);
+    new Notice(`${originalCiteKey ? "Local reference saved" : "Local reference created"}: @${value.citeKey}`);
+    void this.openLocalLibrary();
+  }
+
+  private confirmDeleteLocalReference(item: BibliographyItem): void {
+    const modal = new DeleteLocalReferenceDialog(this.app, item, async () => {
+      try {
+        await deleteLocalReference(this.app.vault, item.sourcePath, item.citeKey);
+        new Notice(`Local reference deleted: @${item.citeKey}`);
+        void this.openLocalLibrary();
+      } catch (error) {
+        new Notice(`Could not delete local reference: ${errorMessage(error)}`, 9000);
+      }
+    });
+    this.register(() => modal.close());
     modal.open();
   }
 

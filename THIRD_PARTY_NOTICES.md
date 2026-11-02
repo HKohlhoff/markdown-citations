@@ -1,6 +1,6 @@
 # Third-party notices
 
-Markdown Citations 1.0.3 bundles the following runtime components:
+Markdown Citations 1.0.4 bundles the following runtime components:
 
 | Component | Version | Purpose | License |
 | --- | --- | --- | --- |

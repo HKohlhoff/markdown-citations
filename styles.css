@@ -1,4 +1,14 @@
-/* Markdown Citations 1.0.3 */
+/* Markdown Citations 1.0.4 */
+
+.markdown-citations-settings-host.setting-item {
+  border-top: 0;
+  display: block;
+  padding: 0;
+}
+
+.markdown-citations-settings-host > .markdown-citations-settings {
+  width: 100%;
+}
 
 .markdown-citations-source-title {
   font-weight: var(--font-semibold);

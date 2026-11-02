@@ -1,8 +1,9 @@
-# Markdown Citations 1.0.2 — Community directory release
+# Markdown Citations 1.0.3 — Community directory release
 
-Markdown Citations 1.0.2 formats portable Markdown citations and bibliographies
-locally with CSL styles. This maintenance release completes the Community
-directory integration and contains no citation-behavior changes from 1.0.0.
+Markdown Citations 1.0.3 formats portable Markdown citations and bibliographies
+locally with CSL styles. Source and style dialogs now validate one exact
+vault-relative path without enumerating the vault. Citation behavior is
+unchanged from 1.0.0.
 
 ## Everyday use
 
@@ -116,10 +117,11 @@ numeric style, and an adapted localized ISO 690:2021 author-date style.
 Existing DIN/Elsevier choices migrate to ISO 690/NLM respectively. Styles only
 change note content after a user-started update.
 
-The optional local library file is empty by default. File and folder pickers
-make source configuration easier. The former unused citation-mode selector has
-been removed; the plugin always writes finished Markdown. Pandoc citation syntax and export
-belong to a separate authoring/export workflow, as explained in the README.
+The optional local library file is empty by default. File and folder path
+dialogs validate only the exact vault-relative path entered by the user. The
+former unused citation-mode selector has been removed; the plugin always writes
+finished Markdown. Pandoc citation syntax and export belong to a separate
+authoring/export workflow, as explained in the README.
 
 ## Documentation
 

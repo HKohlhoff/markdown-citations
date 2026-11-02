@@ -4,6 +4,13 @@ All notable changes to Markdown Citations will be documented in this file.
 
 ## Unreleased
 
+## 1.0.3 - 2026-11-02
+
+- Replace whole-vault file and folder enumeration in source pickers with exact,
+  validated vault-relative path dialogs.
+- Add a release check that rejects complete-vault enumeration APIs anywhere in
+  the plugin source.
+
 ## 1.0.2 - 2026-11-02
 
 - Expose the complete settings tab to Obsidian 1.13 settings search through

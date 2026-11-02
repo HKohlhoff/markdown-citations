@@ -11,7 +11,7 @@ import { BUNDLED_CSL_LOCALES, cslLocaleTitle, isSupportedCslLocale } from "../cs
 import { resolveCitationStyle } from "../csl/resolve-style";
 import { BUNDLED_CITATION_STYLES, getBundledCitationStyle } from "../csl/styles";
 import type { BibliographyItem } from "../model/bibliography";
-import { VaultFileSuggestModal } from "./vault-path-modal";
+import { VaultFilePathModal } from "./vault-path-modal";
 
 const CHOOSE_CSL = "__choose_csl__";
 const ADVANCED_FIELDS = [
@@ -318,7 +318,7 @@ export class LocalReferenceDialog extends Modal {
   }
 
   private choosePreviewStyle(): void {
-    new VaultFileSuggestModal(this.app, "csl", file => {
+    new VaultFilePathModal(this.app, "csl", file => {
       void this.setPreviewStyle(file.path);
     }).open();
   }

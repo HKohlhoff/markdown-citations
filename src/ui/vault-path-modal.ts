@@ -1,95 +1,160 @@
-import { App, SuggestModal, TFile, TFolder } from "obsidian";
+import { App, Modal, Setting, TFile, TFolder, normalizePath } from "obsidian";
 
 type VaultFilePurpose = "bibliography" | "json" | "csl";
 
-const PURPOSES: Record<VaultFilePurpose, { extensions: readonly string[]; placeholder: string; empty: string }> = {
+const PURPOSES: Record<VaultFilePurpose, {
+  extensions: readonly string[];
+  title: string;
+  description: string;
+  placeholder: string;
+}> = {
   bibliography: {
     extensions: ["bib", "biblatex", "json"],
-    placeholder: "Search bibliography files in this vault…",
-    empty: "No bibliography files found: .bib or .json (CSL-JSON).",
+    title: "Choose bibliography file",
+    description: "Enter the exact vault-relative path to a .bib or .json (CSL-JSON) file.",
+    placeholder: "Literature/library.bib",
   },
   json: {
     extensions: ["json"],
-    placeholder: "Search .json (CSL-JSON) files in this vault…",
-    empty: "No .json (CSL-JSON) files found.",
+    title: "Choose CSL-JSON file",
+    description: "Enter the exact vault-relative path to an existing .json (CSL-JSON) file.",
+    placeholder: "Literature/MarkdownCitations.json",
   },
   csl: {
     extensions: ["csl"],
-    placeholder: "Search CSL style files in this vault…",
-    empty: "No CSL style files found.",
+    title: "Choose CSL file",
+    description: "Enter the exact vault-relative path to an existing .csl file.",
+    placeholder: "Styles/custom.csl",
   },
 };
 
-export class VaultFileSuggestModal extends SuggestModal<TFile> {
-  private readonly files: TFile[];
+export class VaultFilePathModal extends Modal {
+  private value = "";
+  private errorEl?: HTMLElement;
 
   constructor(
     app: App,
-    purpose: VaultFilePurpose,
+    private readonly purpose: VaultFilePurpose,
     private readonly onChoose: (file: TFile) => void,
   ) {
     super(app);
-    const config = PURPOSES[purpose];
-    const extensions = new Set(config.extensions);
-    this.files = app.vault.getFiles()
-      .filter((file) => extensions.has(file.extension.toLowerCase()))
-      .sort((left, right) => left.path.localeCompare(right.path));
-    this.setPlaceholder(config.placeholder);
-    this.emptyStateText = config.empty;
-    this.setInstructions([
-      { command: "↑↓", purpose: "navigate" },
-      { command: "↵", purpose: "select" },
-      { command: "esc", purpose: "close" },
-    ]);
   }
 
-  getSuggestions(query: string): TFile[] {
-    const normalized = query.trim().toLocaleLowerCase();
-    if (!normalized) return this.files;
-    return this.files.filter((file) => file.path.toLocaleLowerCase().includes(normalized));
-  }
+  onOpen(): void {
+    const config = PURPOSES[this.purpose];
+    this.setTitle(config.title);
+    this.contentEl.createEl("p", { text: config.description });
 
-  renderSuggestion(file: TFile, element: HTMLElement): void {
-    element.createDiv({ text: file.name, cls: "markdown-citations-picker-title" });
-    element.createDiv({ text: file.parent?.path || "Vault root", cls: "markdown-citations-picker-path" });
-  }
+    new Setting(this.contentEl)
+      .setName("Vault-relative path")
+      .addText(text => {
+        text.setPlaceholder(config.placeholder).onChange(value => {
+          this.value = value;
+          this.errorEl?.empty();
+        });
+        window.setTimeout(() => text.inputEl.focus());
+      });
 
-  onChooseSuggestion(file: TFile): void {
-    this.onChoose(file);
-  }
-}
+    this.errorEl = this.contentEl.createDiv({ cls: "markdown-citations-path-error" });
+    new Setting(this.contentEl)
+      .setClass("markdown-citations-dialog-actions")
+      .addButton(button => button.setButtonText("Cancel").onClick(() => this.close()))
+      .addButton(button => button.setButtonText("Choose file").setCta().onClick(() => this.submit()));
 
-export class VaultFolderSuggestModal extends SuggestModal<TFolder> {
-  private readonly folders: TFolder[];
-
-  constructor(app: App, private readonly onChoose: (folder: TFolder) => void) {
-    super(app);
-    this.folders = app.vault.getAllFolders(true)
-      .sort((left, right) => left.path.localeCompare(right.path));
-    this.setPlaceholder("Search folders in this vault…");
-    this.emptyStateText = "No matching folder found.";
-    this.setInstructions([
-      { command: "↑↓", purpose: "navigate" },
-      { command: "↵", purpose: "select" },
-      { command: "esc", purpose: "close" },
-    ]);
-  }
-
-  getSuggestions(query: string): TFolder[] {
-    const normalized = query.trim().toLocaleLowerCase();
-    if (!normalized) return this.folders;
-    return this.folders.filter((folder) => {
-      const label = folder.isRoot() ? "vault root" : folder.path;
-      return label.toLocaleLowerCase().includes(normalized);
+    this.scope.register([], "Enter", () => {
+      this.submit();
+      return false;
     });
   }
 
-  renderSuggestion(folder: TFolder, element: HTMLElement): void {
-    const path = folder.isRoot() ? "Vault root" : folder.path;
-    element.createDiv({ text: path, cls: "markdown-citations-picker-title" });
+  onClose(): void {
+    this.contentEl.empty();
   }
 
-  onChooseSuggestion(folder: TFolder): void {
+  private submit(): void {
+    const raw = this.value.trim();
+    if (!raw) {
+      this.showError("Enter a vault-relative file path.");
+      return;
+    }
+
+    const path = normalizePath(raw);
+    const file = this.app.vault.getAbstractFileByPath(path);
+    if (!(file instanceof TFile)) {
+      this.showError(`No file exists at ${path}.`);
+      return;
+    }
+
+    const extensions = PURPOSES[this.purpose].extensions;
+    if (!extensions.includes(file.extension.toLowerCase())) {
+      this.showError(`Choose a file ending in ${extensions.map(extension => `.${extension}`).join(" or ")}.`);
+      return;
+    }
+
+    this.onChoose(file);
+    this.close();
+  }
+
+  private showError(message: string): void {
+    this.errorEl?.setText(message);
+  }
+}
+
+export class VaultFolderPathModal extends Modal {
+  private value = "";
+  private errorEl?: HTMLElement;
+
+  constructor(app: App, private readonly onChoose: (folder: TFolder) => void) {
+    super(app);
+  }
+
+  onOpen(): void {
+    this.setTitle("Choose destination folder");
+    this.contentEl.createEl("p", {
+      text: "Enter the exact vault-relative folder path. Leave it empty to use the vault root.",
+    });
+
+    new Setting(this.contentEl)
+      .setName("Vault-relative path")
+      .addText(text => {
+        text.setPlaceholder("Literature").onChange(value => {
+          this.value = value;
+          this.errorEl?.empty();
+        });
+        window.setTimeout(() => text.inputEl.focus());
+      });
+
+    this.errorEl = this.contentEl.createDiv({ cls: "markdown-citations-path-error" });
+    new Setting(this.contentEl)
+      .setClass("markdown-citations-dialog-actions")
+      .addButton(button => button.setButtonText("Cancel").onClick(() => this.close()))
+      .addButton(button => button.setButtonText("Choose folder").setCta().onClick(() => this.submit()));
+
+    this.scope.register([], "Enter", () => {
+      this.submit();
+      return false;
+    });
+  }
+
+  onClose(): void {
+    this.contentEl.empty();
+  }
+
+  private submit(): void {
+    const raw = this.value.trim();
+    const folder = raw
+      ? this.app.vault.getAbstractFileByPath(normalizePath(raw))
+      : this.app.vault.getRoot();
+    if (!(folder instanceof TFolder)) {
+      this.showError(`No folder exists at ${normalizePath(raw)}.`);
+      return;
+    }
+
     this.onChoose(folder);
+    this.close();
+  }
+
+  private showError(message: string): void {
+    this.errorEl?.setText(message);
   }
 }

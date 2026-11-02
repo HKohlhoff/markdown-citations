@@ -115,9 +115,11 @@ workflows:
 - Both kinds of files can be active together with any number of `.bib` files.
   Their citekeys share one namespace and therefore must be unique.
 
-The file and folder buttons beside **Library file** either select an existing
-CSL-JSON file or choose the destination folder for `MarkdownCitations.json`.
-The trash button only clears the configured path; it never deletes the file.
+The file and folder buttons beside **Library file** open a path dialog for an
+existing CSL-JSON file or the destination folder for `MarkdownCitations.json`.
+Enter the exact vault-relative path; the plugin validates only that path and
+does not enumerate the vault. The trash button only clears the configured path;
+it never deletes the file.
 
 ### Create a reference in the dialog
 
@@ -286,7 +288,7 @@ off, local style and locale choices are ignored and global settings apply;
 managed citation data remains active.
 
 Use **Markdown Citations: Set note citation style and language** in the current
-note. The dialog offers all bundled choices and a vault picker for custom CSL
+note. The dialog offers all bundled choices and a path dialog for custom CSL
 files. **Save to frontmatter** changes only the properties;
 **Save to frontmatter and update citations** also reformats the note immediately.
 **Use global default** removes the local property and restores inheritance.

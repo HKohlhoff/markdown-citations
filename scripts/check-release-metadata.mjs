@@ -66,15 +66,10 @@ for (const file of localeFiles) {
 
 const sourceFiles = fs.readdirSync("src", { recursive: true })
   .filter((path) => typeof path === "string" && path.endsWith(".ts"))
-  .filter((path) => path !== "ui/vault-path-modal.ts");
+  .sort();
 const sourceText = sourceFiles.map((path) => fs.readFileSync(`src/${path}`, "utf8")).join("\n");
-for (const api of ["getAllLoadedFiles(", "getFiles(", "getMarkdownFiles("]) {
+for (const api of ["getAllFolders(", "getAllLoadedFiles(", "getFiles(", "getMarkdownFiles("]) {
   if (sourceText.includes(api)) errors.push(`Source must not enumerate the complete vault with ${api}`);
-}
-
-const pickerSource = fs.readFileSync("src/ui/vault-path-modal.ts", "utf8");
-if (!pickerSource.includes("SuggestModal") || !pickerSource.includes("getFiles()")) {
-  errors.push("Vault file enumeration must remain isolated in the user-opened picker.");
 }
 
 if (errors.length > 0) throw new Error(errors.join("\n"));

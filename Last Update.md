@@ -1,7 +1,7 @@
-# Markdown Citations 0.1.0 — Current prototype
+# Markdown Citations 1.0.0 — Initial public release
 
-The prototype now formats portable Markdown citations and bibliographies locally
-with CSL styles. This is a development snapshot, not a new published release.
+Markdown Citations 1.0.0 formats portable Markdown citations and bibliographies
+locally with CSL styles. This is the first public release.
 
 ## Everyday use
 

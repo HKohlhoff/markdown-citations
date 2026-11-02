@@ -4,6 +4,8 @@ All notable changes to Markdown Citations will be documented in this file.
 
 ## Unreleased
 
+## 1.0.0 - 2026-11-02
+
 - Expand the offline CSL locale set from German and English to twelve choices,
   adding Spanish, French, Italian, Japanese, Dutch, Polish, Brazilian
   Portuguese, Russian, and Simplified Chinese throughout settings, note

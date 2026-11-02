@@ -4,6 +4,13 @@ All notable changes to Markdown Citations will be documented in this file.
 
 ## Unreleased
 
+## 1.0.2 - 2026-11-02
+
+- Expose the complete settings tab to Obsidian 1.13 settings search through
+  `getSettingDefinitions()` while retaining the established custom controls.
+- Replace `!important` layout overrides with scoped selectors and keep generated
+  build copies in the scanner-ignored `dist` directory.
+
 ## 1.0.1 - 2026-11-02
 
 - Adopt the official Obsidian release workflow for scanner-compatible,

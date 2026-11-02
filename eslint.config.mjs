@@ -7,6 +7,7 @@ export default defineConfig(
   globalIgnores([
     ".test-build/**",
     "_local/**",
+    "dist/**",
     "main.js",
     "node_modules/**",
     "release/**",
@@ -44,10 +45,6 @@ export default defineConfig(
       "obsidianmd/no-nodejs-modules": "off",
       "obsidianmd/rule-custom-message": "off"
     }
-  },
-  {
-    files: ["src/ui/settings-tab.ts"],
-    rules: { "obsidianmd/settings-tab/prefer-setting-definitions": "off" }
   },
   {
     files: ["tests/**/*.ts"],

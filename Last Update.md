@@ -1,9 +1,9 @@
-# Markdown Citations 1.0.3 — Community directory release
+# Markdown Citations 1.0.4 — Community directory release
 
-Markdown Citations 1.0.3 formats portable Markdown citations and bibliographies
+Markdown Citations 1.0.4 formats portable Markdown citations and bibliographies
 locally with CSL styles. Source and style dialogs now validate one exact
-vault-relative path without enumerating the vault. Citation behavior is
-unchanged from 1.0.0.
+vault-relative path without enumerating the vault, and the settings page retains
+its established vertical layout. Citation behavior is unchanged from 1.0.0.
 
 ## Everyday use
 

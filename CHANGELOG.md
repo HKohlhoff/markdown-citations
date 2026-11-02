@@ -4,6 +4,11 @@ All notable changes to Markdown Citations will be documented in this file.
 
 ## Unreleased
 
+## 1.0.4 - 2026-11-02
+
+- Restore the established vertical settings layout while retaining Obsidian
+  1.13 settings-search integration.
+
 ## 1.0.3 - 2026-11-02
 
 - Replace whole-vault file and folder enumeration in source pickers with exact,

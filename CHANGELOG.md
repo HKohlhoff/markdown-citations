@@ -4,6 +4,13 @@ All notable changes to Markdown Citations will be documented in this file.
 
 ## Unreleased
 
+## 1.0.1 - 2026-11-02
+
+- Adopt the official Obsidian release workflow for scanner-compatible,
+  per-asset build provenance.
+- Limit GitHub release attachments to `main.js`, `manifest.json`, and
+  `styles.css`.
+
 ## 1.0.0 - 2026-11-02
 
 - Expand the offline CSL locale set from German and English to twelve choices,

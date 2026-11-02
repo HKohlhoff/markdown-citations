@@ -2,7 +2,7 @@ import { App, ButtonComponent, normalizePath, PluginSettingTab, Setting, type Se
 import { BUNDLED_CSL_LOCALES } from "../csl/locales";
 import { BUNDLED_CITATION_STYLES, getBundledCitationStyle } from "../csl/styles";
 import type MarkdownCitationsPlugin from "../main";
-import { VaultFilePathModal, VaultFolderPathModal } from "./vault-path-modal";
+import { VaultFileSuggestModal, VaultLibrarySuggestModal } from "./vault-path-modal";
 
 const CUSTOM_STYLE_SENTINEL = "__markdown-citations-custom-style__";
 const LOCAL_LIBRARY_FILE_NAME = "MarkdownCitations.json";
@@ -122,21 +122,10 @@ export class MarkdownCitationsSettingTab extends PluginSettingTab {
       text.inputEl.addClass("markdown-citations-path-input");
     });
     localLibrary.addExtraButton((button) => button
-      .setIcon("file-search-2")
-      .setTooltip("Choose existing .json (CSL-JSON) file")
-      .onClick(() => {
-        new VaultFilePathModal(this.app, "json", (file) => {
-          void this.saveLocalLibraryPath(file.path);
-        }).open();
-      }));
-    localLibrary.addExtraButton((button) => button
       .setIcon("folder-search-2")
-      .setTooltip("Choose destination folder")
+      .setTooltip("Choose library file or destination folder")
       .onClick(() => {
-        new VaultFolderPathModal(this.app, (folder) => {
-          const path = folder.isRoot()
-            ? LOCAL_LIBRARY_FILE_NAME
-            : `${folder.path}/${LOCAL_LIBRARY_FILE_NAME}`;
+        new VaultLibrarySuggestModal(this.app, LOCAL_LIBRARY_FILE_NAME, (path) => {
           void this.saveLocalLibraryPath(path);
         }).open();
       }));
@@ -278,7 +267,7 @@ export class MarkdownCitationsSettingTab extends PluginSettingTab {
   }
 
   private chooseBibliographyFile(replaceIndex?: number): void {
-    new VaultFilePathModal(this.app, "bibliography", (file) => {
+    new VaultFileSuggestModal(this.app, "bibliography", (file) => {
       void this.saveBibliographyFile(file.path, replaceIndex);
     }).open();
   }
@@ -302,7 +291,7 @@ export class MarkdownCitationsSettingTab extends PluginSettingTab {
   }
 
   private chooseCustomStyle(): void {
-    new VaultFilePathModal(this.app, "csl", (file) => {
+    new VaultFileSuggestModal(this.app, "csl", (file) => {
       this.plugin.settings.defaultCitationStyle = file.path;
       void this.plugin.saveSettings().then(() => this.refreshSettings());
     }).open();

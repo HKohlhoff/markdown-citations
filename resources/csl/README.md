@@ -9,6 +9,17 @@ license. The newly selected styles below were retrieved on 2026-10-28 from
 the validated CSL v1.0.2 branch at commit
 `7bf7ec05bc31509d640c9a3ccf8f561f2b3d748b`.
 
+## Bundled locales
+
+The official CSL locale files were retrieved on 2026-11-02 from
+`citation-style-language/locales` at commit
+`8bef426f89f38c0789223c50e53ec2197bc50bb3`. The plugin bundles `de-DE`,
+`en-US`, `en-GB`, `es-ES`, `fr-FR`, `it-IT`, `ja-JP`, `nl-NL`, `pl-PL`,
+`pt-BR`, `ru-RU`, and `zh-CN` for offline desktop and mobile use. The files are
+unmodified and retain their translator and license metadata.
+
+## Bundled styles
+
 | Bundled file | Upstream file | Changes |
 | --- | --- | --- |
 | `american-physics-society.csl` | `american-physics-society.csl` | Unmodified APS / Physical Review style |

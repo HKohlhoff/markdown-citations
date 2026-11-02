@@ -23,6 +23,10 @@ Citation Style Language project: https://citationstyles.org/
 New source snapshot: citation-style-language/styles, validated branch v1.0.2,
 commit `7bf7ec05bc31509d640c9a3ccf8f561f2b3d748b`, retrieved 2026-10-28.
 
+Locale source snapshot: citation-style-language/locales, commit
+`8bef426f89f38c0789223c50e53ec2197bc50bb3`, retrieved 2026-11-02. The twelve
+bundled locale files are unmodified and retain their translator metadata.
+
 - `iso690-author-date-localized.csl` derives from `iso690-author-date-en.csl`,
   whose metadata identifies ISO 690:2021(E). English term overrides are scoped
   to English, the default locale is German, and the selected CSL locale supplies

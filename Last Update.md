@@ -17,6 +17,39 @@ titles identify individual citations. Old inline metadata comments migrate to
 frontmatter during updates. Numeric citation links now render correctly in
 Obsidian, and DOI/URL lines are separate from the bibliographic text.
 
+## Local references
+
+**Manage local references** now creates and edits an ordinary CSL-JSON library
+inside the vault. **Create local reference** opens the editor directly. The
+settings page provides the same manager beside the local-library path. Opening
+these dialogs no longer creates or configures a file. If no path is configured,
+saving the first reference creates `MarkdownCitations.json` in the vault root.
+
+The calm basic form begins with type, title, authors, publication date, and
+language, then adapts its important publication fields to the selected type.
+Books, journal articles, chapters, conference papers, theses, reports, web
+pages, datasets, and software therefore expose the details most useful for that
+source without opening **Show advanced fields**. The editor now also stores CSL
+conference, genre or thesis type, and report-number attributes. The plugin
+generates a readable, collision-safe citekey automatically and keeps it stable
+on later edits.
+
+A live citation and bibliography preview renders the finished Markdown instead
+of showing formatting markers. Its directly visible selector previews any
+bundled style or a custom vault `.csl` file without changing global settings or
+stored data. CSL remains responsible for punctuation, quotation marks, and the
+final appearance; the reference data stays portable and independent of the
+chosen style.
+
+Additional CSL fields from externally edited records are retained. Existing
+citekeys stay fixed to protect links in notes, generated keys avoid duplicates
+in configured libraries, and deletion requires confirmation. Deleting a library
+record intentionally leaves existing note text unchanged.
+
+The README now contains the complete setup and entry workflow, person and
+organisation examples, a multi-record CSL-JSON example, and an explanation of
+which generated Markdown is published with Flowershow.
+
 ## Masters and embedded chapters
 
 Both bibliography commands follow full-note, heading, and block embeds,
@@ -49,6 +82,12 @@ unsupported syntax are not converted. The command works offline and on mobile.
 
 ## Styles and settings
 
+Twelve CSL locales are now bundled for fully offline citation formatting:
+German, US and UK English, Spanish, French, Italian, Japanese, Dutch, Polish,
+Brazilian Portuguese, Russian, and Simplified Chinese. The same choices are
+available globally, for enabled note overrides, and when assigning the language
+of a local reference.
+
 **Allow frontmatter overrides** is off by default. Enable it to use the active
 note's `style` and `locale` properties inside `markdown-citations`. Only style and language can be
 overridden locally; all other preferences remain global. Omitted values use global
@@ -66,6 +105,9 @@ and bibliography immediately.
 
 Citation links now navigate to their HTML bibliography anchors within Obsidian
 in reading mode and the editor, without the misleading missing-heading preview.
+Published anchors include a portable scroll margin so their bibliography entry
+remains visible below fixed website headers. In Obsidian reading mode, the
+plugin selects the visible rendered anchor and centers it in the note view.
 
 Nine bundled styles cover APA, Chicago author-date, Harvard Cite Them Right,
 MLA, IEEE, NLM/Vancouver, APS/Physical Review, an adapted alphabetical AMS
@@ -74,9 +116,8 @@ Existing DIN/Elsevier choices migrate to ISO 690/NLM respectively. Styles only
 change note content after a user-started update.
 
 The optional local library file is empty by default. File and folder pickers
-make source configuration easier. A local-library editing interface is still
-future work. The former unused citation-mode selector has been removed; the
-plugin always writes finished Markdown. Pandoc citation syntax and export
+make source configuration easier. The former unused citation-mode selector has
+been removed; the plugin always writes finished Markdown. Pandoc citation syntax and export
 belong to a separate authoring/export workflow, as explained in the README.
 
 ## Documentation

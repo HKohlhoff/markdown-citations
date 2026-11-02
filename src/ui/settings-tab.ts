@@ -1,4 +1,5 @@
 import { App, ButtonComponent, normalizePath, PluginSettingTab, Setting } from "obsidian";
+import { BUNDLED_CSL_LOCALES } from "../csl/locales";
 import { BUNDLED_CITATION_STYLES, getBundledCitationStyle } from "../csl/styles";
 import type MarkdownCitationsPlugin from "../main";
 import { VaultFileSuggestModal, VaultFolderSuggestModal } from "./vault-path-modal";
@@ -77,9 +78,13 @@ export class MarkdownCitationsSettingTab extends PluginSettingTab {
       .setCta()
       .onClick(() => this.chooseBibliographyFile());
 
+    new Setting(this.containerEl)
+      .setName("Local library")
+      .setDesc("One optional .json (CSL-JSON) file managed by Markdown Citations. Leave it empty when the bibliography files above already contain all sources.")
+      .setClass("markdown-citations-section-intro");
+
     const localLibrary = new Setting(this.containerEl)
-      .setName("Local library file")
-      .setDesc("Optional additional .json (CSL-JSON) file. Leave empty when your bibliography files already contain all sources.")
+      .setName("Library file")
       .setClass("markdown-citations-path-setting");
     localLibrary.addText((text) => {
       text
@@ -110,6 +115,21 @@ export class MarkdownCitationsSettingTab extends PluginSettingTab {
           void this.saveLocalLibraryPath(path);
         }).open();
       }));
+    localLibrary.addExtraButton((button) => button
+      .setIcon("trash-2")
+      .setTooltip("Clear local library path (the file is not deleted)")
+      .setDisabled(!this.plugin.settings.localLibraryPath)
+      .onClick(async () => {
+        this.plugin.settings.localLibraryPath = "";
+        await this.plugin.saveSettings();
+        this.refreshSettings();
+      }));
+
+    const manageLibrary = this.containerEl.createDiv({ cls: "markdown-citations-manage-library" });
+    new ButtonComponent(manageLibrary)
+      .setButtonText("Manage references")
+      .setCta()
+      .onClick(() => { void this.plugin.openLocalLibrary(); });
   }
 
   private renderCitationFormatting(): void {
@@ -162,15 +182,14 @@ export class MarkdownCitationsSettingTab extends PluginSettingTab {
       .setName("Default locale")
       .setDesc("Language used by the citation processor for terms, dates, and punctuation.")
       .setClass("markdown-citations-select-setting")
-      .addDropdown((dropdown) => dropdown
-        .addOption("de-DE", "Deutsch (Deutschland)")
-        .addOption("en-US", "English (United States)")
-        .addOption("en-GB", "English (United Kingdom)")
-        .setValue(this.plugin.settings.defaultLocale)
-        .onChange(async (value) => {
+      .addDropdown((dropdown) => {
+        for (const locale of BUNDLED_CSL_LOCALES) dropdown.addOption(locale.id, locale.title);
+        dropdown.setValue(this.plugin.settings.defaultLocale)
+          .onChange(async (value) => {
           this.plugin.settings.defaultLocale = value;
           await this.plugin.saveSettings();
-        }));
+          });
+      });
 
   }
 

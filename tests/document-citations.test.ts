@@ -141,7 +141,7 @@ test("style changes update citations and bibliography together and can round-tri
   };
   const numeric = rewrite(original, ieee);
   assert.match(findDocumentCitations(numeric)[0]?.label ?? "", /1/u);
-  assert.match(numeric, /<a id="ref-mueller2024"><\/a>/u);
+  assert.match(numeric, /<a id="ref-mueller2024" style="scroll-margin-top: 5rem;"><\/a>/u);
   const restored = rewrite(numeric, apa);
   assert.match(findDocumentCitations(restored)[0]?.label ?? "", /S\. 23/u);
   assert.match(findDocumentCitations(restored)[0]?.label ?? "", /Müller/u);

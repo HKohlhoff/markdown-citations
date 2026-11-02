@@ -1,6 +1,7 @@
 import { MarkdownView, type Plugin } from "obsidian";
 import { EditorView } from "@codemirror/view";
 import { findDocumentCitations } from "../document/citations";
+import { findBibliographyAnchorOffset } from "../document/bibliography-anchor";
 
 /** Obsidian resolves # fragments as headings; our portable HTML IDs need a local bridge. */
 export function registerCitationNavigation(plugin: Plugin): void {
@@ -32,7 +33,7 @@ export function registerCitationNavigation(plugin: Plugin): void {
             .find(citation => position >= citation.start && position < citation.end)?.anchor;
         }
         if (!id) return;
-        if (!view.editor.getValue().includes(`<a id="${id}"></a>`)) return;
+        if (findBibliographyAnchorOffset(view.editor.getValue(), id) < 0) return;
         return { view, id, renderedLink: link.matches("a") };
       };
       const navigate = (event: MouseEvent): void => {
@@ -44,13 +45,15 @@ export function registerCitationNavigation(plugin: Plugin): void {
         event.preventDefault();
         event.stopImmediatePropagation();
         const { view, id } = match;
-        const offset = view.editor.getValue().indexOf(`<a id="${id}"></a>`);
+        const offset = findBibliographyAnchorOffset(view.editor.getValue(), id);
+        if (offset < 0) return;
         const position = view.editor.offsetToPos(offset);
         if (view.getMode() === "preview") {
           // Reading view may not have rendered distant bibliography sections yet.
           view.previewMode.applyScroll(position.line);
-          const anchor = Array.from(view.containerEl.querySelectorAll<HTMLElement>("[id]"))
-            .find(element => element.id === id);
+          const anchors = Array.from(view.containerEl.querySelectorAll<HTMLElement>("[id]"))
+            .filter(element => element.id === id);
+          const anchor = anchors.find(element => element.offsetParent !== null) ?? anchors[0];
           anchor?.scrollIntoView({ block: "center" });
         } else {
           view.editor.setCursor(position);

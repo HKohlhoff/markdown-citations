@@ -49,8 +49,14 @@ for (const file of styleFiles) {
 }
 
 const localeFiles = fs.readdirSync("resources/csl/locales")
-  .filter((file) => file.endsWith(".xml"));
-if (localeFiles.length !== 3) errors.push("Exactly three bundled CSL locales are required.");
+  .filter((file) => file.endsWith(".xml"))
+  .sort();
+const expectedLocaleFiles = [
+  "de-DE", "en-GB", "en-US", "es-ES", "fr-FR", "it-IT", "ja-JP", "nl-NL", "pl-PL", "pt-BR", "ru-RU", "zh-CN",
+].map((locale) => `locales-${locale}.xml`).sort();
+if (JSON.stringify(localeFiles) !== JSON.stringify(expectedLocaleFiles)) {
+  errors.push("Bundled CSL locale files do not match the supported locale set.");
+}
 for (const file of localeFiles) {
   const locale = fs.readFileSync(`resources/csl/locales/${file}`, "utf8");
   if (!locale.includes("creativecommons.org/licenses/by-sa/3.0")) {

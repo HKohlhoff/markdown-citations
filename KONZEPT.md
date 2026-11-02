@@ -23,6 +23,12 @@ Serververarbeitung mit Flowershow veröffentlicht werden.
   alle Quellen in ein gemeinsames CSL-JSON-Datenmodell normalisiert.
 - Zotero ist optional. Mehrere gemischte Bibliografiedateien und eine vom
   Plugin verwaltete lokale CSL-JSON-Bibliothek werden unterstützt.
+- Eigene Referenzen beginnen mit wenigen wesentlichen CSL-Attributen; weitere
+  Angaben werden bei Bedarf eingeblendet. Das Plugin erzeugt eindeutige, beim
+  Bearbeiten stabile Citekeys und speichert portables CSL-JSON. Eine Vorschau
+  mit klar benanntem Stil und temporärer Stilauswahl zeigt die resultierende
+  Zitat- und Literaturdarstellung; die Datenpflege wird nicht zu einer zweiten
+  Formatierungsengine.
 - Beim Aktualisieren wird die Notiz von oben nach unten analysiert. Dadurch
   bleiben Reihenfolge, numerische Stile und Literaturverzeichnis konsistent.
 - Das Literaturverzeichnis wird standardmäßig an der Cursorposition eingefügt
@@ -117,6 +123,8 @@ Veröffentlichung sind zwingend zu prüfen:
 3. [x] eine Quelle in einem mobilen Dialog suchen;
 4. [x] ein einfaches Markdown-Zitat an der Cursorposition einfügen;
 5. [x] ein verlinktes Literaturverzeichnis erzeugen und sicher aktualisieren.
+6. [x] eigene Referenzen in einer lokalen CSL-JSON-Bibliothek erstellen,
+   bearbeiten, mit dem aktiven Stil vorab anzeigen und sicher löschen.
 
 Der erste Prototyp verwendet citeproc-js lokal für CSL-formatierte Einzelzitate,
 Seiten- und Abschnittsangaben sowie Literaturverzeichnisse. Der gemeinsame

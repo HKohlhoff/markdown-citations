@@ -4,6 +4,37 @@ All notable changes to Markdown Citations will be documented in this file.
 
 ## Unreleased
 
+- Expand the offline CSL locale set from German and English to twelve choices,
+  adding Spanish, French, Italian, Japanese, Dutch, Polish, Brazilian
+  Portuguese, Russian, and Simplified Chinese throughout settings, note
+  overrides, and the local-reference editor.
+- Add a mobile-friendly local CSL-JSON reference manager with create, edit,
+  preview, and confirmed-delete workflows.
+- Build local references from standard CSL attributes, preserve unknown fields,
+  keep existing citekeys stable, reject cross-library duplicates, and create
+  the configured vault file/folders through Obsidian APIs.
+- Preview local citations and bibliography entries with the active bundled or
+  custom vault CSL style and locale.
+- Redesign reference creation around a calm essential form, automatic stable
+  citekeys, collapsible advanced attributes, consistently aligned left-reading
+  inputs, and a compact details row for volume, issue, edition, and pages.
+- Label the preview with the active global CSL style and locale, and allow a
+  temporary bundled or custom-vault preview style without changing settings.
+- Render preview Markdown instead of exposing emphasis markers, keep the style
+  selector directly visible, and use a fixed language choice defaulting to the
+  global locale.
+- Delay creation and configuration of `MarkdownCitations.json` until the first
+  reference is actually saved.
+- Tighten the compact publication-detail row and show the access date in the
+  basic form whenever the reference type is a web page.
+- Store the CSL version attribute and show it in the basic form for software.
+- Show ISBN in the basic form for books while retaining it for other types in
+  the advanced section.
+- Adapt the basic form to every supported reference type and add portable CSL
+  fields for conference/event title, thesis type or genre, and report number.
+- Expand the README with a complete local-library workflow, CSL-JSON examples,
+  author-entry conventions, and the Flowershow publication boundary.
+
 - Protect fenced-code, inline-code, and comment examples from bibliography
   replacement; reject incomplete or duplicated ownership markers.
 - Verify rebased publication links independently of Vault effects and document
@@ -28,6 +59,9 @@ All notable changes to Markdown Citations will be documented in this file.
   masters use only their own overrides. All other preferences remain global.
 - Handle portable bibliography anchor navigation within Obsidian and suppress
   misleading missing-heading hover previews for resolved citation links.
+- Keep published bibliography targets below fixed website headers with portable
+  scroll margins, and select the visible rendered anchor in Obsidian reading
+  mode when hidden and visible render trees coexist.
 - Support Cmd/Ctrl-click on CodeMirror citation spans in source mode and live
   preview, including Obsidian's mousedown navigation path.
 - Use consistent .bib and .json (CSL-JSON) file labels in settings and pickers.

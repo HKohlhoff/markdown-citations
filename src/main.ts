@@ -2,6 +2,7 @@ import { Notice, Plugin, MarkdownView, TFile, parseYaml, stringifyYaml, type Edi
 import { loadBibliographies } from "./bibliography/load";
 import type { CitationRenderOptions } from "./citation/render";
 import { formatCslCitation } from "./csl/processor";
+import { isSupportedCslLocale } from "./csl/locales";
 import { resolveCitationStyle } from "./csl/resolve-style";
 import { citedItemsInDocument } from "./document/bibliography";
 import { insertCitation } from "./document/citations";
@@ -22,6 +23,10 @@ import { registerCitationNavigation } from "./ui/citation-navigation";
 import { NoteFormatDialog } from "./ui/note-format-dialog";
 import { assertPublicationOwnership, buildPublication, publicationPath } from "./document/publication";
 import { createPublicationLinkRebaser } from "./vault/publication-links";
+import { deleteLocalReference, readLocalLibrary, saveLocalReference } from "./vault/local-library";
+import { generateLocalCiteKey, localReferenceInput, type LocalReferenceInput } from "./bibliography/local-library";
+import { LocalReferenceDialog } from "./ui/local-reference-dialog";
+import { DeleteLocalReferenceDialog, LocalLibraryDialog } from "./ui/local-library-dialog";
 
 const yamlCodec: YamlCodec = { parse: parseYaml, stringify: stringifyYaml };
 
@@ -58,6 +63,16 @@ export default class MarkdownCitationsPlugin extends Plugin {
     );
     this.addSettingTab(new MarkdownCitationsSettingTab(this.app, this));
     registerCitationNavigation(this);
+    this.addCommand({
+      id: "manage-local-references",
+      name: "Manage local references",
+      callback: () => { void this.openLocalLibrary(); },
+    });
+    this.addCommand({
+      id: "create-local-reference",
+      name: "Create local reference",
+      callback: () => { void this.openLocalReferenceEditor(); },
+    });
     this.addCommand({
       id: "update-publication-note",
       name: "Create / update publication note",
@@ -129,6 +144,47 @@ export default class MarkdownCitationsPlugin extends Plugin {
     this.showUpdateNotice(true);
   }
 
+  async openLocalLibrary(): Promise<void> {
+    try {
+      const path = this.localLibraryTargetPath();
+      const items = await readLocalLibrary(this.app.vault, path);
+      const modal = new LocalLibraryDialog(
+        this.app,
+        path,
+        this.settings.localLibraryPath !== "",
+        items,
+        () => { void this.openLocalReferenceEditor(); },
+        item => { void this.openLocalReferenceEditor(item); },
+        item => this.confirmDeleteLocalReference(item),
+      );
+      this.register(() => modal.close());
+      modal.open();
+    } catch (error) {
+      new Notice(`Could not open local reference library: ${errorMessage(error)}`, 9000);
+    }
+  }
+
+  async openLocalReferenceEditor(item?: BibliographyItem): Promise<void> {
+    try {
+      const path = this.localLibraryTargetPath();
+      if (item && item.sourcePath !== path) throw new Error("Only references from the local library can be edited.");
+      const style = await resolveCitationStyle(this.app.vault, this.settings.defaultCitationStyle);
+      const modal = new LocalReferenceDialog(
+        this.app,
+        item ? localReferenceInput(item.csl) : undefined,
+        item?.citeKey,
+        this.settings.defaultCitationStyle,
+        style,
+        this.settings.defaultLocale,
+        async value => this.persistLocalReference(path, value, item?.citeKey),
+      );
+      this.register(() => modal.close());
+      modal.open();
+    } catch (error) {
+      new Notice(`Could not open local reference editor: ${errorMessage(error)}`, 9000);
+    }
+  }
+
   private showUpdateNotice(force = false): void {
     void this.updateNotice?.show(force).catch((error: unknown) => {
       console.error("[markdown-citations] Could not save update acknowledgement", error);
@@ -145,6 +201,42 @@ export default class MarkdownCitationsPlugin extends Plugin {
     modal.open();
   }
 
+  private localLibraryTargetPath(): string {
+    return this.settings.localLibraryPath || "MarkdownCitations.json";
+  }
+
+  private async persistLocalReference(
+    path: string,
+    value: LocalReferenceInput,
+    originalCiteKey?: string,
+  ): Promise<void> {
+    const allSources = await loadBibliographies(this.app.vault, this.configuredBibliographyPaths(this.settings));
+    const savedValue = originalCiteKey
+      ? { ...value, citeKey: originalCiteKey }
+      : { ...value, citeKey: generateLocalCiteKey(value, allSources.items.map(entry => entry.citeKey)) };
+    await saveLocalReference(this.app.vault, path, savedValue, originalCiteKey);
+    if (!this.settings.localLibraryPath) {
+      this.settings.localLibraryPath = path;
+      await this.saveSettings();
+    }
+    new Notice(`${originalCiteKey ? "Local reference saved" : "Local reference created"}: @${savedValue.citeKey}`);
+    void this.openLocalLibrary();
+  }
+
+  private confirmDeleteLocalReference(item: BibliographyItem): void {
+    const modal = new DeleteLocalReferenceDialog(this.app, item, async () => {
+      try {
+        await deleteLocalReference(this.app.vault, item.sourcePath, item.citeKey);
+        new Notice(`Local reference deleted: @${item.citeKey}`);
+        void this.openLocalLibrary();
+      } catch (error) {
+        new Notice(`Could not delete local reference: ${errorMessage(error)}`, 9000);
+      }
+    });
+    this.register(() => modal.close());
+    modal.open();
+  }
+
   private openNoteFormatDialog(editor: Editor, file?: TFile | null): void {
     if (!this.settings.allowFrontmatterOverrides) {
       new Notice("Local citation settings are disabled. Enable Allow frontmatter overrides in Markdown Citations settings first.", 7000);
@@ -157,7 +249,8 @@ export default class MarkdownCitationsPlugin extends Plugin {
     try {
       const properties = readNoteFormatProperties(editor.getValue(), yamlCodec);
       const style = typeof properties.style === "string" ? properties.style.trim() : "";
-      const locale = ["de-DE", "en-US", "en-GB"].includes(String(properties.locale)) ? String(properties.locale) : "";
+      const storedLocale = typeof properties.locale === "string" ? properties.locale.trim() : "";
+      const locale = isSupportedCslLocale(storedLocale) ? storedLocale : "";
       const modal = new NoteFormatDialog(this.app, { style, locale }, {
         style: this.settings.defaultCitationStyle, locale: this.settings.defaultLocale,
       }, async (selection, update) => {

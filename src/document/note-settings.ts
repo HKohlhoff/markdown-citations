@@ -1,4 +1,5 @@
 import { normalizeSettings, type MarkdownCitationsSettings } from "../settings-data";
+import { isSupportedCslLocale, supportedCslLocaleIds } from "../csl/locales";
 import { frontmatterRange, type YamlCodec } from "./citation-frontmatter";
 
 /** User choices share the plugin namespace with its managed citation registry. */
@@ -20,7 +21,9 @@ export function resolveNoteSettings(
   if (style) effective.defaultCitationStyle = normalizeSettings({ defaultCitationStyle: style }).defaultCitationStyle;
   const locale = text("locale");
   if (locale) {
-    if (!["de-DE", "en-US", "en-GB"].includes(locale)) throw new Error("markdown-citations.locale must be de-DE, en-US, or en-GB.");
+    if (!isSupportedCslLocale(locale)) {
+      throw new Error(`markdown-citations.locale must be one of: ${supportedCslLocaleIds()}.`);
+    }
     effective.defaultLocale = locale;
   }
   return effective;

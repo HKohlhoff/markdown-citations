@@ -43,10 +43,16 @@ test("absent and empty properties fall back and custom styles are supported", ()
 
 test("invalid active overrides fail clearly before changing the note", () => {
   for (const [key, value] of [
-    ["locale", "fr-FR"], ["style", "two\nlines"], ["locale", false],
+    ["locale", "fr-CA"], ["style", "two\nlines"], ["locale", false],
   ] as const) {
     const content = note({ [key]: value });
     assert.throws(() => resolveNoteSettings(global, content, codec), new RegExp(key));
+  }
+});
+
+test("international bundled locales can override the global locale", () => {
+  for (const locale of ["es-ES", "fr-FR", "it-IT", "ja-JP", "nl-NL", "pl-PL", "pt-BR", "ru-RU", "zh-CN"]) {
+    assert.equal(resolveNoteSettings(global, note({ locale }), codec).defaultLocale, locale);
   }
 });
 

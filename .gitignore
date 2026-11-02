@@ -1,6 +1,7 @@
 node_modules/
 main.js
 release/
+dist/
 .test-build/
 data.json
 .DS_Store

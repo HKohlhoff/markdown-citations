@@ -1,4 +1,4 @@
-/* Markdown Citations 1.0.1 */
+/* Markdown Citations 1.0.2 */
 
 .markdown-citations-source-title {
   font-weight: var(--font-semibold);
@@ -268,23 +268,23 @@
   padding: var(--size-4-2) 0;
 }
 
-.markdown-citations-local-reference-grid .setting-item {
+.markdown-citations-local-reference-dialog .markdown-citations-local-reference-grid > .setting-item.markdown-citations-reference-field {
   align-items: stretch;
-  border: 0 !important;
+  border: 0;
   flex-direction: column;
   gap: var(--size-4-3);
-  margin-top: 0 !important;
-  padding: 0 !important;
+  margin-top: 0;
+  padding: 0;
 }
 
-.markdown-citations-local-reference-dialog .markdown-citations-local-reference-grid .markdown-citations-reference-field .setting-item-info {
+.markdown-citations-local-reference-dialog .markdown-citations-local-reference-grid > .setting-item.markdown-citations-reference-field > .setting-item-info {
   flex: none;
-  margin: 0 !important;
+  margin: 0;
 }
 
-.markdown-citations-local-reference-dialog .markdown-citations-local-reference-grid .markdown-citations-reference-field .setting-item-control {
+.markdown-citations-local-reference-dialog .markdown-citations-local-reference-grid > .setting-item.markdown-citations-reference-field > .setting-item-control {
   flex: none;
-  margin: 0 !important;
+  margin: 0;
   min-width: 0;
   width: 100%;
 }

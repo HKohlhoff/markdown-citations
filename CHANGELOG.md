@@ -4,6 +4,10 @@ All notable changes to Markdown Citations will be documented in this file.
 
 ## Unreleased
 
+## 1.0.5 - 2026-11-02
+
+- Let vault-relative path inputs use the full dialog width.
+
 ## 1.0.4 - 2026-11-02
 
 - Restore the established vertical settings layout while retaining Obsidian

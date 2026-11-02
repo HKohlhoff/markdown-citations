@@ -2,7 +2,7 @@ import { App, ButtonComponent, normalizePath, PluginSettingTab, Setting, type Se
 import { BUNDLED_CSL_LOCALES } from "../csl/locales";
 import { BUNDLED_CITATION_STYLES, getBundledCitationStyle } from "../csl/styles";
 import type MarkdownCitationsPlugin from "../main";
-import { VaultFileSuggestModal, VaultFolderSuggestModal } from "./vault-path-modal";
+import { VaultFilePathModal, VaultFolderPathModal } from "./vault-path-modal";
 
 const CUSTOM_STYLE_SENTINEL = "__markdown-citations-custom-style__";
 const LOCAL_LIBRARY_FILE_NAME = "MarkdownCitations.json";
@@ -123,7 +123,7 @@ export class MarkdownCitationsSettingTab extends PluginSettingTab {
       .setIcon("file-search-2")
       .setTooltip("Choose existing .json (CSL-JSON) file")
       .onClick(() => {
-        new VaultFileSuggestModal(this.app, "json", (file) => {
+        new VaultFilePathModal(this.app, "json", (file) => {
           void this.saveLocalLibraryPath(file.path);
         }).open();
       }));
@@ -131,7 +131,7 @@ export class MarkdownCitationsSettingTab extends PluginSettingTab {
       .setIcon("folder-search-2")
       .setTooltip("Choose destination folder")
       .onClick(() => {
-        new VaultFolderSuggestModal(this.app, (folder) => {
+        new VaultFolderPathModal(this.app, (folder) => {
           const path = folder.isRoot()
             ? LOCAL_LIBRARY_FILE_NAME
             : `${folder.path}/${LOCAL_LIBRARY_FILE_NAME}`;
@@ -276,7 +276,7 @@ export class MarkdownCitationsSettingTab extends PluginSettingTab {
   }
 
   private chooseBibliographyFile(replaceIndex?: number): void {
-    new VaultFileSuggestModal(this.app, "bibliography", (file) => {
+    new VaultFilePathModal(this.app, "bibliography", (file) => {
       void this.saveBibliographyFile(file.path, replaceIndex);
     }).open();
   }
@@ -300,7 +300,7 @@ export class MarkdownCitationsSettingTab extends PluginSettingTab {
   }
 
   private chooseCustomStyle(): void {
-    new VaultFileSuggestModal(this.app, "csl", (file) => {
+    new VaultFilePathModal(this.app, "csl", (file) => {
       this.plugin.settings.defaultCitationStyle = file.path;
       void this.plugin.saveSettings().then(() => this.refreshSettings());
     }).open();

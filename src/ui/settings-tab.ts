@@ -30,10 +30,12 @@ export class MarkdownCitationsSettingTab extends PluginSettingTab {
       ],
       render: (setting) => {
         const rootContainer = this.containerEl;
-        this.containerEl = setting.settingEl;
+        setting.settingEl.empty();
+        setting.settingEl.addClass("markdown-citations-settings-host");
+        this.containerEl = setting.settingEl.createDiv();
         this.renderSettings();
         return () => {
-          if (this.containerEl === setting.settingEl) this.containerEl = rootContainer;
+          if (setting.settingEl.contains(this.containerEl)) this.containerEl = rootContainer;
         };
       },
     }];

@@ -47,6 +47,7 @@ export class VaultFilePathModal extends Modal {
 
     new Setting(this.contentEl)
       .setName("Vault-relative path")
+      .setClass("markdown-citations-vault-path-field")
       .addText(text => {
         text.setPlaceholder(config.placeholder).onChange(value => {
           this.value = value;
@@ -116,6 +117,7 @@ export class VaultFolderPathModal extends Modal {
 
     new Setting(this.contentEl)
       .setName("Vault-relative path")
+      .setClass("markdown-citations-vault-path-field")
       .addText(text => {
         text.setPlaceholder("Literature").onChange(value => {
           this.value = value;

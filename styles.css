@@ -1,4 +1,4 @@
-/* Markdown Citations 1.0.4 */
+/* Markdown Citations 1.0.5 */
 
 .markdown-citations-settings-host.setting-item {
   border-top: 0;
@@ -197,6 +197,17 @@
 .markdown-citations-path-error:not(:empty) {
   color: var(--text-error);
   margin: var(--size-4-2) 0;
+}
+
+.markdown-citations-vault-path-field.setting-item {
+  align-items: stretch;
+  flex-direction: column;
+  gap: var(--size-4-2);
+}
+
+.markdown-citations-vault-path-field > .setting-item-control,
+.markdown-citations-vault-path-field input {
+  width: 100%;
 }
 
 .markdown-citations-documentation-modal {

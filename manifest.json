@@ -1,7 +1,7 @@
 {
   "id": "markdown-citations",
   "name": "Markdown Citations",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "minAppVersion": "1.13.0",
   "description": "Create portable Markdown citations and bibliographies from .bib or .json (CSL-JSON) files, regardless of the tool used to create them.",
   "author": "Holger Kohlhoff",

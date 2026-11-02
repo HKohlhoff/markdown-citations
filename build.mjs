@@ -9,7 +9,7 @@ const watch = process.argv.includes("--watch");
 const deploy = process.argv.includes("--deploy");
 const pluginId = "markdown-citations";
 const pluginsDir = process.env.OBSIDIAN_PLUGINS_DIR ?? "";
-const releaseDir = "release";
+const releaseDir = "dist";
 const releaseFiles = [
   "main.js",
   "manifest.json",

@@ -1,4 +1,4 @@
-import { App, ButtonComponent, normalizePath, PluginSettingTab, Setting } from "obsidian";
+import { App, ButtonComponent, normalizePath, PluginSettingTab, Setting, type SettingDefinitionItem } from "obsidian";
 import { BUNDLED_CSL_LOCALES } from "../csl/locales";
 import { BUNDLED_CITATION_STYLES, getBundledCitationStyle } from "../csl/styles";
 import type MarkdownCitationsPlugin from "../main";
@@ -12,8 +12,31 @@ export class MarkdownCitationsSettingTab extends PluginSettingTab {
     super(app, plugin);
   }
 
-  display(): void {
-    this.renderSettings();
+  getSettingDefinitions(): SettingDefinitionItem[] {
+    return [{
+      name: "Markdown Citations",
+      desc: "Configure bibliography sources, citation formatting, bibliography output, and plugin documentation.",
+      aliases: [
+        "Bibliography files",
+        "Local library",
+        "Allow frontmatter overrides",
+        "Default citation style",
+        "Default locale",
+        "Bibliography position",
+        "Insert bibliography heading",
+        "Bibliography heading",
+        "Last update",
+        "README",
+      ],
+      render: (setting) => {
+        const rootContainer = this.containerEl;
+        this.containerEl = setting.settingEl;
+        this.renderSettings();
+        return () => {
+          if (this.containerEl === setting.settingEl) this.containerEl = rootContainer;
+        };
+      },
+    }];
   }
 
   private renderSettings(): void {

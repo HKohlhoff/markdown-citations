@@ -1,7 +1,7 @@
 import { App, Modal, Notice, Setting } from "obsidian";
 import { BUNDLED_CSL_LOCALES, cslLocaleTitle } from "../csl/locales";
 import { BUNDLED_CITATION_STYLES } from "../csl/styles";
-import { VaultFilePathModal } from "./vault-path-modal";
+import { VaultFileSuggestModal } from "./vault-path-modal";
 
 export interface NoteFormat {
   style: string;
@@ -87,7 +87,7 @@ export class NoteFormatDialog extends Modal {
   }
 
   private chooseCustomStyle(): void {
-    new VaultFilePathModal(this.app, "csl", file => {
+    new VaultFileSuggestModal(this.app, "csl", file => {
       this.customStyles.set(file.path, `Custom: ${file.path}`);
       this.noteFormat.style = file.path;
       this.render();

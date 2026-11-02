@@ -32,13 +32,37 @@ jobs:
             release/main.js
             release/manifest.json
             release/styles.css
+            release/LICENSE
+            release/THIRD_PARTY_NOTICES.md
+            release/LICENSES/Citation.js-MIT.md
+            release/LICENSES/CSL-Styles-CC-BY-SA-3.0.md
+            release/LICENSES/citeproc-js-AGPL-3.0-or-later.txt
       - name: Publish release assets
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           tag="${GITHUB_REF#refs/tags/}"
           if gh release view "$tag" >/dev/null 2>&1; then
-            gh release upload "$tag" --clobber release/main.js release/manifest.json release/styles.css
+            gh release upload "$tag" --clobber \
+              release/main.js \
+              release/manifest.json \
+              release/styles.css \
+              release/LICENSE \
+              release/THIRD_PARTY_NOTICES.md \
+              release/LICENSES/Citation.js-MIT.md \
+              release/LICENSES/CSL-Styles-CC-BY-SA-3.0.md \
+              release/LICENSES/citeproc-js-AGPL-3.0-or-later.txt
           else
-            gh release create "$tag" --verify-tag --title="$tag" +              --notes="Release $tag for Markdown Citations." +              release/main.js release/manifest.json release/styles.css
+            gh release create "$tag" \
+              --verify-tag \
+              --title="$tag" \
+              --notes="Release $tag for Markdown Citations." \
+              release/main.js \
+              release/manifest.json \
+              release/styles.css \
+              release/LICENSE \
+              release/THIRD_PARTY_NOTICES.md \
+              release/LICENSES/Citation.js-MIT.md \
+              release/LICENSES/CSL-Styles-CC-BY-SA-3.0.md \
+              release/LICENSES/citeproc-js-AGPL-3.0-or-later.txt
           fi

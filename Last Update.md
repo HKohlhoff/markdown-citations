@@ -82,6 +82,12 @@ unsupported syntax are not converted. The command works offline and on mobile.
 
 ## Styles and settings
 
+Twelve CSL locales are now bundled for fully offline citation formatting:
+German, US and UK English, Spanish, French, Italian, Japanese, Dutch, Polish,
+Brazilian Portuguese, Russian, and Simplified Chinese. The same choices are
+available globally, for enabled note overrides, and when assigning the language
+of a local reference.
+
 **Allow frontmatter overrides** is off by default. Enable it to use the active
 note's `style` and `locale` properties inside `markdown-citations`. Only style and language can be
 overridden locally; all other preferences remain global. Omitted values use global
@@ -99,6 +105,9 @@ and bibliography immediately.
 
 Citation links now navigate to their HTML bibliography anchors within Obsidian
 in reading mode and the editor, without the misleading missing-heading preview.
+Published anchors include a portable scroll margin so their bibliography entry
+remains visible below fixed website headers. In Obsidian reading mode, the
+plugin selects the visible rendered anchor and centers it in the note view.
 
 Nine bundled styles cover APA, Chicago author-date, Harvard Cite Them Right,
 MLA, IEEE, NLM/Vancouver, APS/Physical Review, an adapted alphabetical AMS

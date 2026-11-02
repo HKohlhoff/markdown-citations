@@ -1,4 +1,5 @@
 import { App, Modal, Notice, Setting } from "obsidian";
+import { BUNDLED_CSL_LOCALES, cslLocaleTitle } from "../csl/locales";
 import { BUNDLED_CITATION_STYLES } from "../csl/styles";
 import { VaultFileSuggestModal } from "./vault-path-modal";
 
@@ -55,13 +56,12 @@ export class NoteFormatDialog extends Modal {
       .setName("Locale")
       .setDesc("Language used by the citation processor for terms, dates, and punctuation.")
       .setClass("markdown-citations-select-setting")
-      .addDropdown(dropdown => dropdown
-        .addOption("", `Use global default: ${this.global.locale}`)
-        .addOption("de-DE", "Deutsch (Deutschland)")
-        .addOption("en-US", "English (United States)")
-        .addOption("en-GB", "English (United Kingdom)")
-        .setValue(this.noteFormat.locale)
-        .onChange(value => { this.noteFormat.locale = value; }));
+      .addDropdown(dropdown => {
+        dropdown.addOption("", `Use global default: ${cslLocaleTitle(this.global.locale)}`);
+        for (const locale of BUNDLED_CSL_LOCALES) dropdown.addOption(locale.id, locale.title);
+        dropdown.setValue(this.noteFormat.locale)
+          .onChange(value => { this.noteFormat.locale = value; });
+      });
     const actions = new Setting(this.contentEl).setClass("markdown-citations-note-format-actions");
     actions.addButton(button => button.setButtonText("Cancel").onClick(() => this.close()));
     for (const update of [false, true]) {

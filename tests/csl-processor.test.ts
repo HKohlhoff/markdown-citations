@@ -6,6 +6,7 @@ import {
   placeBibliographyUrlOnOwnLine,
 } from "../src/csl/processor";
 import { getBundledCitationStyle } from "../src/csl/styles";
+import { BUNDLED_CSL_LOCALES } from "../src/csl/locales";
 import type { BibliographyItem } from "../src/model/bibliography";
 
 const item: BibliographyItem = {
@@ -73,6 +74,14 @@ test("citeproc formats a localized citation with a page range", () => {
   assert.match(citation, /2024/u);
   assert.match(citation, /23–27/u);
   assert.doesNotMatch(citation, /<[^>]+>/u);
+});
+
+test("citeproc accepts every bundled locale", () => {
+  for (const locale of BUNDLED_CSL_LOCALES) {
+    const citation = formatCslCitation([item], item, { locator: "3" }, apa, locale.id);
+    assert.match(citation, /Müller/u, locale.id);
+    assert.match(citation, /2024/u, locale.id);
+  }
 });
 
 test("citeproc formats a Markdown bibliography entry", () => {

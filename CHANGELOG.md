@@ -4,6 +4,10 @@ All notable changes to Markdown Citations will be documented in this file.
 
 ## Unreleased
 
+- Expand the offline CSL locale set from German and English to twelve choices,
+  adding Spanish, French, Italian, Japanese, Dutch, Polish, Brazilian
+  Portuguese, Russian, and Simplified Chinese throughout settings, note
+  overrides, and the local-reference editor.
 - Add a mobile-friendly local CSL-JSON reference manager with create, edit,
   preview, and confirmed-delete workflows.
 - Build local references from standard CSL attributes, preserve unknown fields,
@@ -55,6 +59,9 @@ All notable changes to Markdown Citations will be documented in this file.
   masters use only their own overrides. All other preferences remain global.
 - Handle portable bibliography anchor navigation within Obsidian and suppress
   misleading missing-heading hover previews for resolved citation links.
+- Keep published bibliography targets below fixed website headers with portable
+  scroll margins, and select the visible rendered anchor in Obsidian reading
+  mode when hidden and visible render trees coexist.
 - Support Cmd/Ctrl-click on CodeMirror citation spans in source mode and live
   preview, including Obsidian's mousedown navigation path.
 - Use consistent .bib and .json (CSL-JSON) file labels in settings and pickers.

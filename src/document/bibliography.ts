@@ -3,6 +3,7 @@ import type { BibliographyItem } from "../model/bibliography";
 import type { BibliographyPosition } from "../settings-data";
 import { bibliographyAnchor, renderBibliographyEntry } from "../citation/render";
 import { findDocumentCitations } from "./citations";
+import { renderBibliographyAnchor } from "./bibliography-anchor";
 import { BIBLIOGRAPHY_START, BIBLIOGRAPHY_END, BIBLIOGRAPHY_PLACEHOLDER, bibliographyRange, bibliographyPlaceholder } from "./markdown-ranges";
 export { BIBLIOGRAPHY_START, BIBLIOGRAPHY_END, BIBLIOGRAPHY_PLACEHOLDER };
 
@@ -96,7 +97,7 @@ function renderBibliographyBlock(
     markdown: renderBibliographyEntry(item),
   }));
   for (const entry of entries) {
-    lines.push(`<a id="${bibliographyAnchor(entry.citeKey)}"></a>${entry.markdown}`, "");
+    lines.push(`${renderBibliographyAnchor(bibliographyAnchor(entry.citeKey))}${entry.markdown}`, "");
   }
   if (entries.length === 0) lines.push("_No Markdown Citations references found._");
   if (lines[lines.length - 1] !== "") lines.push("");

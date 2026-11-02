@@ -1,59 +1,95 @@
 # Markdown Citations
 
-Markdown Citations creates readable, portable citations and bibliographies from
-bibliography files in **.bib** or **.json (CSL-JSON)** format. It does not matter which
-application created the files or where the bibliographic data originated.
-`.bib` files may use BibTeX or BibLaTeX syntax; JSON files must contain CSL-JSON
-bibliographic records rather than arbitrary JSON data.
+Markdown Citations creates finished, portable Markdown citations and
+bibliographies from BibTeX, BibLaTeX, and CSL-JSON files. The generated text
+remains readable when the plugin is disabled and can be published directly with
+the rest of the note.
 
-Version 0.1.0 is the first working prototype. It loads .bib and .json (CSL-JSON)
-files through the Obsidian Vault API, offers a mobile-friendly source
-search, formats citations and bibliographies locally with citeproc-js, writes
-the finished result as portable Markdown, and creates or updates an owned
-bibliography block.
+Bibliography files and local references stay inside the Obsidian vault. Citation
+processing runs locally without telemetry, accounts, or network requests.
+Markdown Citations works on desktop and mobile and requires Obsidian 1.13.0 or
+later. Version 1.0.0 is the initial public release.
 
-The settings page provides searchable Vault file and folder selectors, wide
-path fields, and a dropdown containing nine bundled CSL styles: APA 7,
-Chicago author-date, Harvard Cite Them Right, MLA 9, IEEE, NLM/Vancouver,
-ISO 690:2021 (localized adaptation), APS/Physical Review, and AMS numeric
-(alphabetical adaptation). Custom `.csl` files stored in the vault can also be
-selected. The optional local library file is empty by default.
+## Features
+
+- **Bibliography sources:** Search multiple `.bib` and `.json` (CSL-JSON) files
+  by author, title, year, or citekey.
+- **Citations:** Insert parenthetical or narrative citations with optional
+  locators, prefixes, and suffixes.
+- **Bibliography:** Generate and safely update a readable Markdown bibliography
+  containing the sources cited in the current note.
+- **Local references:** Create and edit references in an optional local CSL-JSON
+  library without requiring Zotero or another reference manager.
+- **CSL formatting:** Choose from nine bundled CSL styles or select a custom
+  `.csl` file stored in the vault. Format citations with twelve bundled CSL
+  locales, fully offline.
+- **Per-note formatting:** Override citation style and locale for individual
+  notes when explicitly enabled.
+- **Portable output:** Keep generated Markdown usable in Obsidian, Flowershow,
+  and other Markdown workflows without a proprietary citation format.
+
+### Advanced workflow: masters and publication notes
+
+For longer documents split across embedded chapter notes, Markdown Citations
+also provides an optional document-wide workflow:
+
+- **Master bibliography:** Collect citations from a master note and its embedded
+  chapters into one shared bibliography without rewriting the chapter files.
+- **Publication note:** Create a separate, assembled Markdown note with expanded
+  embeds, consistently formatted citations, and one document-wide bibliography.
+
+## Installation
+
+Install Markdown Citations directly from **Settings → Community plugins →
+Browse** in Obsidian.
+
+For a manual installation, download `main.js`, `manifest.json`, and `styles.css`
+from a GitHub release and place them in:
+
+```text
+<vault>/.obsidian/plugins/markdown-citations/
+```
+
+Then reload Obsidian and enable **Markdown Citations** under Community plugins.
+
+## Quick start
+
+1. Open the Markdown Citations settings and select one or more bibliography
+   files in `.bib` or `.json` (CSL-JSON) format.
+2. Choose the default citation style and locale.
+3. Run **Markdown Citations: Insert citation** in an open Markdown note.
+4. Search for a source, choose the citation form, and optionally add a page,
+   section, prefix, or suffix.
+5. Run **Markdown Citations: Insert / update bibliography**.
+6. Run **Markdown Citations: Update citations** after changing a style or
+   locale to reformat existing citations and the bibliography together.
+
+Markdown Citations inserts one source per citation link. Multiple sources can
+be inserted as consecutive citations; combined citation clusters are not
+supported.
+
+## Citation styles and locales
+
+The plugin bundles APA 7, Chicago author-date, Harvard Cite Them Right, MLA 9,
+IEEE, NLM/Vancouver, ISO 690:2021 (localized adaptation), APS/Physical Review,
+and AMS numeric (alphabetical adaptation). Custom `.csl` files stored in the
+vault can also be selected.
 
 IEEE covers engineering and computing; APS covers physics. The AMS adaptation
 uses mathematical bibliography formatting with alphabetical reference ordering;
 APS numbers references in first-citation order. ISO 690 uses the upstream 2021
 author-date style with language-specific terms, rather than the older German
-CSL based on DIN ISO 690:2013. Existing DIN and Elsevier style settings migrate
-to ISO 690 and general NLM/Vancouver respectively. No notes are automatically
-reformatted when settings migrate: run **Update citations** when desired.
+CSL based on DIN ISO 690:2013.
+
+The citation processor includes twelve offline CSL locales: German, US and UK
+English, Spanish, French, Italian, Japanese, Dutch, Polish, Brazilian
+Portuguese, Russian, and Simplified Chinese. A locale supplies translated terms,
+date forms, and language-specific typographic conventions; the selected CSL
+style still determines the structure and formatting of the citation.
 
 The two adapted styles are clearly labeled and documented in
-`resources/csl/README.md`; they are not claims of certified standards compliance.
-
-## Goals
-
-- produce Markdown that remains readable without the plugin;
-- publish the same notes directly with Flowershow;
-- support multiple bibliography files and a local vault library;
-- use CSL styles instead of implementing citation rules ourselves;
-- work on macOS, iPadOS, and iOS without Node or Electron runtime APIs.
-
-The complete product decisions and open technical questions are recorded in
-[KONZEPT.md](KONZEPT.md).
-
-## Prototype workflow
-
-1. Select one or more bibliography files in the plugin settings.
-2. Run **Markdown Citations: Insert citation** in an open Markdown note.
-3. Search by author, title, year, or citekey and select a source.
-4. Choose the citation form and optionally add a page, section, prefix, or
-   suffix. The preview uses the selected CSL style.
-5. Run **Markdown Citations: Insert / update bibliography**.
-
-The selected CSL style now formats single citations, locators, and bibliography
-entries. Multiple sources can be inserted as consecutive independent citations;
-combined citation clusters are deliberately outside the initial core scope.
-The plugin always inserts finished, readable Markdown citations.
+[`resources/csl/README.md`](resources/csl/README.md). They are localized or
+sorted adaptations, not claims of certified standards compliance.
 
 ## Local references
 
@@ -98,22 +134,32 @@ The trash button only clears the configured path; it never deletes the file.
 6. Choose **Create reference**. The plugin writes the entry to the configured
    local CSL-JSON file and reports its generated citekey.
 
-The reference editor starts with the essential attributes: reference type,
-title, authors, publication date, and language. Language is selected from the
-same named choices as the global locale and initially follows that global
-choice. The remaining basic fields adapt to the reference type: books show
-edition, publisher, and ISBN; journal articles their journal and publication
-details; chapters their book, editors, pages, and ISBN; conference papers their
-proceedings and conference; theses their type and university; reports their
-institution and number; web pages their URL and access date; and datasets or
-software their version and identifiers. **Show advanced fields** retains all
-other attributes, including event, genre, report number, publisher and place,
-ISBN, DOI, URL, and access date. Enter one author or editor per line. Use
-`Family, Given` for a person and a line without a comma for an organisation.
+The reference editor always starts with reference type, title, authors,
+publication date, and language. The language initially follows the global
+locale, but serves a different purpose: it describes the referenced work,
+whereas the global or note-specific locale controls the language of generated
+citations.
+
+The remaining basic fields adapt to the selected reference type:
+
+| Reference type | Basic publication fields |
+| --- | --- |
+| Book | Edition, publisher, ISBN |
+| Journal article | Journal, volume, issue, pages, DOI |
+| Book chapter | Book title, editors, pages, ISBN |
+| Conference paper | Proceedings, conference, pages, DOI |
+| Thesis | Thesis type, university |
+| Report | Institution, report number |
+| Web page | URL, access date |
+| Dataset | Version, publisher, DOI |
+| Software | Version, URL, DOI |
+
+Open **Show advanced fields** for additional supported publication details,
+identifiers, editors, event information, publisher data, and access information.
 Dates accept `YYYY`, `YYYY-MM`, or `YYYY-MM-DD`; DOI URLs are normalized to
 their DOI identifier.
 
-Enter people one per line, with family name first:
+Enter authors and editors one per line, with family name first:
 
 ```text
 Müller, Anna
@@ -173,31 +219,6 @@ value to both fields:
     "publisher-place": "Berlin",
     "ISBN": "978-3-00-000000-0",
     "language": "de-DE"
-  },
-  {
-    "type": "webpage",
-    "id": "research-group-2026-project-page",
-    "citation-key": "research-group-2026-project-page",
-    "title": "Project page",
-    "author": [
-      { "literal": "Open Research Group" }
-    ],
-    "issued": { "date-parts": [[2026, 10, 29]] },
-    "accessed": { "date-parts": [[2026, 10, 29]] },
-    "URL": "https://example.org/project",
-    "language": "en-US"
-  },
-  {
-    "type": "software",
-    "id": "kohlhoff-2026-markdown-citations",
-    "citation-key": "kohlhoff-2026-markdown-citations",
-    "title": "Markdown Citations",
-    "author": [
-      { "family": "Kohlhoff", "given": "Holger" }
-    ],
-    "issued": { "date-parts": [[2026, 10, 29]] },
-    "version": "0.1.0",
-    "URL": "https://github.com/HKohlhoff/markdown-citations"
   }
 ]
 ```
@@ -209,22 +230,24 @@ retained when the plugin later edits that record. Invalid JSON, duplicate or
 unsafe citekeys, and missing types are reported before a managed update is
 written. The reference dialog additionally requires a title before saving.
 
-### What is published with Flowershow?
+## Portable Markdown and Flowershow
 
 The bibliography files are source data. The published note itself contains the
 finished, readable Markdown citation and bibliography, including ordinary links
 to stable HTML anchors such as `#ref-mueller-2026-portable-zitate`. Flowershow
 does not need Markdown Citations, citeproc, Zotero, or access to the CSL-JSON
-file to display that generated result. This separation is deliberate: tomorrow's
-publication test should judge the same Markdown that remains readable in the
-vault when the plugin is disabled.
+file to display that generated result. This separation is deliberate: the
+published result is the same Markdown that remains readable in the vault when
+the plugin is disabled.
+
+### Citation metadata and safe updates
 
 After changing the citation style or language, run **Update citations** to
 reformat citations and the bibliography together. Citation details such as
 locators, prefixes, and suffixes are stored in the note's `markdown-citations`
 frontmatter field. Each link carries a short title such as `"mc:c1"` to identify
 its citation instance. There are no inline metadata comments in new citations.
-Existing prototype comments are migrated to frontmatter and removed on update;
+Legacy inline metadata comments are migrated to frontmatter and removed on update;
 older plain links are adopted when their visible details can be recovered.
 Unrecognized citations are preserved and reported instead of losing details.
 
@@ -259,26 +282,19 @@ untouched.
 
 Enable **Allow frontmatter overrides** in settings to use these optional note
 properties under `markdown-citations`. The switch is **off by default**. When
-off, local style/language choices are ignored and global settings apply. Managed citation
-data remains active either way.
+off, local style and locale choices are ignored and global settings apply;
+managed citation data remains active.
 
 Use **Markdown Citations: Set note citation style and language** in the current
-note to choose the style by its full name and select the language from a
-dropdown, just as in settings. The dialog also offers a vault picker for custom
-CSL files. **Save to frontmatter** writes only `style` and `locale` under
-`markdown-citations`; it
-does not reformat the text. Run **Update citations** afterwards, or choose
-**Save to frontmatter and update citations** to save and refresh the current
-note's citations and bibliography together. Existing local values are selected
-when the dialog opens. **Use global
-default** removes the corresponding local property so the note inherits that
-global preference. Cancel leaves the note unchanged. With overrides disabled,
-the command only displays a message explaining which switch to enable.
+note. The dialog offers all bundled choices and a vault picker for custom CSL
+files. **Save to frontmatter** changes only the properties;
+**Save to frontmatter and update citations** also reformats the note immediately.
+**Use global default** removes the local property and restores inheritance.
 
 | Property | Value |
 | --- | --- |
 | `markdown-citations.style` | Bundled style ID, e.g. `apa`, `ieee`, `chicago-author-date`, or a vault-relative custom `.csl` file path. |
-| `markdown-citations.locale` | `de-DE`, `en-US`, or `en-GB`. |
+| `markdown-citations.locale` | Bundled locale ID: `de-DE`, `en-US`, `en-GB`, `es-ES`, `fr-FR`, `it-IT`, `ja-JP`, `nl-NL`, `pl-PL`, `pt-BR`, `ru-RU`, or `zh-CN`. |
 
 ```yaml
 ---
@@ -288,20 +304,16 @@ markdown-citations:
 ---
 ```
 
-Only citation style and language can be overridden locally. Sources, the local
+Only citation style and locale can be overridden locally. Sources, the local
 library, heading, heading visibility, and insertion position always use global
-settings. Omitted or blank style/language properties fall back to globals.
+settings. Omitted or blank style/locale properties fall back to globals.
 Invalid enabled values stop the command with an explanation before modifying
 the note.
 
-These properties apply to citation previews, inserted
-citations, and bibliography commands. Run **Update citations** after editing
-them to refresh existing output; editing properties alone does not trigger an
-update. Global preferences are never overwritten. The same `markdown-citations`
-group also holds managed `version`, `citations`, and optional `master` fields;
-those do not need manual editing. Style and language survive citation updates.
-Old top-level prototype properties migrate into this group on the next citation
-update or when saving through the dialog.
+The overrides apply to previews, inserted citations, updates, and bibliography
+commands. Editing them manually does not reformat existing text; run **Update
+citations** afterwards. The plugin manages the other fields in the same
+`markdown-citations` group and preserves unrelated frontmatter.
 
 For a master, only the master's overrides govern the shared bibliography and
 index. Embedded chapters' style/language overrides are ignored during aggregation.
@@ -319,9 +331,11 @@ suppresses its misleading missing-heading hover preview. Web publication uses
 the ordinary HTML anchors. Cross-note links from embedded chapters still have
 the limitations described below.
 
-## Masters with embedded chapters
+## Advanced usage
 
-### Start from the master
+### Master documents with embedded chapters
+
+#### Start from the master
 
 For a document split into chapters, place the bibliography in the master and
 run the commands **in that master**, not in an individual chapter. For example:
@@ -355,7 +369,7 @@ the master. There is no need to copy chapter citations into the master's text.
 | **Update citations** | Do the same collection and bibliography update, and also reformat citation links physically written in the master. Embedded chapter text is not rewritten. |
 | **Create / update publication note** | Assemble a separate sibling Markdown file with embedded text, consistently formatted citations, and one shared bibliography. |
 
-### What is included
+#### What is included
 
 Both bibliography commands follow `![[Note]]` embeds recursively in reading
 order. Paths and aliases use Obsidian's own link resolution. Heading and block
@@ -363,63 +377,49 @@ embeds such as `![[Chapter#Section]]` and `![[Chapter#^block]]` contribute only
 the selected fragment. Images, ordinary wikilinks, code examples, comments,
 frontmatter, and existing bibliography blocks do not add sources.
 
-Only explicit `![[...]]` note embeds are followed in this prototype. Notes merely
-linked with `[[...]]`, Markdown-form note embeds, and content generated by
-Dataview or other plugins do not expand the document. The master uses the
-effective style and language (global settings or its own enabled overrides) and records that choice in its
-index; the index is a snapshot, not an automatic per-note style override.
+Only explicit `![[...]]` note embeds are followed. Notes merely linked with
+`[[...]]`, Markdown-form note embeds, and content generated by Dataview or
+other plugins do not expand the document. The master uses the effective style
+and locale—global settings or its own enabled overrides—and records that choice
+in its index.
 
-### Where citation data lives
+#### Where citation data lives
 
 The master's `markdown-citations.master` field is a rebuilt index containing
-the effective style/locale, embedded document paths, and citation records keyed
-by source path plus local citation ID. The actual locator, prefix, suffix, and
-citation-form data remain with the source chapter; the index snapshots these
-details for the current master. Repeated embeddings count occurrences without
-duplicating bibliography entries. Each master has its own independent index.
+the effective style and locale, included document paths, and file-scoped
+citation records. Citation details remain in their source chapters; the master
+stores only the snapshot needed for its shared bibliography. Repeated embeds do
+not duplicate bibliography entries, and each master keeps an independent index.
+Changes in a source chapter are picked up on the next explicit update.
 
-For example, `c1` in `Introduction.md` and `c1` in `Main chapter.md` identify
-different citation locations. Their original frontmatter records stay in their
-respective files. The master index distinguishes them by **file path + local
-citation ID**, including their separate page locators. Editing a page number
-in a source chapter is reflected in its master index after the next update.
-
-### Removing or changing an embedding
+#### Removing or changing an embedding
 
 Removing an embed or changing a selected section removes stale master records
 and bibliography entries on the next update. A source still cited elsewhere
-remains. Removing the last embed leaves an empty chapter index rather than
-reusing old data. **Update citations** also removes unused local citation
-records from the active note's frontmatter. Other YAML fields are preserved.
-
-If you remove `![[Main chapter]]`, the next update removes its index records and
-any bibliography entries no longer cited in the remaining included content.
-If the same source also appears in `Introduction.md`, its bibliography entry
-stays. Replacing a full-note embed with a heading/block embed reduces the index
-to that selected content. The removed chapter's file and citation metadata are
-never deleted. Multiple masters can therefore share the same chapter safely.
+remains. The removed chapter and its citation metadata are never changed, so
+multiple masters can safely share the same chapter. **Update citations** also
+removes unused local citation records from the active note while preserving
+other frontmatter.
 
 Updates are explicit: editing a chapter or removing an embed does not trigger
 live synchronization. Run one of the commands again when ready. A reported
 error leaves the previous master content intact; fix the target/data and retry.
 
-### Errors and current limits
+#### Errors and current limits
 
 Missing notes, missing selected sections/blocks, cycles, missing bibliography
 sources, invalid citation records, and excessive recursion stop the update
 before the active editor changes. Save notes before using heading/block embeds
 so Obsidian's section metadata matches their content.
 
-This first master stage reads chapters without rewriting them. **Update
-citations** reformats citations physically present in the master and generates
-the shared bibliography with all collected sources, but embedded chapter labels
-retain their saved formatting and numbers. Thus numeric chapter labels are
-not yet globally renumbered across the master, and links from embedded chapters
-to the master bibliography need an assembled output. Use **Create / update
-publication note** for that output; shared chapters cannot store different
-labels for multiple masters at once.
+The master bibliography workflow reads chapters without rewriting them.
+**Update citations** reformats citations physically present in the master and
+generates the shared bibliography, but embedded chapter labels retain their
+saved formatting and numbers. Numeric chapter labels are not yet globally renumbered across the master.
+Use **Create / update publication note** when the assembled document needs
+consistent labels and working bibliography links.
 
-### Create the publication version
+### Publication notes
 
 Run **Markdown Citations: Create / update publication note** in the original
 master. `Book/Master.md` produces **`Book/Master_publishVersion.md`**, next to
@@ -435,10 +435,8 @@ attached to the correct citation, even when chapters share local IDs. Citation
 links and bibliography anchors now live in the same note.
 
 The original master and chapters are read without modification. Other master
-frontmatter properties are retained in the output. Its `markdown-citations`
-group contains a fresh citation registry, the effective style/language, and
-`publication.source` identifying its original master. Existing master indexes
-are not copied into the assembled registry.
+frontmatter properties are retained in the output, together with the citation
+registry and ownership information needed to update the generated file safely.
 
 **Regenerating means rebuilding the entire generated file from the current
 sources and replacing its previous contents.** Edit the original master or
@@ -446,19 +444,11 @@ chapters: manual edits in a saved publication version are replaced next time.
 There is no live synchronization. Run the command in the original master again
 after changes; the publication itself cannot be used as input to this command.
 
-The publication is also a standalone citation note: with overrides enabled,
-**Set note citation style and language** can change its own local style, and
-**Save to frontmatter and update citations** reformats its entire assembled
-text and bibliography together. This does not change the original master.
-Regenerating from the master replaces these local output changes as well.
-Keep an independent copy under another filename if you want to retain a separate
-edition permanently.
-
-A differently named copy is never the original master's output destination.
-For a completely independent ordinary citation note, remove the entire
-`markdown-citations.publication` subsection (including `source`) from the copy.
-Keep `style`, `locale`, and `citations`; local style changes and citation updates
-continue to work. The original generated output should retain its ownership.
+The publication can be reformatted independently as a standalone citation note,
+but regenerating it from the master replaces those local output changes. To keep
+a separate edition, copy it under another filename and remove the copied
+`markdown-citations.publication` ownership subsection. Keep the generated
+output's ownership information intact.
 
 An existing destination is replaced only if its publication ownership matches
 this master. An unrelated file with the same name, unsaved output edits,
@@ -473,55 +463,29 @@ plugin content, reference-style Markdown links, and other Obsidian-specific
 syntax are not converted into standard Markdown. Unresolved ordinary links
 remain as written. Check these separately for your publishing system.
 
-## Pandoc and book-writing workflows
+## Pandoc
 
-Pandoc citation syntax, conversion to that syntax, and running a document
-exporter are deliberately outside this plugin's scope. There is no citation-mode
-selector. Older saved `citationMode` values are ignored and omitted the next
-time plugin settings are saved. Existing notes are never converted as part of
-that settings cleanup.
-
-For a manuscript that Pandoc should format into a book, you can author native
-Pandoc citations such as `[@mueller2024, p. 23]` directly. A dedicated citation
-plugin can help search a `.bib`/CSL-JSON library and insert this syntax, but is
-not required to type it. The chosen export workflow must then supply the
-bibliography, CSL style, and citation processor. It must also assemble Obsidian
-embeds and prepare any target-specific math, figures, and cross-references.
-Inserting a citation is not itself an export pipeline.
-
-Finished Markdown Citations text can be passed to a converter as ordinary
-formatted text. That does not make it a native Pandoc citation, and citation
-links may need target-specific handling. To let Pandoc reformat these citations,
-an external conversion step would need to transform the owned citation links,
-preserve locators/prefixes/suffixes, omit the pre-generated bibliography, and
-provide the bibliography/style inputs. Only plugin-owned metadata should be
-removed from an export copy; title, author, language, and other useful
-frontmatter should be retained. Shared embedded notes should not be rewritten
-implicitly. This plugin does not perform that conversion.
+Markdown Citations creates finished, readable Markdown rather than native
+Pandoc citation syntax and is therefore not intended to manage citations for a
+Pandoc-based export workflow.
 
 ## About and built-in documentation
 
 At the bottom of the settings, **About** offers **Show last update** and
 **Show readme**, following the same convention as Canvas HTML Exporter.
 
-- **Show last update** opens the current prototype's features, usage notes,
+- **Show last update** opens the current version's features, usage notes,
   and known limits from the repository's `Last Update.md`.
 - **Show readme** renders this exact repository README, bundled at build time.
   Images are omitted in the dialog, while documentation and support links
-  remain usable. Relative documentation links point to this repository's
-  development branch. Opening an external link requires network access;
-  reading the bundled documentation does not.
+  remain usable. Relative documentation links point to this repository.
+  Opening an external link requires network access; reading the bundled
+  documentation does not.
 
 Both dialogs work on desktop and mobile, can be closed with **Close** or Escape,
-and create no notes or other documentation files in the vault. Disabling the
-plugin closes its open documentation dialogs and releases their renderers.
-The update description also opens automatically after the workspace is ready
-when the plugin is first enabled or its version changes. It is marked as read
-only after you close it, and that acknowledgement is stored in plugin data
-for the exact manifest version. It will not reappear on every start or hot
-reload of that same version. Disabling the plugin while the dialog is open
-does not acknowledge it. **Show last update** always lets you reopen it manually;
-repeated requests while it is already open reuse that one dialog.
+and create no documentation files in the vault. The update description opens
+automatically once for each new plugin version and is marked as read only after
+it is closed. **Show last update** can reopen it at any time.
 
 ## Development
 
@@ -545,10 +509,6 @@ Deploy a production build to an explicitly selected test vault:
 OBSIDIAN_PLUGINS_DIR="/path/to/vault/.obsidian/plugins" npm run build:prod:deploy
 ```
 
-For this project the shared runtime test vault is
-`/Users/Holger/SynologyDrive/Obsidian/Obsidian-PluginTests`. Deployment must
-target only its `.obsidian/plugins/markdown-citations` folder.
-
 ## Repository workflow
 
 The project uses GitFlow:
@@ -558,14 +518,23 @@ The project uses GitFlow:
 - `feature/*` branches start from `develop`;
 - release and hotfix branches are merged with explicit merge commits.
 
-The private development repository is
-<https://github.com/HKohlhoff/markdown-citations>. Pushes, tags, and releases
-are never created automatically by the local build.
+The source repository is
+<https://github.com/HKohlhoff/markdown-citations>. Local production builds do
+not push, tag, or publish releases.
 
 ## Privacy
 
-Markdown Citations is designed for local processing. The scaffold contains no
-telemetry, analytics, network requests, or external service integration.
+Markdown Citations processes bibliography files, citations, styles, and locales
+locally. It contains no telemetry, analytics, network requests, or external
+service integration. Network access occurs only when the user explicitly opens
+an external documentation or support link.
+
+## Support and feedback
+
+Report bugs and request features through the
+[GitHub issue tracker](https://github.com/HKohlhoff/markdown-citations/issues).
+If Markdown Citations is useful to you, you can
+[support its continued development on Ko-fi](https://ko-fi.com/hokdev).
 
 ## License
 
@@ -574,5 +543,4 @@ Copyright © 2026 Holger Kohlhoff.
 Markdown Citations is licensed under the GNU Affero General Public License,
 version 3 or later. Third-party components retain their own licenses. The
 currently bundled citation dependencies, CSL styles, and locales are recorded
-in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) and `LICENSES/`. Every
-release still requires a fresh production dependency and bundled-content audit.
+in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) and `LICENSES/`.

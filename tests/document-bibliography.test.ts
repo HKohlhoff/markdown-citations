@@ -23,7 +23,7 @@ test("updateBibliography follows first citation order and ignores normal links",
   assert.ok(result.content.includes(BIBLIOGRAPHY_END));
   assert.ok(result.content.includes(`${BIBLIOGRAPHY_START}\n\n## Literatur`));
   assert.ok(result.content.indexOf("Second source") < result.content.indexOf("First source"));
-  assert.ok(result.content.includes("Second source*.\n\n<a id=\"ref-first2024\"></a>Alpha (2024). *First source") );
+  assert.ok(result.content.includes("Second source*.\n\n<a id=\"ref-first2024\" style=\"scroll-margin-top: 5rem;\"></a>Alpha (2024). *First source") );
   assert.ok(result.content.includes("[normal link](https://example.com)"));
 });
 
@@ -38,7 +38,7 @@ test("updateBibliography recognizes nested numeric citation labels", () => {
   );
 
   assert.deepEqual(result.citedItems.map((entry) => entry.citeKey), ["first2024"]);
-  assert.ok(result.content.includes("<a id=\"ref-first2024\"></a>"));
+  assert.ok(result.content.includes("<a id=\"ref-first2024\" style=\"scroll-margin-top: 5rem;\"></a>"));
 });
 
 test("updateBibliography replaces only its existing owned block", () => {
@@ -76,7 +76,7 @@ test("updateBibliography can omit the heading and renders entries as paragraphs"
 
   assert.ok(!result.content.includes("## Literatur"));
   assert.ok(!result.content.includes("\n- Alpha"));
-  assert.ok(result.content.includes("\n<a id=\"ref-first2024\"></a>Alpha (2024)."));
+  assert.ok(result.content.includes("\n<a id=\"ref-first2024\" style=\"scroll-margin-top: 5rem;\"></a>Alpha (2024)."));
 });
 
 test("updateBibliography automatically uses a placeholder", () => {

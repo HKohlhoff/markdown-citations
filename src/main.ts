@@ -2,6 +2,7 @@ import { Notice, Plugin, MarkdownView, TFile, parseYaml, stringifyYaml, type Edi
 import { loadBibliographies } from "./bibliography/load";
 import type { CitationRenderOptions } from "./citation/render";
 import { formatCslCitation } from "./csl/processor";
+import { isSupportedCslLocale } from "./csl/locales";
 import { resolveCitationStyle } from "./csl/resolve-style";
 import { citedItemsInDocument } from "./document/bibliography";
 import { insertCitation } from "./document/citations";
@@ -248,7 +249,8 @@ export default class MarkdownCitationsPlugin extends Plugin {
     try {
       const properties = readNoteFormatProperties(editor.getValue(), yamlCodec);
       const style = typeof properties.style === "string" ? properties.style.trim() : "";
-      const locale = ["de-DE", "en-US", "en-GB"].includes(String(properties.locale)) ? String(properties.locale) : "";
+      const storedLocale = typeof properties.locale === "string" ? properties.locale.trim() : "";
+      const locale = isSupportedCslLocale(storedLocale) ? storedLocale : "";
       const modal = new NoteFormatDialog(this.app, { style, locale }, {
         style: this.settings.defaultCitationStyle, locale: this.settings.defaultLocale,
       }, async (selection, update) => {

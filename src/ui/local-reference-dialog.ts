@@ -7,6 +7,7 @@ import {
   type LocalReferenceInput,
 } from "../bibliography/local-library";
 import { formatCslBibliography, formatCslCitation } from "../csl/processor";
+import { BUNDLED_CSL_LOCALES, cslLocaleTitle, isSupportedCslLocale } from "../csl/locales";
 import { resolveCitationStyle } from "../csl/resolve-style";
 import { BUNDLED_CITATION_STYLES, getBundledCitationStyle } from "../csl/styles";
 import type { BibliographyItem } from "../model/bibliography";
@@ -258,10 +259,8 @@ export class LocalReferenceDialog extends Modal {
       .setClass("markdown-citations-reference-field")
       .addDropdown(dropdown => {
         dropdown.addOption("", "Not specified");
-        dropdown.addOption("de-DE", "Deutsch (Deutschland)");
-        dropdown.addOption("en-US", "English (United States)");
-        dropdown.addOption("en-GB", "English (United Kingdom)");
-        if (this.value.language && !["de-DE", "en-US", "en-GB"].includes(this.value.language)) {
+        for (const locale of BUNDLED_CSL_LOCALES) dropdown.addOption(locale.id, locale.title);
+        if (this.value.language && !isSupportedCslLocale(this.value.language)) {
           dropdown.addOption(this.value.language, `Existing value: ${this.value.language}`);
         }
         dropdown.setValue(this.value.language).onChange(value => this.change("language", value));
@@ -379,10 +378,7 @@ function basicFieldsForType(type: CSLType): readonly AdvancedField[] {
 }
 
 function localeTitle(locale: string): string {
-  if (locale === "de-DE") return "Deutsch (Deutschland)";
-  if (locale === "en-US") return "English (United States)";
-  if (locale === "en-GB") return "English (United Kingdom)";
-  return locale;
+  return cslLocaleTitle(locale);
 }
 
 function errorMessage(error: unknown): string {

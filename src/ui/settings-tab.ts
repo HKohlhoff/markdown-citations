@@ -1,4 +1,5 @@
 import { App, ButtonComponent, normalizePath, PluginSettingTab, Setting } from "obsidian";
+import { BUNDLED_CSL_LOCALES } from "../csl/locales";
 import { BUNDLED_CITATION_STYLES, getBundledCitationStyle } from "../csl/styles";
 import type MarkdownCitationsPlugin from "../main";
 import { VaultFileSuggestModal, VaultFolderSuggestModal } from "./vault-path-modal";
@@ -181,15 +182,14 @@ export class MarkdownCitationsSettingTab extends PluginSettingTab {
       .setName("Default locale")
       .setDesc("Language used by the citation processor for terms, dates, and punctuation.")
       .setClass("markdown-citations-select-setting")
-      .addDropdown((dropdown) => dropdown
-        .addOption("de-DE", "Deutsch (Deutschland)")
-        .addOption("en-US", "English (United States)")
-        .addOption("en-GB", "English (United Kingdom)")
-        .setValue(this.plugin.settings.defaultLocale)
-        .onChange(async (value) => {
+      .addDropdown((dropdown) => {
+        for (const locale of BUNDLED_CSL_LOCALES) dropdown.addOption(locale.id, locale.title);
+        dropdown.setValue(this.plugin.settings.defaultLocale)
+          .onChange(async (value) => {
           this.plugin.settings.defaultLocale = value;
           await this.plugin.saveSettings();
-        }));
+          });
+      });
 
   }
 

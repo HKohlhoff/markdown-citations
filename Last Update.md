@@ -1,7 +1,8 @@
-# Markdown Citations 1.0.0 — Initial public release
+# Markdown Citations 1.0.1 — Community directory release
 
-Markdown Citations 1.0.0 formats portable Markdown citations and bibliographies
-locally with CSL styles. This is the first public release.
+Markdown Citations 1.0.1 formats portable Markdown citations and bibliographies
+locally with CSL styles. This maintenance release uses the official Obsidian
+release workflow and contains no citation-behavior changes from 1.0.0.
 
 ## Everyday use
 

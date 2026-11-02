@@ -1,10 +1,11 @@
-# Markdown Citations 1.0.5 — Community directory release
+# Markdown Citations 1.0.6 — First public release
 
-Markdown Citations 1.0.5 formats portable Markdown citations and bibliographies
-locally with CSL styles. Source and style dialogs now validate one exact
-vault-relative path without enumerating the vault, and the settings page retains
-its established vertical layout. Path inputs use the full dialog width.
-Citation behavior is unchanged from 1.0.0.
+Markdown Citations 1.0.6 formats portable Markdown citations and bibliographies
+locally with CSL styles. This first public release supports everyday citation
+work in individual notes as well as advanced publication workflows built from
+masters and embedded chapters. It works offline on desktop and mobile, keeps
+bibliographic data inside the vault, and produces readable Markdown that
+remains useful without the plugin.
 
 ## Everyday use
 
@@ -16,23 +17,22 @@ Citation behavior is unchanged from 1.0.0.
    active note's citations and bibliography together.
 
 Citation details live in the note's `markdown-citations` frontmatter. Short link
-titles identify individual citations. Old inline metadata comments migrate to
-frontmatter during updates. Numeric citation links now render correctly in
-Obsidian, and DOI/URL lines are separate from the bibliographic text.
+titles identify individual citations. Numeric citation links render correctly
+in Obsidian, and DOI/URL lines are separate from the bibliographic text.
 
 ## Local references
 
-**Manage local references** now creates and edits an ordinary CSL-JSON library
+**Manage local references** creates and edits an ordinary CSL-JSON library
 inside the vault. **Create local reference** opens the editor directly. The
 settings page provides the same manager beside the local-library path. Opening
-these dialogs no longer creates or configures a file. If no path is configured,
+these dialogs does not create or configure a file. If no path is configured,
 saving the first reference creates `MarkdownCitations.json` in the vault root.
 
 The calm basic form begins with type, title, authors, publication date, and
 language, then adapts its important publication fields to the selected type.
 Books, journal articles, chapters, conference papers, theses, reports, web
 pages, datasets, and software therefore expose the details most useful for that
-source without opening **Show advanced fields**. The editor now also stores CSL
+source without opening **Show advanced fields**. The editor also stores CSL
 conference, genre or thesis type, and report-number attributes. The plugin
 generates a readable, collision-safe citekey automatically and keeps it stable
 on later edits.
@@ -49,7 +49,7 @@ citekeys stay fixed to protect links in notes, generated keys avoid duplicates
 in configured libraries, and deletion requires confirmation. Deleting a library
 record intentionally leaves existing note text unchanged.
 
-The README now contains the complete setup and entry workflow, person and
+The README contains the complete setup and entry workflow, person and
 organisation examples, a multi-record CSL-JSON example, and an explanation of
 which generated Markdown is published with Flowershow.
 
@@ -85,7 +85,7 @@ unsupported syntax are not converted. The command works offline and on mobile.
 
 ## Styles and settings
 
-Twelve CSL locales are now bundled for fully offline citation formatting:
+Twelve CSL locales are bundled for fully offline citation formatting:
 German, US and UK English, Spanish, French, Italian, Japanese, Dutch, Polish,
 Brazilian Portuguese, Russian, and Simplified Chinese. The same choices are
 available globally, for enabled note overrides, and when assigning the language
@@ -98,7 +98,7 @@ settings; disabling the switch ignores these properties without disabling
 citation metadata. Masters use their own overrides and leave chapter settings
 and text unchanged. Run **Update citations** after changing properties.
 
-The new **Set note citation style and language** command offers named styles
+**Set note citation style and language** offers named styles
 and languages in dropdowns and saves the selection to frontmatter. Choose
 **Use global default** to remove a local override. With overrides switched off,
 the command only displays an explanatory message. Existing local choices are
@@ -106,7 +106,7 @@ preselected. **Save to frontmatter** only saves the selection;
 **Save to frontmatter and update citations** also refreshes the note's citations
 and bibliography immediately.
 
-Citation links now navigate to their HTML bibliography anchors within Obsidian
+Citation links navigate to their HTML bibliography anchors within Obsidian
 in reading mode and the editor, without the misleading missing-heading preview.
 Published anchors include a portable scroll margin so their bibliography entry
 remains visible below fixed website headers. In Obsidian reading mode, the
@@ -115,13 +115,12 @@ plugin selects the visible rendered anchor and centers it in the note view.
 Nine bundled styles cover APA, Chicago author-date, Harvard Cite Them Right,
 MLA, IEEE, NLM/Vancouver, APS/Physical Review, an adapted alphabetical AMS
 numeric style, and an adapted localized ISO 690:2021 author-date style.
-Existing DIN/Elsevier choices migrate to ISO 690/NLM respectively. Styles only
-change note content after a user-started update.
+Styles only change note content after a user-started update.
 
-The optional local library file is empty by default. File and folder path
-dialogs validate only the exact vault-relative path entered by the user. The
-former unused citation-mode selector has been removed; the plugin always writes
-finished Markdown. Pandoc citation syntax and export belong to a separate
+The optional local library file is empty by default. One Obsidian search dialog
+selects either an existing library file or a destination folder; direct path
+entry remains available in settings. The plugin always writes finished
+Markdown. Pandoc citation syntax and export belong to a separate
 authoring/export workflow, as explained in the README.
 
 ## Documentation

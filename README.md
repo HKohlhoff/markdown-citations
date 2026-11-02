@@ -115,11 +115,12 @@ workflows:
 - Both kinds of files can be active together with any number of `.bib` files.
   Their citekeys share one namespace and therefore must be unique.
 
-The file and folder buttons beside **Library file** open a path dialog for an
-existing CSL-JSON file or the destination folder for `MarkdownCitations.json`.
-Enter the exact vault-relative path; the plugin validates only that path and
-does not enumerate the vault. The trash button only clears the configured path;
-it never deletes the file.
+The search button beside **Library file** opens one familiar Obsidian dialog.
+Choose either an existing CSL-JSON file or a destination folder where
+`MarkdownCitations.json` should be created. The dialog searches matching vault
+paths locally only when you open it. You can also enter an exact vault-relative
+path directly. The trash button only clears the configured path; it never
+deletes the file.
 
 ### Create a reference in the dialog
 
@@ -529,7 +530,9 @@ not push, tag, or publish releases.
 Markdown Citations processes bibliography files, citations, styles, and locales
 locally. It contains no telemetry, analytics, network requests, or external
 service integration. Network access occurs only when the user explicitly opens
-an external documentation or support link.
+an external documentation or support link. When you open a file or folder
+picker, the plugin searches matching vault paths locally; the picker does not
+read file contents or transmit paths.
 
 ## Support and feedback
 

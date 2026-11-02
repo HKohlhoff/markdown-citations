@@ -4,6 +4,15 @@ All notable changes to Markdown Citations will be documented in this file.
 
 ## Unreleased
 
+## 1.0.6 - 2026-11-02
+
+- Restore the familiar Obsidian file and folder search dialogs for bibliography,
+  local-library, and custom CSL paths.
+- Combine existing-file and destination-folder selection for the local library
+  in one clearly labelled search dialog.
+- Search matching vault paths locally only when the user opens a picker; direct
+  path entry in settings remains available.
+
 ## 1.0.5 - 2026-11-02
 
 - Let vault-relative path inputs use the full dialog width.

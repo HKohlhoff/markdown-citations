@@ -10,7 +10,7 @@ import { updateCitationDocument } from "./document/update-document";
 import { readNoteFormatProperties, resolveNoteSettings } from "./document/note-settings";
 import { createEmbeddingResolver } from "./vault/master-source";
 import { DocumentationModal } from "./ui/documentation-modal";
-import { LAST_UPDATE_MARKDOWN, README_MARKDOWN, prepareReadmeMarkdown } from "./ui/documentation-content";
+import { LAST_UPDATE_MARKDOWN, README_MARKDOWN, ZOTERO_GUIDE_MARKDOWN, prepareReadmeMarkdown } from "./ui/documentation-content";
 import type { YamlCodec } from "./document/citation-frontmatter";
 import type { BibliographyItem } from "./model/bibliography";
 import { normalizePluginData, type MarkdownCitationsData } from "./plugin-data";
@@ -138,6 +138,11 @@ export default class MarkdownCitationsPlugin extends Plugin {
   showReadme(): void {
     if (this.disposed) return;
     this.openDocumentation(`${this.manifest.name}: README`, prepareReadmeMarkdown(README_MARKDOWN));
+  }
+
+  showZoteroGuide(): void {
+    if (this.disposed) return;
+    this.openDocumentation(`${this.manifest.name}: Zotero guide`, ZOTERO_GUIDE_MARKDOWN);
   }
 
   showLastUpdate(): void {

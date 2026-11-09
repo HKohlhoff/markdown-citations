@@ -10,6 +10,11 @@ processing runs locally without telemetry, accounts, or network requests.
 Markdown Citations works on desktop and mobile and requires Obsidian 1.13.0 or
 later. Version 1.0.0 is the initial public release.
 
+For a detailed Zotero setup walkthrough, open **Settings → Markdown Citations →
+About → Zotero guide → Show Zotero guide**. It covers Zotero exports, plugin
+settings, citations, bibliographies, and mobile synchronization, and is available
+offline. You can also [read the guide here](Markdown_Citations_Zotero_Guide.md).
+
 ## Features
 
 - **Bibliography sources:** Search multiple `.bib` and `.json` (CSL-JSON) files
@@ -474,8 +479,8 @@ Pandoc-based export workflow.
 
 ## About and built-in documentation
 
-At the bottom of the settings, **About** offers **Show last update** and
-**Show readme**, following the same convention as Canvas HTML Exporter.
+At the bottom of the settings, **About** offers **Show last update**,
+**Show readme**, and **Show Zotero guide**.
 
 - **Show last update** opens the current version's features, usage notes,
   and known limits from the repository's `Last Update.md`.
@@ -484,8 +489,11 @@ At the bottom of the settings, **About** offers **Show last update** and
   remain usable. Relative documentation links point to this repository.
   Opening an external link requires network access; reading the bundled
   documentation does not.
+- **Show Zotero guide** opens the repository’s
+  `Markdown_Citations_Zotero_Guide.md`, bundled at build time, with step-by-step
+  Zotero export, setup, citation, and mobile sync instructions.
 
-Both dialogs work on desktop and mobile, can be closed with **Close** or Escape,
+All three dialogs work on desktop and mobile, can be closed with **Close** or Escape,
 and create no documentation files in the vault. The update description opens
 automatically once for each new plugin version and is marked as read only after
 it is closed. **Show last update** can reopen it at any time.

@@ -1,6 +1,8 @@
 import readme from "../../README.md";
+import zoteroGuide from "../../Markdown_Citations_Zotero_Guide.md";
 import lastUpdate from "../../Last Update.md";
 
+export const ZOTERO_GUIDE_MARKDOWN = zoteroGuide;
 export const README_MARKDOWN = readme;
 export const LAST_UPDATE_MARKDOWN = lastUpdate;
 export const REPOSITORY_URL = "https://github.com/HKohlhoff/markdown-citations";

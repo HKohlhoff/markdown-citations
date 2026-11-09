@@ -27,6 +27,7 @@ export class MarkdownCitationsSettingTab extends PluginSettingTab {
         "Bibliography heading",
         "Last update",
         "README",
+        "Zotero guide",
       ],
       render: (setting) => {
         const rootContainer = this.containerEl;
@@ -264,6 +265,10 @@ export class MarkdownCitationsSettingTab extends PluginSettingTab {
       .setName("README")
       .setDesc("Open the complete plugin documentation without leaving Obsidian.")
       .addButton(button => button.setButtonText("Show readme").onClick(() => this.plugin.showReadme()));
+    new Setting(this.containerEl)
+      .setName("Zotero guide")
+      .setDesc("Follow the Zotero export, plugin setup, citation, and mobile workflow step by step.")
+      .addButton(button => button.setButtonText("Show Zotero guide").onClick(() => this.plugin.showZoteroGuide()));
   }
 
   private chooseBibliographyFile(replaceIndex?: number): void {

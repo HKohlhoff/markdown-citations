@@ -1,9 +1,10 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import test from "node:test";
-import { README_MARKDOWN, LAST_UPDATE_MARKDOWN, prepareReadmeMarkdown } from "../src/ui/documentation-content";
+import { README_MARKDOWN, LAST_UPDATE_MARKDOWN, ZOTERO_GUIDE_MARKDOWN, prepareReadmeMarkdown } from "../src/ui/documentation-content";
 
 test("bundled About documents come directly from repository files and match the manifest version", () => {
+  assert.equal(ZOTERO_GUIDE_MARKDOWN, fs.readFileSync("Markdown_Citations_Zotero_Guide.md", "utf8"));
   assert.equal(README_MARKDOWN, fs.readFileSync("README.md", "utf8"));
   assert.equal(LAST_UPDATE_MARKDOWN, fs.readFileSync("Last Update.md", "utf8"));
   const manifest: unknown = JSON.parse(fs.readFileSync("manifest.json", "utf8"));

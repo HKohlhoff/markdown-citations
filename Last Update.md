@@ -1,11 +1,18 @@
-# Markdown Citations 1.0.6 — First public release
+# Markdown Citations 1.0.7 — Zotero setup guide
 
-Markdown Citations 1.0.6 formats portable Markdown citations and bibliographies
-locally with CSL styles. This first public release supports everyday citation
+Markdown Citations 1.0.7 formats portable Markdown citations and bibliographies
+locally with CSL styles. The plugin supports everyday citation
 work in individual notes as well as advanced publication workflows built from
 masters and embedded chapters. It works offline on desktop and mobile, keeps
 bibliographic data inside the vault, and produces readable Markdown that
 remains useful without the plugin.
+
+## New in 1.0.7
+
+- Open **About → Zotero guide → Show Zotero guide** in settings for a detailed
+  walkthrough of Zotero exports, plugin settings, citation updates, and mobile sync.
+- The guide is bundled directly from the repository and works offline without
+  creating a vault note. The README now points to it near the top.
 
 ## Everyday use
 
@@ -126,8 +133,9 @@ authoring/export workflow, as explained in the README.
 ## Documentation
 
 At the bottom of the settings, **About → Show readme** opens the complete bundled
-README; **Show last update** reopens this description. Both dialogs work offline
-and leave no documentation notes in your vault. Close them with **Close** or
+README; **Show last update** reopens this description. **Show Zotero guide**
+opens the detailed setup walkthrough. All three dialogs work offline and leave
+no documentation notes in your vault. Close them with **Close** or
 Escape. Disabling the plugin closes its open documentation dialogs.
 
 This description opens automatically once per plugin version, including the

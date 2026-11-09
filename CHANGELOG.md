@@ -4,6 +4,12 @@ All notable changes to Markdown Citations will be documented in this file.
 
 ## Unreleased
 
+## 1.0.7 - 2026-11-09
+
+- Add a reviewed, offline Zotero setup guide as the third About document.
+- Cover stable citekeys, plugin settings, explicit citation updates, and mobile
+  synchronization; link the guide near the top of the README.
+
 ## 1.0.6 - 2026-11-02
 
 - Restore the familiar Obsidian file and folder search dialogs for bibliography,

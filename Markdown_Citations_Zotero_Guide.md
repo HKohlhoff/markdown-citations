@@ -8,6 +8,38 @@ Requires Obsidian **1.13.0 or later** on desktop, iPhone, or iPad. Zotero and
 Better BibTeX run on your desktop; the Obsidian plugin works offline with the
 exported files. Zotero is optional for the plugin, but used throughout this guide.
 
+## Without Zotero: static files and a local library
+
+Zotero and Better BibTeX are **not required**. Markdown Citations reads ordinary
+BibTeX/BibLaTeX (`.bib`) and CSL-JSON (`.json`) files, regardless of which
+application produced them. A generic JSON export is not necessarily CSL-JSON.
+
+If you already have such a file, skip section 1. Place it inside the vault and
+select it under **Bibliography files → Add bibliography file** as described in
+section 2. No Zotero-specific switch, account, data folder, or connection needs
+to be configured. Citation style, locale, bibliography placement, and all
+citation commands work in the same way for every source.
+
+| Source workflow | What to configure in Markdown Citations | How source data changes |
+| --- | --- | --- |
+| Zotero with Better BibTeX automatic export | Add the exported file under **Bibliography files**. | Zotero on the desktop updates the export; wait for export and sync to finish. |
+| Static `.bib` or CSL-JSON file from any tool | Add the file under **Bibliography files**. | Edit it with the source application or replace/re-export it at the same vault path. The plugin does not refresh the file for you. |
+| References maintained inside Obsidian | Choose a separate CSL-JSON file under **Local library → Library file**, then use **Manage references**. | The plugin writes your edits to this local library. Zotero is not involved. |
+
+In **all three workflows**, changes to source data do not automatically rewrite
+notes. Run **Update citations** in each affected note to refresh its citations
+and bibliography; use **Insert / update bibliography** when only rebuilding the
+bibliography is needed. Keep citekeys stable when editing or replacing files.
+
+You may combine several source files and the optional local library, provided
+citekeys remain unique. The local-library manager edits only its configured
+library, not the other bibliography files. Leave **Library file** empty if you
+do not need references managed inside Obsidian.
+
+Static files and the local library also work offline on mobile after they have
+synced into the vault. Sync settings in section 6 apply to them too; only the
+Zotero automatic-export step is omitted.
+
 ## 1. Export your references from Zotero
 
 For an automatically updated export, install the [Better BibTeX add-on for Zotero](https://retorque.re/zotero-better-bibtex/).

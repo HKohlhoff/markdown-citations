@@ -1,13 +1,19 @@
-# Markdown Citations 1.0.7 — Zotero setup guide
+# Markdown Citations 1.0.8 — Zotero setup guide
 
-Markdown Citations 1.0.7 formats portable Markdown citations and bibliographies
+Markdown Citations 1.0.8 formats portable Markdown citations and bibliographies
 locally with CSL styles. The plugin supports everyday citation
 work in individual notes as well as advanced publication workflows built from
 masters and embedded chapters. It works offline on desktop and mobile, keeps
 bibliographic data inside the vault, and produces readable Markdown that
 remains useful without the plugin.
 
-## New in 1.0.7
+## New in 1.0.8
+
+- The guide now explains setup without Zotero, using static `.bib` or CSL-JSON
+  files or the optional local library. A comparison shows where to configure
+  each source and how source-file updates differ from note updates.
+
+## Added in 1.0.7
 
 - Open **About → Zotero guide → Show Zotero guide** in settings for a detailed
   walkthrough of Zotero exports, plugin settings, citation updates, and mobile sync.

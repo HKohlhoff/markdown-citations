@@ -13,7 +13,8 @@ later. Version 1.0.0 is the initial public release.
 For a detailed Zotero setup walkthrough, open **Settings → Markdown Citations →
 About → Zotero guide → Show Zotero guide**. It covers Zotero exports, plugin
 settings, citations, bibliographies, and mobile synchronization, and is available
-offline. You can also [read the guide here](Markdown_Citations_Zotero_Guide.md).
+offline. Zotero is optional: the guide also explains setup with static `.bib` or
+CSL-JSON files and the differences in updating them. You can also [read the guide here](Markdown_Citations_Zotero_Guide.md).
 
 ## Features
 

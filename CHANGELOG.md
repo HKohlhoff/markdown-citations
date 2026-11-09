@@ -4,6 +4,12 @@ All notable changes to Markdown Citations will be documented in this file.
 
 ## Unreleased
 
+## 1.0.8 - 2026-11-09
+
+- Clarify that Zotero is optional and document setup with static `.bib` and
+  CSL-JSON files and the managed local library.
+- Compare source-file maintenance with explicit citation and bibliography updates.
+
 ## 1.0.7 - 2026-11-09
 
 - Add a reviewed, offline Zotero setup guide as the third About document.
